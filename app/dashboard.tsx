@@ -93,6 +93,11 @@ export default function DashboardScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: '#1a3a1a' }}>
       <View style={{ paddingTop: 60, paddingBottom: 14, paddingHorizontal: 24, borderBottomWidth: 1, borderBottomColor: '#2d5a2d' }}>
+        <TouchableOpacity onPress={() => router.back()} style={{ marginBottom: 8 }} activeOpacity={0.6}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 10, color: '#f4f0e6', textTransform: 'uppercase', letterSpacing: 2, opacity: 0.55 }}>
+            ‹ Change Vehicle
+          </Text>
+        </TouchableOpacity>
         <Text style={{ fontFamily: 'monospace', fontSize: 9, color: '#f4f0e6', opacity: 0.5, textTransform: 'uppercase', letterSpacing: 2 }}>
           Step 2 of 2 — Climate Configuration
         </Text>

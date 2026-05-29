@@ -10,6 +10,7 @@ import { useClimateStore } from '../lib/store';
 import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
 import { BANNER_AD_UNIT_ID } from '../lib/ads';
+import { compatShareUrl, WEB_BASE_URL } from '../lib/config';
 
 export default function ResultScreen() {
   const viewShotRef = useRef<ViewShot>(null);
@@ -27,10 +28,10 @@ export default function ResultScreen() {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(dest, { mimeType: 'image/jpeg', dialogTitle: 'Share your Climate Operator Permit' });
       } else {
-        Share.share({ message: `I got "${archetype.name}" on Climate Permit. climatepermit.app` });
+        Share.share({ message: `I got "${archetype.name}" on Climate Permit. ${WEB_BASE_URL}` });
       }
     } catch (e) {
-      Share.share({ message: `I got "${archetype.name}" on Climate Permit. climatepermit.app` });
+      Share.share({ message: `I got "${archetype.name}" on Climate Permit. ${WEB_BASE_URL}` });
     }
   }
 
@@ -43,7 +44,7 @@ export default function ResultScreen() {
       make: store.make,
       model: store.model,
     });
-    const link = `climatepermit://compat/${payload}`;
+    const link = compatShareUrl(payload);
     Share.share({
       message: `I got "${archetype.name}" on Climate Permit 🌡️ What's your climate type? Take the quiz and see our compatibility:\n${link}`,
     });

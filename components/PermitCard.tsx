@@ -28,9 +28,11 @@ function permitNo(archetypeId: string): string {
   return `${num}-${letter}`;
 }
 
-const ISSUE_DATE = new Date()
-  .toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-  .toUpperCase();
+function todayIssueDate(): string {
+  return new Date()
+    .toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+    .toUpperCase();
+}
 
 // Fake QR-like block (text art)
 const QR_ROWS = [
@@ -43,6 +45,7 @@ const QR_ROWS = [
 
 export function PermitCard({ archetype, make, model, answers, compact = false }: Props) {
   const s = compact ? 0.6 : 1;
+  const issueDate = todayIssueDate();
 
   const T = ({ style, children, ...rest }: any) => (
     <Text style={[{ fontFamily: 'monospace', color: '#1a3a1a' }, style]} {...rest}>
@@ -100,7 +103,7 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
         </View>
         <View style={{ alignItems: 'flex-end' }}>
           <T style={{ fontSize: compact ? 6 : 8, opacity: 0.5, textTransform: 'uppercase', letterSpacing: 1 }}>Issued</T>
-          <T style={{ fontSize: compact ? 8 : 10, marginTop: 1, letterSpacing: 1 }}>{ISSUE_DATE}</T>
+          <T style={{ fontSize: compact ? 8 : 10, marginTop: 1, letterSpacing: 1 }}>{issueDate}</T>
         </View>
       </View>
 

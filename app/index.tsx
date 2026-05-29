@@ -32,6 +32,11 @@ export default function LandingScreen() {
         >
           Operator Permit Division
         </Text>
+        <Text
+          style={{ fontFamily: 'monospace', fontSize: 10, color: '#1a3a1a', textAlign: 'center', marginTop: 18, lineHeight: 16, opacity: 0.75, paddingHorizontal: 6 }}
+        >
+          A satirical evaluation of your car's climate-control behavior. 60 seconds. 16 archetypes. Test your partner.
+        </Text>
       </View>
 
       {/* Seal */}
@@ -89,6 +94,12 @@ export default function LandingScreen() {
         Warning: Results may be accurate.{'\n'}
         Not valid for aircraft or watercraft.{'\n'}
         climatepermit.app
+      </Text>
+
+      <Text
+        style={{ fontFamily: 'monospace', fontSize: 8, color: '#1a3a1a', textAlign: 'center', opacity: 0.4, lineHeight: 13, marginTop: 14, letterSpacing: 1 }}
+      >
+        PARODY. NOT AFFILIATED WITH ANY{'\n'}GOVERNMENT AGENCY.
       </Text>
     </View>
   );

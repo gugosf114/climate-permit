@@ -11,6 +11,20 @@ export default function LandingScreen() {
   return (
     <View className="flex-1 bg-paper items-center justify-center px-8">
       <View className="items-center mb-10">
+        <View style={{
+          flexDirection: 'row', alignItems: 'center', gap: 8,
+          borderWidth: 1, borderColor: '#1a3a1a',
+          paddingHorizontal: 8, paddingVertical: 3,
+          marginBottom: 14,
+        }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 7, color: '#1a3a1a', letterSpacing: 2, textTransform: 'uppercase' }}>
+            Form CL-OP
+          </Text>
+          <View style={{ width: 1, height: 8, backgroundColor: '#1a3a1a', opacity: 0.4 }} />
+          <Text style={{ fontFamily: 'monospace', fontSize: 7, color: '#1a3a1a', letterSpacing: 2, textTransform: 'uppercase', opacity: 0.7 }}>
+            Rev 04 · 2026
+          </Text>
+        </View>
         <Text
           style={{ fontFamily: 'monospace', fontSize: 10, color: '#1a3a1a', letterSpacing: 3, textTransform: 'uppercase', opacity: 0.6 }}
         >
@@ -94,6 +108,12 @@ export default function LandingScreen() {
         Warning: Results may be accurate.{'\n'}
         Not valid for aircraft or watercraft.{'\n'}
         climatepermit.app
+      </Text>
+
+      <Text
+        style={{ fontFamily: 'monospace', fontSize: 8, color: '#1a3a1a', textAlign: 'center', opacity: 0.35, lineHeight: 12, marginTop: 10, letterSpacing: 1 }}
+      >
+        Issuance authorized under Sec. 5.2.4 —{'\n'}Operator Classification Survey
       </Text>
 
       <Text

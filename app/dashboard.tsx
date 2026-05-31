@@ -1,4 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import * as Haptics from 'expo-haptics';
@@ -6,26 +7,157 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing, FadeIn } from 'react-native-reanimated';
 import { useClimateStore, Answers } from '../lib/store';
 import { pickArchetype } from '../lib/scoring';
+import { getDashboardImage } from '../lib/dashboardImages';
 
 const TEMP_STEPS = [60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80];
 
 const C = {
-  chrome: '#1a3a1a',
-  chromeSoft: '#2d5a2d',
-  chromeDeep: '#0e2410',
-  cream: '#f4f0e6',
-  panel: '#1a1814',
-  panelLight: '#2c2820',
-  panelEdge: '#3a342a',
-  panelHighlight: '#4a4234',
-  panelShadow: '#080604',
-  amber: '#ffb84d',
-  amberDim: '#3a2810',
-  amberBright: '#ffd17a',
-  silk: '#d8cfb8',
-  silkDim: '#7d735c',
-  red: '#8b2020',
+  chrome: '#0a0e14',           // app bg (was DoCC green)
+  chromeSoft: 'rgba(201, 168, 117, 0.18)',  // divider
+  chromeDeep: '#0a0e14',       // scrollview bg
+  cream: '#c9a875',            // active button gold (was cream paper)
+  panel: '#14191f',            // panel surface
+  panelLight: '#2a2e36',       // bevel highlight (top/left)
+  panelEdge: 'rgba(201, 168, 117, 0.22)', // section dividers
+  panelHighlight: '#262e38',   // tile bevel top
+  panelShadow: '#06080c',      // bevel shadow (bottom/right)
+  amber: '#c9a875',            // gold (was amber)
+  amberDim: '#5a4730',         // gold dim
+  amberBright: '#e8c98a',      // gold bright
+  silk: '#f0e9d8',             // primary text
+  silkDim: '#a8a193',          // secondary text
+  red: '#c75444',
 };
+
+function BrandBanner({
+  make, model, answers, onCycleTemp,
+}: {
+  make: string;
+  model: string;
+  answers: Answers;
+  onCycleTemp: (direction: 'up' | 'down') => void;
+}) {
+  const temp = answers.driverTemp;
+  const fan = answers.fanSpeed;
+  const acOn = answers.acCompressor === 'on';
+  const autoOn = answers.climateMode === 'auto';
+  const recircOn = answers.recirc === 'on';
+
+  return (
+    <View style={{
+      width: '100%', aspectRatio: 1536 / 1024, marginBottom: 12,
+      padding: 6,
+      backgroundColor: C.panel,
+      borderTopColor: C.panelHighlight, borderLeftColor: C.panelHighlight,
+      borderBottomColor: C.panelShadow, borderRightColor: C.panelShadow,
+      borderWidth: 1.5,
+      shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 4 },
+    }}>
+      <Pressable
+        onPress={async () => { await Haptics.selectionAsync(); onCycleTemp('up'); }}
+        onLongPress={async () => { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); onCycleTemp('down'); }}
+        style={{ flex: 1, borderWidth: 1, borderColor: C.amber }}
+      >
+        <Image
+          source={getDashboardImage(make)}
+          style={{ width: '100%', height: '100%' }}
+          contentFit="cover"
+        />
+
+        {/* Brand marker — top left */}
+        <View style={{
+          position: 'absolute', top: 8, left: 8,
+          backgroundColor: 'rgba(20, 20, 16, 0.85)',
+          borderWidth: 1, borderColor: C.amber,
+          paddingHorizontal: 8, paddingVertical: 3,
+        }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, letterSpacing: 2, textTransform: 'uppercase' }}>
+            {make} · {model}
+          </Text>
+        </View>
+
+        {/* HUD — top right */}
+        <View style={{
+          position: 'absolute', top: 8, right: 8,
+          backgroundColor: 'rgba(20, 20, 16, 0.88)',
+          borderWidth: 1.5, borderColor: C.amber,
+          paddingVertical: 8, paddingHorizontal: 10, minWidth: 90,
+        }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.amber, opacity: 0.65, letterSpacing: 2, textTransform: 'uppercase' }}>
+            Driver Temp
+          </Text>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 28, fontWeight: 'bold',
+            color: C.amberBright,
+            letterSpacing: 1, lineHeight: 30,
+            textShadowColor: C.amber, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 10,
+          }}>
+            {temp !== undefined ? `${temp}°` : '--°'}
+          </Text>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 }}>
+            <View style={{
+              width: 6, height: 6, borderRadius: 3,
+              backgroundColor: acOn ? C.amberBright : C.amberDim,
+              shadowColor: C.amber, shadowOpacity: acOn ? 0.9 : 0, shadowRadius: 4,
+            }} />
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: acOn ? C.amber : C.silkDim, letterSpacing: 1.5 }}>
+              A/C
+            </Text>
+            <View style={{
+              width: 6, height: 6, borderRadius: 3,
+              backgroundColor: autoOn ? C.amberBright : C.amberDim,
+              shadowColor: C.amber, shadowOpacity: autoOn ? 0.9 : 0, shadowRadius: 4,
+              marginLeft: 4,
+            }} />
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: autoOn ? C.amber : C.silkDim, letterSpacing: 1.5 }}>
+              AUTO
+            </Text>
+            <View style={{
+              width: 6, height: 6, borderRadius: 3,
+              backgroundColor: recircOn ? C.amberBright : C.amberDim,
+              shadowColor: C.amber, shadowOpacity: recircOn ? 0.9 : 0, shadowRadius: 4,
+              marginLeft: 4,
+            }} />
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: recircOn ? C.amber : C.silkDim, letterSpacing: 1.5 }}>
+              RCRC
+            </Text>
+          </View>
+
+          <View style={{ marginTop: 6, flexDirection: 'row', gap: 2 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.amber, opacity: 0.65, letterSpacing: 1.5, marginRight: 4 }}>
+              FAN
+            </Text>
+            {[1, 2, 3, 4, 5, 6, 7].map((n) => {
+              const lit = typeof fan === 'number' ? n <= fan : fan === 'auto' ? true : false;
+              return (
+                <View
+                  key={n}
+                  style={{
+                    width: 6, height: 8,
+                    backgroundColor: lit ? C.amberBright : C.amberDim,
+                    shadowColor: C.amber, shadowOpacity: lit ? 0.7 : 0, shadowRadius: 3,
+                  }}
+                />
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Tap hint — bottom */}
+        <View style={{
+          position: 'absolute', bottom: 6, alignSelf: 'center',
+          backgroundColor: 'rgba(20, 20, 16, 0.75)',
+          paddingHorizontal: 10, paddingVertical: 3,
+        }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, letterSpacing: 2, textTransform: 'uppercase' }}>
+            Tap · +1   Hold · −1
+          </Text>
+        </View>
+      </Pressable>
+    </View>
+  );
+}
 
 function PowerDot({ on }: { on: boolean }) {
   const s = useSharedValue(0.6);
@@ -63,13 +195,13 @@ function LCDReadout({ value, label, big }: { value?: number | 'same'; label: str
         borderWidth: 2,
         borderTopColor: C.panelShadow, borderLeftColor: C.panelShadow,
         borderBottomColor: C.panelHighlight, borderRightColor: C.panelHighlight,
-        backgroundColor: C.amberDim,
+        backgroundColor: '#5c2a2a',
         paddingVertical: big ? 14 : 10, paddingHorizontal: 14,
       }}
     >
       <Text
         style={{
-          fontFamily: 'monospace', fontSize: 8, color: C.amber, opacity: 0.7,
+          fontFamily: 'monospace', fontSize: 8, color: C.amber, opacity: 0.85,
           letterSpacing: 2.5, textTransform: 'uppercase', marginBottom: 4,
         }}
       >
@@ -284,15 +416,50 @@ export default function DashboardScreen() {
     setAnswer(k, v);
   }
 
+  function cycleTemp(direction: 'up' | 'down') {
+    const current = answers.driverTemp;
+    if (current === undefined) {
+      setAnswer('driverTemp', direction === 'up' ? TEMP_STEPS[0] : TEMP_STEPS[TEMP_STEPS.length - 1]);
+      return;
+    }
+    const idx = TEMP_STEPS.indexOf(current);
+    if (idx === -1) {
+      setAnswer('driverTemp', 70);
+      return;
+    }
+    const newIdx = direction === 'up'
+      ? (idx + 1) % TEMP_STEPS.length
+      : (idx - 1 + TEMP_STEPS.length) % TEMP_STEPS.length;
+    setAnswer('driverTemp', TEMP_STEPS[newIdx]);
+  }
+
   const autoOn = answers.climateMode === 'auto';
 
   return (
     <View style={{ flex: 1, backgroundColor: C.chrome }}>
       {/* DoCC header */}
-      <View style={{ paddingTop: 60, paddingBottom: 14, paddingHorizontal: 24, borderBottomWidth: 1, borderBottomColor: C.chromeSoft }}>
-        <TouchableOpacity onPress={() => router.back()} style={{ marginBottom: 8 }} activeOpacity={0.6}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 10, color: C.cream, textTransform: 'uppercase', letterSpacing: 2, opacity: 0.55 }}>
-            ‹ Change Vehicle
+      <View style={{ paddingTop: 60, paddingBottom: 16, paddingHorizontal: 20, borderBottomWidth: 1, borderBottomColor: C.chromeSoft }}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          activeOpacity={0.7}
+          style={{
+            alignSelf: 'flex-start',
+            flexDirection: 'row', alignItems: 'center', gap: 6,
+            paddingHorizontal: 14, paddingVertical: 10,
+            marginBottom: 14,
+            backgroundColor: C.panel,
+            borderTopColor: C.panelHighlight, borderLeftColor: C.panelHighlight,
+            borderBottomColor: C.panelShadow, borderRightColor: C.panelShadow,
+            borderWidth: 1.5,
+            shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 4, shadowOffset: { width: 0, height: 2 },
+          }}
+        >
+          <MaterialCommunityIcons name="chevron-left" size={18} color={C.amberBright} />
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 12, color: C.amberBright,
+            textTransform: 'uppercase', letterSpacing: 2.5, fontWeight: '600',
+          }}>
+            Change Vehicle
           </Text>
         </TouchableOpacity>
         <Text style={{ fontFamily: 'monospace', fontSize: 9, color: C.cream, opacity: 0.5, textTransform: 'uppercase', letterSpacing: 2 }}>
@@ -308,6 +475,7 @@ export default function DashboardScreen() {
 
       {/* The HVAC Panel */}
       <ScrollView style={{ flex: 1, backgroundColor: C.chromeDeep }} contentContainerStyle={{ padding: 12, paddingBottom: 40 }}>
+        <BrandBanner make={make} model={model} answers={answers} onCycleTemp={cycleTemp} />
         <Animated.View
           entering={FadeIn.duration(450)}
           style={{
@@ -560,7 +728,7 @@ export default function DashboardScreen() {
           <Text style={{
             fontFamily: 'monospace', fontSize: 12, fontWeight: 'bold',
             textTransform: 'uppercase', letterSpacing: 3,
-            color: allAnswered ? C.chrome : C.cream,
+            color: allAnswered ? '#0a0e14' : C.silk,
           }}>
             {allAnswered ? 'Submit Configuration' : `${remainingCount} setting${remainingCount === 1 ? '' : 's'} remaining`}
           </Text>

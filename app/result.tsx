@@ -5,12 +5,31 @@ import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system/legacy';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { PermitCard } from '../components/PermitCard';
 import { useClimateStore } from '../lib/store';
 import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
 import { BANNER_AD_UNIT_ID } from '../lib/ads';
-import { compatShareUrl, WEB_BASE_URL } from '../lib/config';
+import { compatShareUrl, PLAY_STORE_URL } from '../lib/config';
+
+const C = {
+  bg:        '#0a0e14',
+  bg2:       '#14191f',
+  bg3:       '#1f262e',
+  tile:      '#1c232b',
+  tileHi:    '#262e38',
+  tileLo:    '#0d1218',
+  gold:      '#c9a875',
+  goldBright:'#e8c98a',
+  goldDim:   '#5a4730',
+  text:      '#f0e9d8',
+  textDim:   '#a8a193',
+  textMuted: '#6b6760',
+  divider:   'rgba(201, 168, 117, 0.18)',
+  border:    'rgba(201, 168, 117, 0.3)',
+  red:       '#c75444',
+};
 
 export default function ResultScreen() {
   const viewShotRef = useRef<ViewShot>(null);
@@ -26,12 +45,12 @@ export default function ResultScreen() {
       const dest = FileSystem.cacheDirectory + 'permit.jpg';
       await FileSystem.copyAsync({ from: uri, to: dest });
       if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(dest, { mimeType: 'image/jpeg', dialogTitle: 'Share your Climate Operator Permit' });
+        await Sharing.shareAsync(dest, { mimeType: 'image/jpeg', dialogTitle: 'Share your Climate Permit' });
       } else {
-        Share.share({ message: `I got "${archetype.name}" on Climate Permit. ${WEB_BASE_URL}` });
+        Share.share({ message: `I got "${archetype.name}" on Climate Permit. Get it: ${PLAY_STORE_URL}` });
       }
     } catch (e) {
-      Share.share({ message: `I got "${archetype.name}" on Climate Permit. ${WEB_BASE_URL}` });
+      Share.share({ message: `I got "${archetype.name}" on Climate Permit. Get it: ${PLAY_STORE_URL}` });
     }
   }
 
@@ -53,100 +72,173 @@ export default function ResultScreen() {
   const hasCompat = Boolean(store.compatPayload);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#f4f0e6' }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 120 }}>
+    <View style={{ flex: 1, backgroundColor: C.bg }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 130 }}>
         {/* Header */}
-        <View style={{ paddingTop: 60, paddingBottom: 14, paddingHorizontal: 24, borderBottomWidth: 1, borderBottomColor: '#1a3a1a' }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 9, color: '#1a3a1a', opacity: 0.5, textTransform: 'uppercase', letterSpacing: 2 }}>
+        <Animated.View entering={FadeIn.duration(500)} style={{
+          paddingTop: 60, paddingBottom: 18, paddingHorizontal: 24,
+          borderBottomWidth: 1, borderBottomColor: C.divider,
+        }}>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 9, color: C.gold,
+            opacity: 0.8, textTransform: 'uppercase', letterSpacing: 4,
+          }}>
             Permit Issued
           </Text>
-          <Text style={{ fontFamily: 'monospace', fontSize: 20, color: '#1a3a1a', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, marginTop: 4 }}>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 22, color: C.goldBright,
+            fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3, marginTop: 6,
+            textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 14,
+          }}>
             {archetype.name}
           </Text>
-          <Text style={{ fontFamily: 'monospace', fontSize: 10, color: '#1a3a1a', marginTop: 4, opacity: 0.6 }}>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 11, color: C.text,
+            marginTop: 8, opacity: 0.8, lineHeight: 17,
+          }}>
             {archetype.oneLineBurn}
           </Text>
-        </View>
+        </Animated.View>
 
         {/* Permit Card */}
-        <View style={{ paddingHorizontal: 20, paddingTop: 24 }}>
+        <Animated.View entering={FadeInDown.duration(700).delay(200)} style={{ paddingHorizontal: 18, paddingTop: 22 }}>
           <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.95 }}>
             <PermitCard archetype={archetype} make={store.make} model={store.model} answers={store.answers} />
           </ViewShot>
-        </View>
+        </Animated.View>
 
-        {/* Quadrant label */}
-        <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 8, flexDirection: 'row', gap: 8 }}>
-          <View style={{ backgroundColor: '#1a3a1a', paddingHorizontal: 10, paddingVertical: 4 }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 9, color: '#f4f0e6', textTransform: 'uppercase', letterSpacing: 1 }}>
+        {/* Quadrant + bias pills */}
+        <Animated.View entering={FadeInDown.duration(500).delay(450)} style={{
+          paddingHorizontal: 22, paddingTop: 18, paddingBottom: 8,
+          flexDirection: 'row', gap: 8, flexWrap: 'wrap',
+        }}>
+          <View style={{
+            backgroundColor: C.gold,
+            borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
+            borderBottomColor: C.goldDim, borderRightColor: C.goldDim,
+            borderWidth: 1,
+            paddingHorizontal: 12, paddingVertical: 5,
+          }}>
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 9, color: C.bg,
+              fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2,
+            }}>
               {archetype.quadrant}
             </Text>
           </View>
-          <View style={{ borderWidth: 1, borderColor: '#1a3a1a', paddingHorizontal: 10, paddingVertical: 4 }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 9, color: '#1a3a1a', textTransform: 'uppercase', letterSpacing: 1 }}>
+          <View style={{
+            backgroundColor: C.tile,
+            borderTopColor: C.tileHi, borderLeftColor: C.tileHi,
+            borderBottomColor: C.tileLo, borderRightColor: C.tileLo,
+            borderWidth: 1,
+            paddingHorizontal: 12, paddingVertical: 5,
+          }}>
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 9, color: C.text,
+              textTransform: 'uppercase', letterSpacing: 1.5,
+            }}>
               {archetype.xBias === 'self' ? 'Self-Focused' : 'Other-Focused'}  ·  {archetype.yBias === 'controller' ? 'Controller' : 'Chill'}
             </Text>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Compat traits */}
-        <View style={{ paddingHorizontal: 24, paddingBottom: 20 }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 9, color: '#1a3a1a', opacity: 0.5, marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1 }}>
-            Compatible with:
+        <Animated.View entering={FadeInDown.duration(500).delay(600)} style={{ paddingHorizontal: 22, paddingBottom: 24 }}>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 8, color: C.gold,
+            opacity: 0.6, marginBottom: 5, textTransform: 'uppercase', letterSpacing: 2,
+          }}>
+            Compatible with
           </Text>
-          <Text style={{ fontFamily: 'monospace', fontSize: 10, color: '#1a3a1a' }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 11, color: C.text, lineHeight: 18 }}>
             {archetype.compatTraits.join('  ·  ')}
           </Text>
-        </View>
+        </Animated.View>
 
         {/* Actions */}
-        <View style={{ paddingHorizontal: 24, gap: 10 }}>
+        <Animated.View entering={FadeIn.duration(500).delay(800)} style={{ paddingHorizontal: 22, gap: 10 }}>
           <TouchableOpacity
-            style={{ backgroundColor: '#1a3a1a', paddingVertical: 18, alignItems: 'center' }}
+            activeOpacity={0.88}
             onPress={handleShare}
-            activeOpacity={0.85}
+            style={{
+              backgroundColor: C.gold,
+              borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
+              borderBottomColor: '#8a7250', borderRightColor: '#8a7250',
+              borderWidth: 1.5,
+              paddingVertical: 18, alignItems: 'center',
+              shadowColor: C.gold, shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 5 },
+            }}
           >
-            <Text style={{ fontFamily: 'monospace', fontSize: 12, color: '#f4f0e6', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3 }}>
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 12, color: C.bg,
+              fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3,
+            }}>
               Share Your Permit
             </Text>
           </TouchableOpacity>
 
           {hasCompat ? (
             <TouchableOpacity
-              style={{ backgroundColor: '#8b2020', paddingVertical: 18, alignItems: 'center' }}
+              activeOpacity={0.88}
               onPress={() => router.push(`/compat/${store.compatPayload}`)}
-              activeOpacity={0.85}
+              style={{
+                backgroundColor: C.red,
+                borderTopColor: '#e07060', borderLeftColor: '#e07060',
+                borderBottomColor: '#7a2818', borderRightColor: '#7a2818',
+                borderWidth: 1.5,
+                paddingVertical: 18, alignItems: 'center',
+                shadowColor: C.red, shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 4 },
+              }}
             >
-              <Text style={{ fontFamily: 'monospace', fontSize: 12, color: '#f4f0e6', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3 }}>
-                View Compatibility →
+              <Text style={{
+                fontFamily: 'monospace', fontSize: 12, color: C.text,
+                fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3,
+              }}>
+                View Compatibility  →
               </Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={{ borderWidth: 1, borderColor: '#1a3a1a', paddingVertical: 18, alignItems: 'center' }}
-              onPress={handleCompatLink}
               activeOpacity={0.85}
+              onPress={handleCompatLink}
+              style={{
+                backgroundColor: C.tile,
+                borderTopColor: C.tileHi, borderLeftColor: C.tileHi,
+                borderBottomColor: C.tileLo, borderRightColor: C.tileLo,
+                borderWidth: 1.5,
+                paddingVertical: 18, alignItems: 'center',
+              }}
             >
-              <Text style={{ fontFamily: 'monospace', fontSize: 12, color: '#1a3a1a', textTransform: 'uppercase', letterSpacing: 2 }}>
-                Test Your Partner →
+              <Text style={{
+                fontFamily: 'monospace', fontSize: 12, color: C.gold,
+                textTransform: 'uppercase', letterSpacing: 2.5,
+              }}>
+                Test Your Partner  →
               </Text>
             </TouchableOpacity>
           )}
 
           <TouchableOpacity
-            style={{ paddingVertical: 12, alignItems: 'center' }}
-            onPress={() => { store.reset(); router.replace('/'); }}
             activeOpacity={0.7}
+            onPress={() => { store.reset(); router.replace('/'); }}
+            style={{ paddingVertical: 14, alignItems: 'center' }}
           >
-            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: '#1a3a1a', textTransform: 'uppercase', letterSpacing: 2, opacity: 0.4 }}>
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 10, color: C.textMuted,
+              textTransform: 'uppercase', letterSpacing: 2.5,
+            }}>
               Start Over
             </Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </ScrollView>
 
       {/* Sticky banner ad */}
-      <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, alignItems: 'center', backgroundColor: '#f4f0e6' }}>
+      <View style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0,
+        alignItems: 'center', backgroundColor: C.bg2,
+        borderTopWidth: 1, borderTopColor: C.divider,
+      }}>
         <BannerAd
           unitId={BANNER_AD_UNIT_ID}
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}

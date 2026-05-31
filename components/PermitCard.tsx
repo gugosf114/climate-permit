@@ -1,6 +1,8 @@
 import { View, Text } from 'react-native';
+import { Image } from 'expo-image';
 import { Archetype } from '../data/archetypes';
 import { Answers } from '../lib/store';
+import { getVehicleImage } from '../lib/vehicleImages';
 
 interface Props {
   archetype: Archetype;
@@ -10,6 +12,23 @@ interface Props {
   compact?: boolean;
 }
 
+const C = {
+  bg:        '#0a0e14',
+  bg2:       '#14191f',
+  bg3:       '#1f262e',
+  cardLight: '#262e38',
+  cardDark:  '#06080c',
+  gold:      '#c9a875',
+  goldBright:'#e8c98a',
+  goldDim:   '#5a4730',
+  text:      '#f0e9d8',
+  textDim:   '#a8a193',
+  textMuted: '#6b6760',
+  divider:   'rgba(201, 168, 117, 0.18)',
+  border:    'rgba(201, 168, 117, 0.4)',
+  red:       '#c75444',
+};
+
 function zoneSummary(answers: Answers): string {
   const parts: string[] = [];
   if (answers.driverTemp) parts.push(`${answers.driverTemp}°F`);
@@ -18,7 +37,6 @@ function zoneSummary(answers: Answers): string {
   return parts.join(' / ') || 'DEFAULT';
 }
 
-// Deterministic permit number from archetype id
 function permitNo(archetypeId: string): string {
   let hash = 0;
   for (let i = 0; i < archetypeId.length; i++) hash = ((hash << 5) - hash + archetypeId.charCodeAt(i)) | 0;
@@ -34,7 +52,6 @@ function todayIssueDate(): string {
     .toUpperCase();
 }
 
-// Fake QR-like block (text art)
 const QR_ROWS = [
   '▓▓▓ ░ ▓ ░░░ ▓▓▓',
   '▓ ░ ▓ ░ ▓ ░ ▓ ░',
@@ -44,11 +61,10 @@ const QR_ROWS = [
 ];
 
 export function PermitCard({ archetype, make, model, answers, compact = false }: Props) {
-  const s = compact ? 0.6 : 1;
   const issueDate = todayIssueDate();
 
   const T = ({ style, children, ...rest }: any) => (
-    <Text style={[{ fontFamily: 'monospace', color: '#1a3a1a' }, style]} {...rest}>
+    <Text style={[{ fontFamily: 'monospace', color: C.text }, style]} {...rest}>
       {children}
     </Text>
   );
@@ -56,9 +72,10 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
   return (
     <View
       style={{
-        backgroundColor: '#f4f0e6',
+        backgroundColor: C.bg2,
+        borderTopColor: C.cardLight, borderLeftColor: C.cardLight,
+        borderBottomColor: C.cardDark, borderRightColor: C.cardDark,
         borderWidth: compact ? 1 : 2,
-        borderColor: '#1a3a1a',
         padding: compact ? 12 : 20,
         position: 'relative',
         overflow: 'hidden',
@@ -70,103 +87,144 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
           position: 'absolute',
           top: '28%', left: '-10%', right: '-10%',
           transform: [{ rotate: '-28deg' }],
-          opacity: 0.055,
+          opacity: 0.06,
           pointerEvents: 'none',
         }}
       >
-        <T style={{ fontSize: compact ? 28 : 46, fontWeight: 'bold', textAlign: 'center', letterSpacing: 10, color: '#1a3a1a' }}>
+        <T style={{ fontSize: compact ? 28 : 46, fontWeight: 'bold', textAlign: 'center', letterSpacing: 10, color: C.gold }}>
           CERTIFIED
         </T>
       </View>
 
-      {/* Header */}
-      <View style={{ alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#1a3a1a', paddingBottom: compact ? 8 : 12, marginBottom: compact ? 8 : 12 }}>
-        <T style={{ fontSize: compact ? 7 : 9, letterSpacing: 2, textTransform: 'uppercase', opacity: 0.55 }}>
-          Department of Climate Control
+      {/* Top gold rule + wordmark */}
+      <View style={{
+        alignItems: 'center',
+        borderBottomWidth: 1, borderBottomColor: C.divider,
+        paddingBottom: compact ? 8 : 12, marginBottom: compact ? 10 : 14,
+      }}>
+        <T style={{
+          fontSize: compact ? 7 : 9, color: C.gold,
+          letterSpacing: 4, textTransform: 'uppercase', opacity: 0.85,
+        }}>
+          Operator Authorization
         </T>
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 3 }}>
-          <View style={{ flex: 1, height: 1, backgroundColor: '#1a3a1a' }} />
-          <T style={{ fontSize: compact ? 9 : 12, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3, marginHorizontal: 8 }}>
-            Operator Permit
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+          <View style={{ flex: 1, height: 1, backgroundColor: C.gold, opacity: 0.5 }} />
+          <T style={{
+            fontSize: compact ? 11 : 14, fontWeight: 'bold',
+            textTransform: 'uppercase', letterSpacing: 4, marginHorizontal: 10,
+            color: C.goldBright,
+            textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 8,
+          }}>
+            Climate Permit
           </T>
-          <View style={{ flex: 1, height: 1, backgroundColor: '#1a3a1a' }} />
+          <View style={{ flex: 1, height: 1, backgroundColor: C.gold, opacity: 0.5 }} />
         </View>
       </View>
 
       {/* Permit meta */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: compact ? 8 : 12 }}>
         <View>
-          <T style={{ fontSize: compact ? 6 : 8, opacity: 0.5, textTransform: 'uppercase', letterSpacing: 1 }}>Permit No.</T>
-          <T style={{ fontSize: compact ? 10 : 14, fontWeight: 'bold', letterSpacing: 1, marginTop: 1 }}>
+          <T style={{ fontSize: compact ? 6 : 8, color: C.textMuted, textTransform: 'uppercase', letterSpacing: 2 }}>Permit No.</T>
+          <T style={{ fontSize: compact ? 10 : 14, fontWeight: 'bold', letterSpacing: 1.5, marginTop: 2, color: C.goldBright }}>
             {permitNo(archetype.id)}
           </T>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
-          <T style={{ fontSize: compact ? 6 : 8, opacity: 0.5, textTransform: 'uppercase', letterSpacing: 1 }}>Issued</T>
-          <T style={{ fontSize: compact ? 8 : 10, marginTop: 1, letterSpacing: 1 }}>{issueDate}</T>
+          <T style={{ fontSize: compact ? 6 : 8, color: C.textMuted, textTransform: 'uppercase', letterSpacing: 2 }}>Issued</T>
+          <T style={{ fontSize: compact ? 8 : 10, marginTop: 2, letterSpacing: 1.5, color: C.text }}>{issueDate}</T>
         </View>
       </View>
 
       {/* Vehicle badge */}
-      <View style={{ borderWidth: 1, borderColor: '#1a3a1a', alignItems: 'center', paddingVertical: compact ? 8 : 14, marginBottom: compact ? 8 : 12 }}>
-        <Text style={{ fontSize: compact ? 22 : 30 }}>🚗</Text>
-        <T style={{ fontSize: compact ? 7 : 9, textTransform: 'uppercase', letterSpacing: 1, opacity: 0.5, marginTop: 2 }}>
-          {make}  {model}
+      <View style={{
+        borderWidth: 1, borderColor: C.divider,
+        alignItems: 'center', paddingVertical: compact ? 8 : 12,
+        paddingHorizontal: compact ? 12 : 16,
+        marginBottom: compact ? 10 : 14,
+        backgroundColor: C.bg,
+      }}>
+        <Image
+          source={getVehicleImage(make, model)}
+          style={{ width: '100%', aspectRatio: 1536 / 1024, maxHeight: compact ? 80 : 130 }}
+          contentFit="contain"
+        />
+        <T style={{
+          fontSize: compact ? 7 : 9, textTransform: 'uppercase', letterSpacing: 2,
+          color: C.gold, marginTop: 4, opacity: 0.85,
+        }}>
+          {make}  ·  {model}
         </T>
       </View>
 
-      {/* Classification */}
-      <View style={{ alignItems: 'center', marginBottom: compact ? 8 : 12 }}>
-        <T style={{ fontSize: compact ? 6 : 8, opacity: 0.5, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 4 }}>Classification</T>
-        <View style={{ backgroundColor: '#1a3a1a', paddingHorizontal: 12, paddingVertical: compact ? 6 : 10, width: '100%', alignItems: 'center' }}>
-          <T style={{ fontSize: compact ? 11 : 15, fontWeight: 'bold', color: '#f4f0e6', textTransform: 'uppercase', letterSpacing: compact ? 1 : 2, textAlign: 'center' }}>
+      {/* Classification — featured gold bar */}
+      <View style={{ alignItems: 'center', marginBottom: compact ? 10 : 14 }}>
+        <T style={{ fontSize: compact ? 6 : 8, color: C.textMuted, textTransform: 'uppercase', letterSpacing: 3, marginBottom: 6 }}>
+          Classification
+        </T>
+        <View style={{
+          backgroundColor: C.gold,
+          borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
+          borderBottomColor: C.goldDim, borderRightColor: C.goldDim,
+          borderWidth: 1.5,
+          paddingHorizontal: 14, paddingVertical: compact ? 8 : 12,
+          width: '100%', alignItems: 'center',
+          shadowColor: C.gold, shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 },
+        }}>
+          <T style={{
+            fontSize: compact ? 12 : 16, fontWeight: 'bold', color: C.bg,
+            textTransform: 'uppercase', letterSpacing: compact ? 1.5 : 2.5, textAlign: 'center',
+          }}>
             {archetype.name}
           </T>
         </View>
       </View>
 
       {/* Vehicle + zone */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#1a3a1a', paddingTop: compact ? 6 : 10, marginBottom: compact ? 8 : 10 }}>
+      <View style={{
+        flexDirection: 'row', justifyContent: 'space-between',
+        borderTopWidth: 1, borderTopColor: C.divider,
+        paddingTop: compact ? 8 : 12, marginBottom: compact ? 8 : 12,
+      }}>
         <View>
-          <T style={{ fontSize: compact ? 6 : 8, opacity: 0.5, textTransform: 'uppercase', letterSpacing: 1 }}>Vehicle</T>
-          <T style={{ fontSize: compact ? 8 : 10, fontWeight: 'bold', textTransform: 'uppercase', marginTop: 1 }}>
+          <T style={{ fontSize: compact ? 6 : 8, color: C.textMuted, textTransform: 'uppercase', letterSpacing: 2 }}>Vehicle</T>
+          <T style={{ fontSize: compact ? 8 : 10, fontWeight: 'bold', textTransform: 'uppercase', marginTop: 2, letterSpacing: 1, color: C.text }}>
             {make} {model}
           </T>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
-          <T style={{ fontSize: compact ? 6 : 8, opacity: 0.5, textTransform: 'uppercase', letterSpacing: 1 }}>Zone Pref.</T>
-          <T style={{ fontSize: compact ? 8 : 10, fontWeight: 'bold', textTransform: 'uppercase', marginTop: 1 }}>
+          <T style={{ fontSize: compact ? 6 : 8, color: C.textMuted, textTransform: 'uppercase', letterSpacing: 2 }}>Zone Pref.</T>
+          <T style={{ fontSize: compact ? 8 : 10, fontWeight: 'bold', textTransform: 'uppercase', marginTop: 2, letterSpacing: 1, color: C.goldBright }}>
             {zoneSummary(answers)}
           </T>
         </View>
       </View>
 
       {/* Restrictions */}
-      <View style={{ borderTopWidth: 1, borderTopColor: '#1a3a1a', paddingTop: compact ? 6 : 10, marginBottom: compact ? 6 : 10 }}>
-        <T style={{ fontSize: compact ? 6 : 8, opacity: 0.5, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 4 }}>
-          — Restrictions —
+      <View style={{ borderTopWidth: 1, borderTopColor: C.divider, paddingTop: compact ? 8 : 12, marginBottom: compact ? 8 : 12 }}>
+        <T style={{ fontSize: compact ? 6 : 8, color: C.textMuted, textTransform: 'uppercase', letterSpacing: 3, marginBottom: 6 }}>
+          —  Restrictions  —
         </T>
-        <T style={{ fontSize: compact ? 7 : 8, lineHeight: compact ? 11 : 13 }} numberOfLines={compact ? 4 : 7}>
+        <T style={{ fontSize: compact ? 7 : 9, lineHeight: compact ? 12 : 15, color: C.text, opacity: 0.92 }} numberOfLines={compact ? 4 : 7}>
           {archetype.permitText}
         </T>
       </View>
 
       {/* Footer */}
-      <View style={{ borderTopWidth: 1, borderTopColor: '#1a3a1a', paddingTop: compact ? 6 : 10, alignItems: 'center' }}>
-        <T style={{ fontSize: compact ? 6 : 8, color: '#8b2020', fontStyle: 'italic', letterSpacing: 1, marginBottom: compact ? 4 : 8, textAlign: 'center' }}>
+      <View style={{ borderTopWidth: 1, borderTopColor: C.divider, paddingTop: compact ? 8 : 12, alignItems: 'center' }}>
+        <T style={{ fontSize: compact ? 6 : 8, color: C.red, fontStyle: 'italic', letterSpacing: 1.5, marginBottom: compact ? 6 : 10, textAlign: 'center', opacity: 0.85 }}>
           "Issued under penalty of comfort"
         </T>
 
-        {/* Fake QR */}
-        <View style={{ borderWidth: 1, borderColor: '#1a3a1a', padding: compact ? 3 : 6, marginBottom: compact ? 3 : 6 }}>
+        <View style={{ borderWidth: 1, borderColor: C.divider, padding: compact ? 4 : 6, marginBottom: compact ? 6 : 8 }}>
           {QR_ROWS.map((row, i) => (
-            <T key={i} style={{ fontSize: compact ? 5 : 7, letterSpacing: 1, opacity: 0.35, textAlign: 'center' }}>
+            <T key={i} style={{ fontSize: compact ? 5 : 7, letterSpacing: 1, color: C.gold, opacity: 0.35, textAlign: 'center' }}>
               {row}
             </T>
           ))}
         </View>
 
-        <T style={{ fontSize: compact ? 6 : 8, textTransform: 'uppercase', letterSpacing: 2, opacity: 0.55 }}>
+        <T style={{ fontSize: compact ? 6 : 8, color: C.gold, textTransform: 'uppercase', letterSpacing: 3, opacity: 0.75 }}>
           CLIMATEPERMIT.APP
         </T>
       </View>

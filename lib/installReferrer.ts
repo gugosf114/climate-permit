@@ -1,10 +1,15 @@
-import { PlayInstallReferrer } from 'react-native-play-install-referrer';
-
 // Reads the Play Store install referrer if present.
-// Format: a query-string like "compat=BASE64PAYLOAD" set by compatShareUrl().
+// Format: a URL-encoded query string like "compat=BASE64PAYLOAD" set by compatShareUrl().
+// Lazy-require the native module so a missing-or-unlinked native build doesn't crash the JS bundle.
 export function readInstallReferrer(): Promise<string | null> {
   return new Promise((resolve) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { PlayInstallReferrer } = require('react-native-play-install-referrer');
+      if (!PlayInstallReferrer || typeof PlayInstallReferrer.getInstallReferrerInfo !== 'function') {
+        resolve(null);
+        return;
+      }
       PlayInstallReferrer.getInstallReferrerInfo((info: any, error: any) => {
         if (error || !info) {
           resolve(null);
@@ -20,7 +25,6 @@ export function readInstallReferrer(): Promise<string | null> {
 
 export function parseCompatPayload(referrer: string | null): string | null {
   if (!referrer) return null;
-  // referrer is a URL-encoded query string, possibly "compat=PAYLOAD" or "utm_source=...&compat=PAYLOAD"
   const decoded = decodeURIComponent(referrer);
   const match = decoded.match(/(?:^|&)compat=([^&]+)/);
   return match ? match[1] : null;

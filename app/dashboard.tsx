@@ -1,7 +1,7 @@
-import { View, Text, ScrollView, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Pressable, PanResponder } from 'react-native';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, Fragment, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing, FadeIn } from 'react-native-reanimated';
@@ -242,6 +242,28 @@ function LCDReadout({ value, label, big }: { value?: number | 'same'; label: str
   );
 }
 
+const KNOB_SIZE = 124;
+const KNOB_RADIUS = KNOB_SIZE / 2;
+const DASH_R = KNOB_RADIUS - 12;
+const LABEL_R = KNOB_RADIUS + 13;
+
+const KNOB_DISC = '#0e1825';
+const KNOB_RIM = '#050810';
+const KNOB_INNER = '#152234';
+const POINTER_WHITE = '#f5f0e0';
+const DASH_COOL = '#5489c4';
+const DASH_COOL_BRIGHT = '#7eb0e6';
+const DASH_NEUTRAL = '#bcb6a4';
+const DASH_NEUTRAL_BRIGHT = '#e8e2d2';
+const DASH_WARM = '#c2604f';
+const DASH_WARM_BRIGHT = '#e88573';
+
+function dashColor(i: number, active: boolean) {
+  if (i <= 3) return active ? DASH_COOL_BRIGHT : DASH_COOL;
+  if (i <= 6) return active ? DASH_NEUTRAL_BRIGHT : DASH_NEUTRAL;
+  return active ? DASH_WARM_BRIGHT : DASH_WARM;
+}
+
 function TempStepper({
   value, onChange, includesSame,
 }: {
@@ -250,55 +272,269 @@ function TempStepper({
   includesSame?: boolean;
 }) {
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingVertical: 8, paddingHorizontal: 2 }}>
-      <View style={{ flexDirection: 'row', gap: 5 }}>
-        {includesSame && (
-          <Pressable
-            onPress={async () => { await Haptics.selectionAsync(); onChange('same'); }}
+    <View style={{ alignItems: 'center', marginTop: 8, paddingTop: 4, paddingBottom: includesSame ? 0 : 8 }}>
+      <TempKnob value={typeof value === 'number' ? value : undefined} onChange={onChange} />
+      {includesSame && (
+        <SamePill
+          active={value === 'same'}
+          onPress={() => onChange(value === 'same' ? 70 : 'same')}
+        />
+      )}
+    </View>
+  );
+}
+
+function angleForIndex(i: number) {
+  return -90 + i * 18;
+}
+
+function TempKnob({
+  value, onChange,
+}: {
+  value?: number;
+  onChange: (v: number) => void;
+}) {
+  const lastValueRef = useRef<number | undefined>(value);
+  lastValueRef.current = value;
+
+  const handleTouch = (locationX: number, locationY: number) => {
+    const dx = locationX - KNOB_RADIUS;
+    const dy = locationY - KNOB_RADIUS;
+    let angle = (Math.atan2(dx, -dy) * 180) / Math.PI;
+    if (angle < -90) angle = -90;
+    if (angle > 90) angle = 90;
+    const idx = Math.round((angle + 90) / 18);
+    const newValue = TEMP_STEPS[Math.max(0, Math.min(TEMP_STEPS.length - 1, idx))];
+    if (newValue !== lastValueRef.current) {
+      Haptics.selectionAsync();
+      lastValueRef.current = newValue;
+      onChange(newValue);
+    }
+  };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderGrant: (e) => handleTouch(e.nativeEvent.locationX, e.nativeEvent.locationY),
+      onPanResponderMove: (e) => handleTouch(e.nativeEvent.locationX, e.nativeEvent.locationY),
+    })
+  ).current;
+
+  const pointerAngle = value !== undefined ? angleForIndex(TEMP_STEPS.indexOf(value)) : null;
+
+  return (
+    <View
+      style={{
+        width: KNOB_SIZE + 40,
+        height: KNOB_SIZE + 26,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {TEMP_STEPS.map((t, i) => {
+        if (i % 2 !== 0) return null;
+        const angle = angleForIndex(i);
+        const active = value === t;
+        return (
+          <View
+            key={`l${t}`}
+            pointerEvents="none"
             style={{
-              paddingHorizontal: 12, paddingVertical: 7,
-              borderWidth: 1.5,
-              borderTopColor: value === 'same' ? C.amberBright : C.panelHighlight,
-              borderLeftColor: value === 'same' ? C.amberBright : C.panelHighlight,
-              borderBottomColor: value === 'same' ? C.amber : C.panelShadow,
-              borderRightColor: value === 'same' ? C.amber : C.panelShadow,
-              backgroundColor: value === 'same' ? C.amberDim : C.panel,
+              position: 'absolute',
+              top: (KNOB_SIZE + 26) / 2 - 8,
+              left: (KNOB_SIZE + 40) / 2 - 11,
+              width: 22,
+              height: 16,
+              transform: [
+                { rotate: `${angle}deg` },
+                { translateY: -LABEL_R },
+                { rotate: `${-angle}deg` },
+              ],
             }}
           >
-            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: value === 'same' ? C.amberBright : C.silk, letterSpacing: 1.5, fontWeight: value === 'same' ? 'bold' : 'normal' }}>
-              SAME
-            </Text>
-          </Pressable>
-        )}
-        {TEMP_STEPS.map((t) => {
-          const active = value === t;
-          return (
-            <Pressable
-              key={t}
-              onPress={async () => { await Haptics.selectionAsync(); onChange(t); }}
+            <Text
               style={{
-                paddingHorizontal: 10, paddingVertical: 7,
-                borderWidth: 1.5,
-                borderTopColor: active ? C.amberBright : C.panelHighlight,
-                borderLeftColor: active ? C.amberBright : C.panelHighlight,
-                borderBottomColor: active ? C.amber : C.panelShadow,
-                borderRightColor: active ? C.amber : C.panelShadow,
-                backgroundColor: active ? C.amberDim : C.panel,
-                minWidth: 38, alignItems: 'center',
+                fontFamily: 'monospace',
+                fontSize: active ? 11 : 10,
+                fontWeight: active ? 'bold' : 'normal',
+                color: POINTER_WHITE,
+                opacity: active ? 1 : 0.75,
+                textAlign: 'center',
               }}
             >
-              <Text style={{
-                fontFamily: 'monospace', fontSize: 11,
-                color: active ? C.amberBright : C.silk,
-                fontWeight: active ? 'bold' : 'normal',
-              }}>
-                {t}°
-              </Text>
-            </Pressable>
+              {t}
+            </Text>
+          </View>
+        );
+      })}
+
+      <View
+        style={{
+          width: KNOB_SIZE,
+          height: KNOB_SIZE,
+          borderRadius: KNOB_RADIUS,
+          position: 'relative',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        {...panResponder.panHandlers}
+      >
+        <View
+          style={{
+            position: 'absolute',
+            width: KNOB_SIZE, height: KNOB_SIZE,
+            borderRadius: KNOB_RADIUS,
+            backgroundColor: KNOB_DISC,
+            borderWidth: 1.5,
+            borderColor: KNOB_RIM,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.6,
+            shadowRadius: 8,
+            elevation: 8,
+          }}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: 4, left: 4,
+            width: KNOB_SIZE - 8, height: KNOB_SIZE - 8,
+            borderRadius: (KNOB_SIZE - 8) / 2,
+            borderWidth: 1,
+            borderColor: KNOB_INNER,
+            backgroundColor: 'transparent',
+          }}
+        />
+
+        {TEMP_STEPS.map((t, i) => {
+          const angle = angleForIndex(i);
+          const active = value === t;
+          const color = dashColor(i, active);
+          return (
+            <View
+              key={`d${t}`}
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                top: KNOB_RADIUS, left: KNOB_RADIUS,
+                width: 0, height: 0,
+                transform: [
+                  { rotate: `${angle}deg` },
+                  { translateY: -DASH_R },
+                ],
+              }}
+            >
+              <View
+                style={{
+                  width: active ? 5 : 4,
+                  height: active ? 16 : 13,
+                  backgroundColor: color,
+                  borderRadius: 1,
+                  marginLeft: active ? -2.5 : -2,
+                  marginTop: -((active ? 16 : 13) / 2),
+                }}
+              />
+            </View>
           );
         })}
+
+        {pointerAngle !== null && (
+          <View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              top: KNOB_RADIUS, left: KNOB_RADIUS,
+              width: 0, height: 0,
+              transform: [{ rotate: `${pointerAngle}deg` }],
+            }}
+          >
+            <View
+              style={{
+                width: 18,
+                height: KNOB_RADIUS - 8,
+                backgroundColor: '#1c2a3f',
+                borderTopLeftRadius: 9,
+                borderTopRightRadius: 9,
+                borderBottomLeftRadius: 4,
+                borderBottomRightRadius: 4,
+                borderWidth: 1,
+                borderColor: '#26344d',
+                marginLeft: -9,
+                marginTop: -(KNOB_RADIUS - 8) + 6,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.5,
+                shadowRadius: 3,
+                elevation: 4,
+              }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                top: -(KNOB_RADIUS - 24),
+                left: 0,
+                width: 0, height: 0,
+                borderLeftWidth: 9,
+                borderRightWidth: 9,
+                borderBottomWidth: 14,
+                borderLeftColor: 'transparent',
+                borderRightColor: 'transparent',
+                borderBottomColor: POINTER_WHITE,
+                marginLeft: -9,
+              }}
+            />
+          </View>
+        )}
+
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            top: KNOB_RADIUS - 5, left: KNOB_RADIUS - 5,
+            width: 10, height: 10, borderRadius: 5,
+            backgroundColor: KNOB_RIM,
+            borderWidth: 1,
+            borderColor: KNOB_INNER,
+          }}
+        />
       </View>
-    </ScrollView>
+    </View>
+  );
+}
+
+function SamePill({
+  active, onPress,
+}: {
+  active: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={async () => { await Haptics.selectionAsync(); onPress(); }}
+      style={{
+        marginTop: 10,
+        paddingHorizontal: 16,
+        paddingVertical: 7,
+        borderRadius: 16,
+        borderWidth: 1.5,
+        borderColor: POINTER_WHITE,
+        backgroundColor: active ? POINTER_WHITE : KNOB_DISC,
+      }}
+    >
+      <Text
+        style={{
+          fontFamily: 'monospace',
+          fontSize: 10,
+          fontWeight: 'bold',
+          color: active ? KNOB_DISC : POINTER_WHITE,
+          letterSpacing: 1.8,
+        }}
+      >
+        SAME AS DRIVER
+      </Text>
+    </Pressable>
   );
 }
 

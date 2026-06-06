@@ -77,3 +77,31 @@ When George took a screenshot: the amber digits were completely lost in the busy
 **Fix:** Asked George to navigate to the target screen himself, then I screenshot. The interactive navigation is cheaper for him than coordinate-guessing is for me.
 
 **Lesson:** Don't try to automate navigation flows via raw `input tap` against a real device. Either use UI automation (Espresso, etc) or just have the human do the navigation.
+
+---
+
+## 2026-06-06 — Samsung Fold `screencap -p` stdout pollution
+
+**Failure:** Tried to grab a phone screenshot via `adb exec-out screencap -p > out.png` for inline analysis. Output file had a `.png` extension but failed image-magic detection — flagged as plain `data`. PIL refused to open it. The PNG bytes were correct — they were just prefixed by a `[Warning] Multiple display detected...` string written to stdout by Samsung's `screencap` implementation on foldable devices. The warning lives in the same byte stream as the PNG payload, so simple stream redirect captures both.
+
+**Fix:** Find the PNG magic header (`\x89PNG`) in the captured bytes and strip everything before it.
+
+```python
+data = open('out.png', 'rb').read()
+i = data.find(b'\x89PNG')
+open('clean.png', 'wb').write(data[i:])
+```
+
+In this session the warning was 347 bytes long.
+
+**Lesson:** Any device with a non-trivial display topology (Fold, Flip, multi-screen tablet) may inject stderr-flavored text into `screencap -p` stdout. Always validate the PNG magic before treating the output as an image. The standard `2>/dev/null` redirect does NOT catch this — the warning isn't on stderr; it's on stdout.
+
+---
+
+## 2026-06-06 — "I'm looking at it, nothing's changed" (looking at the wrong thing)
+
+**Failure:** Rebuilt + reinstalled the dashboard UI with new TempStepper, told George to verify. He came back with "nothing's changed, did you actually install it?" Spent two tool calls verifying the bundle was fresh, the APK lastUpdateTime was within seconds, and the new color literals were in the bundled JS. All checked out. Took a fresh screenshot of his phone — turns out he was looking at the Claude Code chat with the OLD screenshot of the app pinned as a message attachment thumbnail above the input box. He had not actually switched apps to Climate Permit. The new APK was running fine; he was reading my reply, not looking at the app.
+
+**Fix:** Take a screenshot of the phone before claiming installation success. The screenshot proves what's *visible*, not just what's *installed*.
+
+**Lesson:** "I'm looking at it" is ambiguous when the user is on a phone juggling Claude Code + the target app. The screenshot pinned in their chat input is a static image; the foreground app may not be the target. When in doubt, the installer's success is verified by the device's current foreground screen, not by anything the user reports.

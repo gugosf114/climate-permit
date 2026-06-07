@@ -1,11 +1,13 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useEffect, useState } from 'react';
+import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { decodePayload, CompatPayload } from '../../lib/encode';
 import { useClimateStore } from '../../lib/store';
 import { loadAndShowInterstitial } from '../../lib/ads';
 import { CompatResult } from '../../components/CompatResult';
 import { ARCHETYPES } from '../../data/archetypes';
+import { palette as C, glow, goldBevel } from '../../constants/tokens';
 
 export default function CompatScreen() {
   const { code } = useLocalSearchParams<{ code: string }>();
@@ -32,18 +34,24 @@ export default function CompatScreen() {
 
   if (invalid) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#f4f0e6', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
-        <Text style={{ fontFamily: 'monospace', fontSize: 14, color: '#8b2020', textTransform: 'uppercase', letterSpacing: 2, textAlign: 'center', marginBottom: 16 }}>
-          Invalid Permit Link
-        </Text>
-        <TouchableOpacity
-          style={{ backgroundColor: '#1a3a1a', paddingVertical: 14, paddingHorizontal: 32 }}
-          onPress={() => router.replace('/')}
-        >
-          <Text style={{ fontFamily: 'monospace', fontSize: 11, color: '#f4f0e6', textTransform: 'uppercase', letterSpacing: 2 }}>
-            Get Your Own Permit
+      <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
+        <Animated.View entering={FadeIn.duration(400)} style={{ alignItems: 'center', width: '100%' }}>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 14, color: C.red, textTransform: 'uppercase',
+            letterSpacing: 2, textAlign: 'center', marginBottom: 20, ...glow(C.red, 10),
+          }}>
+            Invalid Permit Link
           </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={{ backgroundColor: C.gold, ...goldBevel, paddingVertical: 16, paddingHorizontal: 32 }}
+            onPress={() => router.replace('/')}
+            activeOpacity={0.88}
+          >
+            <Text style={{ fontFamily: 'monospace', fontSize: 11, color: C.bg, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2 }}>
+              Get Your Own Permit
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     );
   }
@@ -51,41 +59,53 @@ export default function CompatScreen() {
   // Partner has a code but current user hasn't taken quiz yet
   if (!store.archetypeId && partnerPayload) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#f4f0e6', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
-        <Text style={{ fontFamily: 'monospace', fontSize: 9, color: '#1a3a1a', opacity: 0.5, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8, textAlign: 'center' }}>
-          Your partner has challenged you
-        </Text>
-        <Text style={{ fontFamily: 'monospace', fontSize: 20, fontWeight: 'bold', color: '#1a3a1a', textTransform: 'uppercase', letterSpacing: 2, textAlign: 'center', marginBottom: 6 }}>
-          Take the Quiz First
-        </Text>
-        <Text style={{ fontFamily: 'monospace', fontSize: 10, color: '#1a3a1a', opacity: 0.55, textAlign: 'center', lineHeight: 17, marginBottom: 32 }}>
-          Their permit is locked until you complete your own climate configuration. Your results will be compared automatically.
-        </Text>
+      <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
+        <Animated.View entering={FadeInDown.duration(600)} style={{ alignItems: 'center', width: '100%' }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 9, color: C.gold, opacity: 0.7, textTransform: 'uppercase', letterSpacing: 3, marginBottom: 8, textAlign: 'center' }}>
+            Your partner has challenged you
+          </Text>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 20, fontWeight: 'bold', color: C.goldBright,
+            textTransform: 'uppercase', letterSpacing: 2, textAlign: 'center', marginBottom: 8, ...glow(C.gold, 12),
+          }}>
+            Take the Quiz First
+          </Text>
+          <Text style={{ fontFamily: 'monospace', fontSize: 10, color: C.text, opacity: 0.7, textAlign: 'center', lineHeight: 17, marginBottom: 28 }}>
+            Their permit is locked until you complete your own climate configuration. Your results will be compared automatically.
+          </Text>
 
-        {/* Partner's archetype teaser */}
-        {partnerPayload && (
-          <View style={{ borderWidth: 1, borderColor: '#1a3a1a', paddingVertical: 12, paddingHorizontal: 20, marginBottom: 32, width: '100%', alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: '#1a3a1a', opacity: 0.5, textTransform: 'uppercase', letterSpacing: 1 }}>
+          {/* Partner's archetype teaser */}
+          <View style={{
+            borderWidth: 1, borderColor: C.border, paddingVertical: 14, paddingHorizontal: 20,
+            marginBottom: 28, width: '100%', alignItems: 'center', backgroundColor: C.bg2,
+          }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.textMuted, textTransform: 'uppercase', letterSpacing: 1 }}>
               Partner classified as
             </Text>
-            <Text style={{ fontFamily: 'monospace', fontSize: 14, fontWeight: 'bold', color: '#8b2020', textTransform: 'uppercase', letterSpacing: 2, marginTop: 4 }}>
-              ???
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 16, fontWeight: 'bold', color: C.red,
+              textTransform: 'uppercase', letterSpacing: 3, marginTop: 4, ...glow(C.red, 8),
+            }}>
+              ? ? ?
             </Text>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: '#1a3a1a', opacity: 0.4, marginTop: 2 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.textDim, marginTop: 4, letterSpacing: 1 }}>
               Reveal after your quiz
             </Text>
           </View>
-        )}
 
-        <TouchableOpacity
-          style={{ backgroundColor: '#1a3a1a', paddingVertical: 18, width: '100%', alignItems: 'center' }}
-          onPress={() => router.push('/car-select')}
-          activeOpacity={0.85}
-        >
-          <Text style={{ fontFamily: 'monospace', fontSize: 12, color: '#f4f0e6', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3 }}>
-            Start My Quiz
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              backgroundColor: C.gold, ...goldBevel, paddingVertical: 18, width: '100%', alignItems: 'center',
+              shadowColor: C.gold, shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 5 },
+            }}
+            onPress={() => router.push('/car-select')}
+            activeOpacity={0.88}
+          >
+            <Text style={{ fontFamily: 'monospace', fontSize: 12, color: C.bg, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3 }}>
+              Start My Quiz
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
     );
   }
@@ -93,9 +113,9 @@ export default function CompatScreen() {
   // Waiting for ad + result
   if (!showResult || !partnerPayload) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#f4f0e6', alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontFamily: 'monospace', fontSize: 11, color: '#1a3a1a', textTransform: 'uppercase', letterSpacing: 3, opacity: 0.5 }}>
-          Calculating...
+      <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontFamily: 'monospace', fontSize: 11, color: C.gold, textTransform: 'uppercase', letterSpacing: 4, opacity: 0.7 }}>
+          Calculating…
         </Text>
       </View>
     );

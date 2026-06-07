@@ -1,41 +1,83 @@
 import { View, Text, TouchableOpacity, ScrollView, Share } from 'react-native';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { router } from 'expo-router';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system/legacy';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, {
+  FadeIn, FadeInDown,
+  useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay,
+} from 'react-native-reanimated';
 import { PermitCard } from '../components/PermitCard';
 import { useClimateStore } from '../lib/store';
 import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
 import { BANNER_AD_UNIT_ID } from '../lib/ads';
 import { compatShareUrl, PLAY_STORE_URL } from '../lib/config';
+import { palette as C, glow, goldBevel } from '../constants/tokens';
 
-const C = {
-  bg:        '#0a0e14',
-  bg2:       '#14191f',
-  bg3:       '#1f262e',
-  tile:      '#1c232b',
-  tileHi:    '#262e38',
-  tileLo:    '#0d1218',
-  gold:      '#c9a875',
-  goldBright:'#e8c98a',
-  goldDim:   '#5a4730',
-  text:      '#f0e9d8',
-  textDim:   '#a8a193',
-  textMuted: '#6b6760',
-  divider:   'rgba(201, 168, 117, 0.18)',
-  border:    'rgba(201, 168, 117, 0.3)',
-  red:       '#c75444',
-};
+/** "ISSUED" official stamp that slams onto the permit just after it appears. */
+function PermitStamp() {
+  const scale = useSharedValue(2.6);
+  const opacity = useSharedValue(0);
+  useEffect(() => {
+    opacity.value = withDelay(680, withTiming(1, { duration: 160 }));
+    scale.value = withDelay(680, withSpring(1, { damping: 9, stiffness: 150, mass: 0.7 }));
+  }, []);
+  const stampStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ rotate: '-14deg' }, { scale: scale.value }],
+  }));
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[{ position: 'absolute', top: 12, right: 8 }, stampStyle]}
+    >
+      <View style={{
+        borderWidth: 2.5, borderColor: C.red, borderRadius: 6,
+        paddingHorizontal: 10, paddingVertical: 4,
+        backgroundColor: 'rgba(199, 84, 68, 0.10)',
+        alignItems: 'center',
+      }}>
+        <Text style={{ fontFamily: 'monospace', fontSize: 15, fontWeight: 'bold', color: C.red, letterSpacing: 3, ...glow(C.red, 6) }}>
+          ISSUED
+        </Text>
+        <Text style={{ fontFamily: 'monospace', fontSize: 6, color: C.red, letterSpacing: 2, opacity: 0.85, marginTop: 1 }}>
+          DEPT · OF · CLIMATE
+        </Text>
+      </View>
+    </Animated.View>
+  );
+}
 
 export default function ResultScreen() {
   const viewShotRef = useRef<ViewShot>(null);
   const store = useClimateStore();
   const _archetype = ARCHETYPES.find((a) => a.id === store.archetypeId);
-  if (!_archetype) return null;
+
+  // No archetype on file (e.g. cold deep-link) — never render a blank screen.
+  if (!_archetype) {
+    return (
+      <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
+        <Text style={{
+          fontFamily: 'monospace', fontSize: 12, color: C.gold, textTransform: 'uppercase',
+          letterSpacing: 3, textAlign: 'center', marginBottom: 20, opacity: 0.85,
+        }}>
+          No permit on file
+        </Text>
+        <TouchableOpacity
+          style={{ backgroundColor: C.gold, ...goldBevel, paddingVertical: 16, paddingHorizontal: 32 }}
+          onPress={() => { store.reset(); router.replace('/'); }}
+          activeOpacity={0.88}
+        >
+          <Text style={{ fontFamily: 'monospace', fontSize: 11, color: C.bg, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2 }}>
+            Start Over
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   const archetype = _archetype;
 
   async function handleShare() {
@@ -88,7 +130,7 @@ export default function ResultScreen() {
           <Text style={{
             fontFamily: 'monospace', fontSize: 22, color: C.goldBright,
             fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3, marginTop: 6,
-            textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 14,
+            ...glow(C.gold, 14),
           }}>
             {archetype.name}
           </Text>
@@ -100,10 +142,13 @@ export default function ResultScreen() {
           </Text>
         </Animated.View>
 
-        {/* Permit Card */}
+        {/* Permit Card + stamp */}
         <Animated.View entering={FadeInDown.duration(700).delay(200)} style={{ paddingHorizontal: 18, paddingTop: 22 }}>
           <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.95 }}>
-            <PermitCard archetype={archetype} make={store.make} model={store.model} answers={store.answers} />
+            <View style={{ position: 'relative' }}>
+              <PermitCard archetype={archetype} make={store.make} model={store.model} answers={store.answers} />
+              <PermitStamp />
+            </View>
           </ViewShot>
         </Animated.View>
 
@@ -161,10 +206,7 @@ export default function ResultScreen() {
             activeOpacity={0.88}
             onPress={handleShare}
             style={{
-              backgroundColor: C.gold,
-              borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
-              borderBottomColor: '#8a7250', borderRightColor: '#8a7250',
-              borderWidth: 1.5,
+              backgroundColor: C.gold, ...goldBevel,
               paddingVertical: 18, alignItems: 'center',
               shadowColor: C.gold, shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 5 },
             }}
@@ -183,8 +225,8 @@ export default function ResultScreen() {
               onPress={() => router.push(`/compat/${store.compatPayload}`)}
               style={{
                 backgroundColor: C.red,
-                borderTopColor: '#e07060', borderLeftColor: '#e07060',
-                borderBottomColor: '#7a2818', borderRightColor: '#7a2818',
+                borderTopColor: C.redBright, borderLeftColor: C.redBright,
+                borderBottomColor: C.redDeep, borderRightColor: C.redDeep,
                 borderWidth: 1.5,
                 paddingVertical: 18, alignItems: 'center',
                 shadowColor: C.red, shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 4 },

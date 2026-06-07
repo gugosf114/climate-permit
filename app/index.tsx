@@ -3,23 +3,7 @@ import { useEffect } from 'react';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing, FadeIn, FadeInDown } from 'react-native-reanimated';
-
-const C = {
-  bg:        '#0a0e14',
-  bg2:       '#14191f',
-  bg3:       '#1f262e',
-  surface:   'rgba(255, 248, 232, 0.04)',
-  gold:      '#c9a875',
-  goldBright:'#e8c98a',
-  goldDim:   '#5a4730',
-  goldShadow:'rgba(201, 168, 117, 0.4)',
-  text:      '#f0e9d8',
-  textDim:   '#a8a193',
-  textMuted: '#6b6760',
-  border:    'rgba(201, 168, 117, 0.25)',
-  borderHi:  'rgba(232, 201, 138, 0.55)',
-  divider:   'rgba(201, 168, 117, 0.12)',
-};
+import { palette as C } from '../constants/tokens';
 
 function Seal() {
   const pulse = useSharedValue(0.85);

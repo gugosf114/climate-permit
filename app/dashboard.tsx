@@ -2,6 +2,11 @@ import { View, Text, ScrollView, TouchableOpacity, Pressable, PanResponder } fro
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, Fragment, useRef } from 'react';
+const VENT_FACE_PNG = require('../assets/images/hvac-icons/face.png');
+const VENT_MIX_PNG = require('../assets/images/hvac-icons/mix.png');
+const VENT_FEET_PNG = require('../assets/images/hvac-icons/feet.png');
+const VENT_DEFROST_PNG = require('../assets/images/hvac-icons/defrost.png');
+const RECIRC_PNG = require('../assets/images/hvac-icons/recirc.png');
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing, FadeIn } from 'react-native-reanimated';
@@ -242,10 +247,12 @@ function LCDReadout({ value, label, big }: { value?: number | 'same'; label: str
   );
 }
 
-const KNOB_SIZE = 124;
+const KNOB_SIZE = 122;
 const KNOB_RADIUS = KNOB_SIZE / 2;
 const DASH_R = KNOB_RADIUS - 12;
-const LABEL_R = KNOB_RADIUS + 13;
+const LABEL_R = KNOB_RADIUS + 11;
+const KNOB_CONTAINER_W = KNOB_SIZE + 38;
+const KNOB_CONTAINER_H = KNOB_SIZE + 26;
 
 const KNOB_DISC = '#0e1825';
 const KNOB_RIM = '#050810';
@@ -284,31 +291,83 @@ function TempStepper({
   );
 }
 
-function angleForIndex(i: number) {
-  return -90 + i * 18;
+type KnobOption = {
+  key: string;
+  label?: string;
+  icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  render?: (props: { color: string; opacity: number; size: number }) => React.ReactNode;
+};
+
+const VENT_ICON_SIZE = 32;
+
+function VentIcon({ source, color, opacity = 1 }: { source: any; color: string; opacity?: number }) {
+  return (
+    <Image
+      source={source}
+      style={{ width: VENT_ICON_SIZE, height: VENT_ICON_SIZE, opacity }}
+      contentFit="contain"
+      tintColor={color}
+    />
+  );
 }
 
-function TempKnob({
-  value, onChange,
+function FaceVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
+  return <VentIcon source={VENT_FACE_PNG} color={color} opacity={opacity} />;
+}
+
+function FeetVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
+  return <VentIcon source={VENT_FEET_PNG} color={color} opacity={opacity} />;
+}
+
+function MixVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
+  return <VentIcon source={VENT_MIX_PNG} color={color} opacity={opacity} />;
+}
+
+function DefrostVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
+  return <VentIcon source={VENT_DEFROST_PNG} color={color} opacity={opacity} />;
+}
+
+function Knob({
+  options, activeKey, onChange,
+  size = KNOB_SIZE,
+  labelWidth = 16,
+  dashColorFn,
 }: {
-  value?: number;
-  onChange: (v: number) => void;
+  options: KnobOption[];
+  activeKey?: string;
+  onChange: (key: string) => void;
+  size?: number;
+  labelWidth?: number;
+  dashColorFn?: (i: number, active: boolean) => string;
 }) {
-  const lastValueRef = useRef<number | undefined>(value);
-  lastValueRef.current = value;
+  const radius = size / 2;
+  const dashR = radius - 12;
+  const labelR = radius + 11;
+  const containerW = size + 16 + labelWidth;
+  const containerH = size + 26;
+  const angleStep = options.length > 1 ? 180 / (options.length - 1) : 0;
+  const angleForIdx = (i: number) => -90 + i * angleStep;
+
+  const activeIdx = activeKey != null ? options.findIndex((o) => o.key === activeKey) : -1;
+  const isDefault = activeIdx < 0;
+  const pointerIdx = isDefault ? Math.floor(options.length / 2) : activeIdx;
+  const pointerAngle = angleForIdx(pointerIdx);
+
+  const lastIdxRef = useRef<number>(activeIdx);
+  lastIdxRef.current = activeIdx;
 
   const handleTouch = (locationX: number, locationY: number) => {
-    const dx = locationX - KNOB_RADIUS;
-    const dy = locationY - KNOB_RADIUS;
+    const dx = locationX - radius;
+    const dy = locationY - radius;
     let angle = (Math.atan2(dx, -dy) * 180) / Math.PI;
     if (angle < -90) angle = -90;
     if (angle > 90) angle = 90;
-    const idx = Math.round((angle + 90) / 18);
-    const newValue = TEMP_STEPS[Math.max(0, Math.min(TEMP_STEPS.length - 1, idx))];
-    if (newValue !== lastValueRef.current) {
+    const idx = Math.round((angle + 90) / angleStep);
+    const clamped = Math.max(0, Math.min(options.length - 1, idx));
+    if (clamped !== lastIdxRef.current) {
       Haptics.selectionAsync();
-      lastValueRef.current = newValue;
-      onChange(newValue);
+      lastIdxRef.current = clamped;
+      onChange(options[clamped].key);
     }
   };
 
@@ -322,59 +381,71 @@ function TempKnob({
     })
   ).current;
 
-  const pointerAngle = value !== undefined ? angleForIndex(TEMP_STEPS.indexOf(value)) : null;
-
   return (
     <View
       style={{
-        width: KNOB_SIZE + 40,
-        height: KNOB_SIZE + 26,
+        width: containerW,
+        height: containerH,
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'visible',
       }}
     >
-      {TEMP_STEPS.map((t, i) => {
-        if (i % 2 !== 0) return null;
-        const angle = angleForIndex(i);
-        const active = value === t;
+      {options.map((opt, i) => {
+        const angle = angleForIdx(i);
+        const active = !isDefault && activeIdx === i;
         return (
           <View
-            key={`l${t}`}
+            key={`l${opt.key}`}
             pointerEvents="none"
             style={{
               position: 'absolute',
-              top: (KNOB_SIZE + 26) / 2 - 8,
-              left: (KNOB_SIZE + 40) / 2 - 11,
-              width: 22,
-              height: 16,
+              top: containerH / 2 - 16,
+              left: containerW / 2 - labelWidth / 2,
+              width: labelWidth,
+              height: 32,
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'visible',
               transform: [
                 { rotate: `${angle}deg` },
-                { translateY: -LABEL_R },
+                { translateY: -labelR },
                 { rotate: `${-angle}deg` },
               ],
             }}
           >
-            <Text
-              style={{
-                fontFamily: 'monospace',
-                fontSize: active ? 11 : 10,
-                fontWeight: active ? 'bold' : 'normal',
-                color: POINTER_WHITE,
-                opacity: active ? 1 : 0.75,
-                textAlign: 'center',
-              }}
-            >
-              {t}
-            </Text>
+            {opt.render ? (
+              opt.render({ color: POINTER_WHITE, opacity: active ? 1 : 0.85, size: active ? 24 : 22 })
+            ) : opt.icon ? (
+              <MaterialCommunityIcons
+                name={opt.icon}
+                size={active ? 16 : 14}
+                color={POINTER_WHITE}
+                style={{ opacity: active ? 1 : 0.92 }}
+              />
+            ) : (
+              <Text
+                style={{
+                  fontFamily: 'monospace',
+                  fontSize: active ? 11 : 9.5,
+                  fontWeight: 'bold',
+                  color: POINTER_WHITE,
+                  opacity: active ? 1 : 0.92,
+                  textAlign: 'center',
+                }}
+              >
+                {opt.label}
+              </Text>
+            )}
           </View>
         );
       })}
 
       <View
         style={{
-          width: KNOB_SIZE,
-          height: KNOB_SIZE,
-          borderRadius: KNOB_RADIUS,
+          width: size,
+          height: size,
+          borderRadius: radius,
           position: 'relative',
           alignItems: 'center',
           justifyContent: 'center',
@@ -384,8 +455,8 @@ function TempKnob({
         <View
           style={{
             position: 'absolute',
-            width: KNOB_SIZE, height: KNOB_SIZE,
-            borderRadius: KNOB_RADIUS,
+            width: size, height: size,
+            borderRadius: radius,
             backgroundColor: KNOB_DISC,
             borderWidth: 1.5,
             borderColor: KNOB_RIM,
@@ -400,29 +471,29 @@ function TempKnob({
           style={{
             position: 'absolute',
             top: 4, left: 4,
-            width: KNOB_SIZE - 8, height: KNOB_SIZE - 8,
-            borderRadius: (KNOB_SIZE - 8) / 2,
+            width: size - 8, height: size - 8,
+            borderRadius: (size - 8) / 2,
             borderWidth: 1,
             borderColor: KNOB_INNER,
             backgroundColor: 'transparent',
           }}
         />
 
-        {TEMP_STEPS.map((t, i) => {
-          const angle = angleForIndex(i);
-          const active = value === t;
-          const color = dashColor(i, active);
+        {options.map((opt, i) => {
+          const angle = angleForIdx(i);
+          const active = !isDefault && activeIdx === i;
+          const color = dashColorFn ? dashColorFn(i, active) : (active ? DASH_NEUTRAL_BRIGHT : DASH_NEUTRAL);
           return (
             <View
-              key={`d${t}`}
+              key={`d${opt.key}`}
               pointerEvents="none"
               style={{
                 position: 'absolute',
-                top: KNOB_RADIUS, left: KNOB_RADIUS,
+                top: radius, left: radius,
                 width: 0, height: 0,
                 transform: [
                   { rotate: `${angle}deg` },
-                  { translateY: -DASH_R },
+                  { translateY: -dashR },
                 ],
               }}
             >
@@ -440,59 +511,72 @@ function TempKnob({
           );
         })}
 
-        {pointerAngle !== null && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            top: radius, left: radius,
+            width: 0, height: 0,
+            transform: [{ rotate: `${pointerAngle}deg` }],
+          }}
+        >
           <View
-            pointerEvents="none"
+            style={{
+              width: 12,
+              height: radius - 8,
+              backgroundColor: '#1a2940',
+              borderTopLeftRadius: 6,
+              borderTopRightRadius: 6,
+              borderBottomLeftRadius: 3,
+              borderBottomRightRadius: 3,
+              borderWidth: 1,
+              borderColor: '#2a3b56',
+              marginLeft: -6,
+              marginTop: -(radius - 8) + 6,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.55,
+              shadowRadius: 3,
+              elevation: 4,
+              opacity: isDefault ? 0.7 : 1,
+            }}
+          />
+          <View
             style={{
               position: 'absolute',
-              top: KNOB_RADIUS, left: KNOB_RADIUS,
-              width: 0, height: 0,
-              transform: [{ rotate: `${pointerAngle}deg` }],
+              width: 3,
+              height: radius - 24,
+              backgroundColor: '#2e405d',
+              borderRadius: 1.5,
+              marginLeft: -1.5,
+              top: -(radius - 8) + 14,
+              left: 0,
+              opacity: isDefault ? 0.7 : 1,
             }}
-          >
-            <View
-              style={{
-                width: 18,
-                height: KNOB_RADIUS - 8,
-                backgroundColor: '#1c2a3f',
-                borderTopLeftRadius: 9,
-                borderTopRightRadius: 9,
-                borderBottomLeftRadius: 4,
-                borderBottomRightRadius: 4,
-                borderWidth: 1,
-                borderColor: '#26344d',
-                marginLeft: -9,
-                marginTop: -(KNOB_RADIUS - 8) + 6,
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.5,
-                shadowRadius: 3,
-                elevation: 4,
-              }}
-            />
-            <View
-              style={{
-                position: 'absolute',
-                top: -(KNOB_RADIUS - 24),
-                left: 0,
-                width: 0, height: 0,
-                borderLeftWidth: 9,
-                borderRightWidth: 9,
-                borderBottomWidth: 14,
-                borderLeftColor: 'transparent',
-                borderRightColor: 'transparent',
-                borderBottomColor: POINTER_WHITE,
-                marginLeft: -9,
-              }}
-            />
-          </View>
-        )}
+          />
+          <View
+            style={{
+              position: 'absolute',
+              top: -(radius - 4),
+              left: 0,
+              width: 0, height: 0,
+              borderLeftWidth: 6,
+              borderRightWidth: 6,
+              borderBottomWidth: 9,
+              borderLeftColor: 'transparent',
+              borderRightColor: 'transparent',
+              borderBottomColor: POINTER_WHITE,
+              marginLeft: -6,
+              opacity: isDefault ? 0.65 : 1,
+            }}
+          />
+        </View>
 
         <View
           pointerEvents="none"
           style={{
             position: 'absolute',
-            top: KNOB_RADIUS - 5, left: KNOB_RADIUS - 5,
+            top: radius - 5, left: radius - 5,
             width: 10, height: 10, borderRadius: 5,
             backgroundColor: KNOB_RIM,
             borderWidth: 1,
@@ -503,6 +587,88 @@ function TempKnob({
     </View>
   );
 }
+
+const TEMP_OPTIONS: KnobOption[] = TEMP_STEPS.map((t) => ({ key: String(t), label: String(t) }));
+const FAN_OPTIONS: KnobOption[] = [
+  { key: 'off', label: 'OFF' },
+  { key: '1', label: '1' },
+  { key: '2', label: '2' },
+  { key: '3', label: '3' },
+  { key: '4', label: '4' },
+  { key: '5', label: '5' },
+  { key: '6', label: '6' },
+  { key: '7', label: '7' },
+  { key: 'auto', icon: 'fan-auto' },
+];
+const VENT_OPTIONS: KnobOption[] = [
+  { key: 'face', render: (p) => <FaceVentIcon color={p.color} opacity={p.opacity} /> },
+  { key: 'mix', render: (p) => <MixVentIcon color={p.color} opacity={p.opacity} /> },
+  { key: 'feet', render: (p) => <FeetVentIcon color={p.color} opacity={p.opacity} /> },
+  { key: 'defrost', render: (p) => <DefrostVentIcon color={p.color} opacity={p.opacity} /> },
+];
+
+function TempKnob({
+  value, onChange,
+}: {
+  value?: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <Knob
+      options={TEMP_OPTIONS}
+      activeKey={value !== undefined ? String(value) : undefined}
+      onChange={(k) => onChange(parseInt(k, 10))}
+      labelWidth={16}
+      dashColorFn={dashColor}
+    />
+  );
+}
+
+function FanKnob({
+  value, onChange,
+}: {
+  value?: number | 'auto';
+  onChange: (v: number | 'auto') => void;
+}) {
+  const activeKey =
+    value === 'auto' ? 'auto'
+    : value === 0 ? 'off'
+    : typeof value === 'number' ? String(value)
+    : undefined;
+  return (
+    <View style={{ alignItems: 'center' }}>
+      <Knob
+        options={FAN_OPTIONS}
+        activeKey={activeKey}
+        onChange={(k) => {
+          if (k === 'auto') onChange('auto');
+          else if (k === 'off') onChange(0 as any);
+          else onChange(parseInt(k, 10));
+        }}
+        labelWidth={22}
+      />
+    </View>
+  );
+}
+
+function VentKnob({
+  value, onChange,
+}: {
+  value?: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <View style={{ alignItems: 'center' }}>
+      <Knob
+        options={VENT_OPTIONS}
+        activeKey={value}
+        onChange={(k) => onChange(k)}
+        labelWidth={36}
+      />
+    </View>
+  );
+}
+
 
 function SamePill({
   active, onPress,
@@ -533,6 +699,125 @@ function SamePill({
         }}
       >
         SAME AS DRIVER
+      </Text>
+    </Pressable>
+  );
+}
+
+function CircleButton({
+  size = 58,
+  label,
+  icon,
+  image,
+  state,
+  onPress,
+}: {
+  size?: number;
+  label?: string;
+  icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  image?: any;
+  state: 'off' | 'on' | 'auto';
+  onPress: () => void;
+}) {
+  const active = state !== 'off';
+  const tint = state === 'on' ? KNOB_DISC : POINTER_WHITE;
+  return (
+    <Pressable
+      onPress={async () => { await Haptics.selectionAsync(); onPress(); }}
+      style={{
+        width: size, height: size, borderRadius: size / 2,
+        backgroundColor: state === 'on' ? POINTER_WHITE : KNOB_DISC,
+        borderWidth: 1.5,
+        borderColor: state === 'auto' ? POINTER_WHITE : KNOB_RIM,
+        alignItems: 'center', justifyContent: 'center',
+        shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.55, shadowRadius: 6,
+        elevation: 6,
+      }}
+    >
+      {image ? (
+        <Image
+          source={image}
+          style={{ width: size * 0.55, height: size * 0.55, opacity: active ? 1 : 0.85 }}
+          contentFit="contain"
+          tintColor={tint}
+        />
+      ) : icon ? (
+        <MaterialCommunityIcons
+          name={icon}
+          size={size * 0.42}
+          color={tint}
+          style={{ opacity: active ? 1 : 0.85 }}
+        />
+      ) : (
+        <Text style={{
+          fontFamily: 'monospace',
+          fontSize: size * 0.27,
+          fontWeight: 'bold',
+          color: state === 'on' ? KNOB_DISC : POINTER_WHITE,
+          letterSpacing: 1.2,
+          opacity: active ? 1 : 0.85,
+        }}>
+          {label}
+        </Text>
+      )}
+      {state === 'auto' && (
+        <View style={{
+          position: 'absolute', bottom: -6,
+          paddingHorizontal: 4, paddingVertical: 1,
+          borderRadius: 3,
+          backgroundColor: KNOB_DISC,
+          borderWidth: 1, borderColor: POINTER_WHITE,
+        }}>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 6,
+            color: POINTER_WHITE,
+            fontWeight: 'bold',
+            letterSpacing: 1,
+          }}>
+            AUTO
+          </Text>
+        </View>
+      )}
+    </Pressable>
+  );
+}
+
+function cycleTriState(current: 'on' | 'off' | 'auto' | undefined): 'on' | 'off' | 'auto' {
+  if (current === 'off' || current === undefined) return 'on';
+  if (current === 'on') return 'auto';
+  return 'off';
+}
+
+function AutoPill({
+  active, onPress,
+}: {
+  active: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={async () => { await Haptics.selectionAsync(); onPress(); }}
+      style={{
+        marginTop: 10,
+        paddingHorizontal: 18,
+        paddingVertical: 7,
+        borderRadius: 16,
+        borderWidth: 1.5,
+        borderColor: POINTER_WHITE,
+        backgroundColor: active ? POINTER_WHITE : KNOB_DISC,
+      }}
+    >
+      <Text
+        style={{
+          fontFamily: 'monospace',
+          fontSize: 11,
+          fontWeight: 'bold',
+          color: active ? KNOB_DISC : POINTER_WHITE,
+          letterSpacing: 2.5,
+        }}
+      >
+        AUTO
       </Text>
     </Pressable>
   );
@@ -758,101 +1043,52 @@ export default function DashboardScreen() {
 
           {/* FAN SPEED */}
           <SectionLabel icon="fan">Fan Speed</SectionLabel>
-          <View style={{ flexDirection: 'row', gap: 4, flexWrap: 'wrap' }}>
-            {['1', '2', '3', '4', '5', '6', '7'].map((n) => {
-              const active = String(answers.fanSpeed) === n;
-              return (
-                <PanelButton
-                  key={n}
-                  active={active}
-                  onPress={() => set('fanSpeed', parseInt(n, 10) as any)}
-                  label={n}
-                  flex={0}
-                />
-              );
-            })}
-            <View style={{ flex: 1 }}>
-              <PanelButton
-                active={answers.fanSpeed === 'auto'}
-                onPress={() => set('fanSpeed', 'auto')}
-                label="Auto"
-                icon="fan-auto"
-              />
-            </View>
+          <View style={{ alignItems: 'center', marginTop: 4 }}>
+            <FanKnob
+              value={answers.fanSpeed}
+              onChange={(v) => set('fanSpeed', v as any)}
+            />
           </View>
 
           {/* VENT DIRECTION */}
           <SectionLabel icon="weather-windy">Vent Direction</SectionLabel>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <PanelButton
-              active={answers.ventDirection === 'face'}
-              onPress={() => set('ventDirection', 'face')}
-              label="Face"
-              sub="↑↑"
-            />
-            <PanelButton
-              active={answers.ventDirection === 'feet'}
-              onPress={() => set('ventDirection', 'feet')}
-              label="Feet"
-              sub="↓"
-            />
-            <PanelButton
-              active={answers.ventDirection === 'defrost'}
-              onPress={() => set('ventDirection', 'defrost')}
-              label="Defrost"
-              icon="car-defrost-front"
-            />
-            <PanelButton
-              active={answers.ventDirection === 'mix'}
-              onPress={() => set('ventDirection', 'mix')}
-              label="Mix"
-              sub="↕"
+          <View style={{ alignItems: 'center', marginTop: 4 }}>
+            <VentKnob
+              value={answers.ventDirection}
+              onChange={(v) => set('ventDirection', v as any)}
             />
           </View>
 
-          {/* AIR — A/C + Recirc */}
-          <SectionLabel icon="air-conditioner">Air Compressor</SectionLabel>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <PanelButton
-              active={answers.acCompressor === 'on'}
-              onPress={() => set('acCompressor', 'on')}
-              label="A/C On"
-              icon="snowflake"
-            />
-            <PanelButton
-              active={answers.acCompressor === 'off'}
-              onPress={() => set('acCompressor', 'off')}
-              label="A/C Off"
-              icon="snowflake-off"
-            />
-            <PanelButton
-              active={answers.acCompressor === 'auto'}
-              onPress={() => set('acCompressor', 'auto')}
-              label="A/C Auto"
-              icon="cog"
-            />
-          </View>
-
-          <SectionLabel icon="recycle-variant">Recirculation</SectionLabel>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <PanelButton
-              active={answers.recirc === 'on'}
-              onPress={() => set('recirc', 'on')}
-              label="Recirc"
-              icon="autorenew"
-            />
-            <PanelButton
-              active={answers.recirc === 'off'}
-              onPress={() => set('recirc', 'off')}
-              label="Fresh"
-              icon="weather-windy"
-            />
-            <PanelButton
-              active={answers.recirc === 'auto'}
-              onPress={() => set('recirc', 'auto')}
-              label="Auto"
-              icon="cog"
-            />
+          {/* AIR — A/S + Recirc circular buttons */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginTop: 18, marginBottom: 14, paddingHorizontal: 30 }}>
+            <View style={{ alignItems: 'center' }}>
+              <CircleButton
+                label="A/S"
+                state={(answers.acCompressor as any) ?? 'off'}
+                onPress={() => set('acCompressor', cycleTriState(answers.acCompressor))}
+              />
+              <Text style={{
+                fontFamily: 'monospace', fontSize: 8,
+                color: C.silkDim, letterSpacing: 2, marginTop: 14,
+                textTransform: 'uppercase',
+              }}>
+                A/C
+              </Text>
+            </View>
+            <View style={{ alignItems: 'center' }}>
+              <CircleButton
+                image={RECIRC_PNG}
+                state={(answers.recirc as any) ?? 'off'}
+                onPress={() => set('recirc', cycleTriState(answers.recirc))}
+              />
+              <Text style={{
+                fontFamily: 'monospace', fontSize: 8,
+                color: C.silkDim, letterSpacing: 2, marginTop: 14,
+                textTransform: 'uppercase',
+              }}>
+                Recirc
+              </Text>
+            </View>
           </View>
 
           {/* CLIMATE MODE */}

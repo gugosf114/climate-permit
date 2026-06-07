@@ -9,7 +9,7 @@ const VENT_DEFROST_PNG = require('../assets/images/hvac-icons/defrost.png');
 const RECIRC_PNG = require('../assets/images/hvac-icons/recirc.png');
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing, FadeIn } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, withSpring, Easing, FadeIn } from 'react-native-reanimated';
 import { useClimateStore, Answers } from '../lib/store';
 import { pickArchetype } from '../lib/scoring';
 import { getDashboardImage } from '../lib/dashboardImages';
@@ -353,6 +353,14 @@ function Knob({
   const pointerIdx = isDefault ? Math.floor(options.length / 2) : activeIdx;
   const pointerAngle = angleForIdx(pointerIdx);
 
+  // Spring the needle to the selected detent for a real-dial feel
+  // (input logic is unchanged — only the visual pointer is animated).
+  const pointerRot = useSharedValue(pointerAngle);
+  useEffect(() => {
+    pointerRot.value = withSpring(pointerAngle, { damping: 13, stiffness: 170, mass: 0.6 });
+  }, [pointerAngle]);
+  const pointerAnimStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${pointerRot.value}deg` }] }));
+
   const lastIdxRef = useRef<number>(activeIdx);
   lastIdxRef.current = activeIdx;
 
@@ -511,14 +519,13 @@ function Knob({
           );
         })}
 
-        <View
+        <Animated.View
           pointerEvents="none"
-          style={{
+          style={[{
             position: 'absolute',
             top: radius, left: radius,
             width: 0, height: 0,
-            transform: [{ rotate: `${pointerAngle}deg` }],
-          }}
+          }, pointerAnimStyle]}
         >
           <View
             style={{
@@ -570,7 +577,7 @@ function Knob({
               opacity: isDefault ? 0.65 : 1,
             }}
           />
-        </View>
+        </Animated.View>
 
         <View
           pointerEvents="none"

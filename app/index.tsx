@@ -1,71 +1,130 @@
-import { View, Text, TouchableOpacity } from 'react-native';
-import { useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing, FadeIn, FadeInDown } from 'react-native-reanimated';
-import { palette as C } from '../constants/tokens';
+import Svg, { Path } from 'react-native-svg';
+import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 
-function Seal() {
-  const pulse = useSharedValue(0.85);
-  useEffect(() => {
-    pulse.value = withRepeat(withTiming(1, { duration: 2400, easing: Easing.inOut(Easing.sin) }), -1, true);
-  }, []);
-  const halo = useAnimatedStyle(() => ({ opacity: pulse.value * 0.45 }));
+const DMV = {
+  paper:       '#f5efde',
+  paperLight:  '#fbf6e6',
+  paperDeep:   '#ede4c2',
+  border:      '#8a7a3a',
+  caBlue:      '#0e2d63',
+  caBlueSoft:  '#1e4385',
+  caBlueDeep:  '#081c44',
+  ink:         '#0a0a0a',
+  inkSoft:     '#2c2c2c',
+  inkDim:      '#7a7a7a',
+  red:         '#b41d23',
+  redDeep:     '#7a1218',
+  gold:        '#c78c19',
+  goldDeep:    '#8b6310',
+  hologram:    '#dba519',
+  divider:     'rgba(20,20,20,0.18)',
+};
 
+function BearSilhouette({ size, color }: { size: number; color: string }) {
   return (
-    <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 56 }}>
-      {/* outer halo */}
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            width: 220, height: 220, borderRadius: 110,
-            backgroundColor: C.gold,
-            opacity: 0.18,
-          },
-          halo,
-        ]}
+    <Svg width={size} height={size * 0.55} viewBox="0 0 100 55">
+      <Path
+        d="M 4 32 C 3 30, 4 27, 8 25 L 11 22 C 13 19, 16 17, 19 19 L 20 14 L 23 19 L 25 14 L 28 19 C 33 14, 41 11, 48 11 C 58 11, 68 13, 77 17 C 84 20, 89 24, 91 27 L 94 24 L 96 28 L 91 30 C 89 36, 86 41, 83 43 L 83 49 C 81 50, 78 50, 76 49 L 76 44 C 70 45, 64 45, 58 44 L 50 49 C 48 50, 45 50, 43 49 L 43 44 L 26 44 L 18 49 C 16 50, 13 50, 11 49 L 11 44 C 8 43, 5 38, 4 34 Z"
+        fill={color}
       />
-      {/* outer ring */}
-      <View
-        style={{
-          width: 160, height: 160, borderRadius: 80,
-          borderWidth: 2, borderColor: C.gold,
-          alignItems: 'center', justifyContent: 'center',
-          backgroundColor: C.bg2,
-          shadowColor: C.gold, shadowOpacity: 0.6, shadowRadius: 24, shadowOffset: { width: 0, height: 0 },
-        }}
-      >
-        {/* inner ring */}
-        <View
-          style={{
-            width: 134, height: 134, borderRadius: 67,
-            borderWidth: 1, borderColor: C.gold,
-            borderStyle: 'dashed',
-            alignItems: 'center', justifyContent: 'center',
-          }}
-        >
-          {/* deepest ring */}
-          <View
-            style={{
-              width: 108, height: 108, borderRadius: 54,
-              borderWidth: 1, borderColor: 'rgba(201, 168, 117, 0.35)',
-              alignItems: 'center', justifyContent: 'center',
-              backgroundColor: C.bg,
-            }}
-          >
-            <Text style={{ fontSize: 48, color: C.goldBright, textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 12 }}>
-              ❄
-            </Text>
-            <Text style={{
-              fontFamily: 'monospace', fontSize: 7, color: C.gold,
-              letterSpacing: 3, textTransform: 'uppercase', marginTop: 4,
-              opacity: 0.7,
-            }}>
-              Certified
-            </Text>
-          </View>
-        </View>
+      <Path
+        d="M 55 20 L 56.8 24 L 61 24 L 57.6 26.6 L 58.8 31 L 55 28.4 L 51.2 31 L 52.4 26.6 L 49 24 L 53.2 24 Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function DocumentBackground() {
+  return (
+    <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+      <Text style={{
+        position: 'absolute',
+        top: '40%', left: -40, right: -40,
+        fontWeight: 'bold',
+        fontSize: 42,
+        color: DMV.caBlue,
+        opacity: 0.06,
+        letterSpacing: 10,
+        textAlign: 'center',
+        transform: [{ rotate: '-8deg' }],
+      }}>
+        STATE OF CALIFORNIA
+      </Text>
+
+      {Array.from({ length: 14 }).map((_, i) => (
+        <Text key={`r${i}`} style={{
+          position: 'absolute', left: 0, right: 0,
+          top: 70 + i * 60,
+          fontSize: 7, fontWeight: 'bold',
+          color: DMV.caBlue, opacity: 0.055,
+          letterSpacing: 2.5,
+          textAlign: 'center',
+        }}>
+          STATE OF CALIFORNIA · STATE OF CALIFORNIA · STATE OF CALIFORNIA · STATE OF CALIFORNIA
+        </Text>
+      ))}
+
+      <View style={{
+        position: 'absolute', top: '40%', left: 0, right: 0,
+        alignItems: 'center', opacity: 0.05,
+      }}>
+        <BearSilhouette size={260} color={DMV.caBlueDeep} />
+      </View>
+
+      <View style={{ position: 'absolute', top: 220, right: 30, opacity: 0.08 }}>
+        <BearSilhouette size={50} color={DMV.gold} />
+      </View>
+      <View style={{ position: 'absolute', bottom: 200, left: 24, opacity: 0.08 }}>
+        <BearSilhouette size={50} color={DMV.gold} />
+      </View>
+
+      {Array.from({ length: 32 }).map((_, i) => (
+        <View key={`g${i}`} style={{
+          position: 'absolute', left: 0, right: 0,
+          top: i * 24, height: 1,
+          backgroundColor: DMV.gold, opacity: 0.04,
+        }} />
+      ))}
+    </View>
+  );
+}
+
+function OfficialHeader() {
+  return (
+    <View style={{
+      paddingTop: 50, paddingBottom: 10, paddingHorizontal: 22,
+      borderBottomWidth: 1, borderBottomColor: DMV.divider,
+      backgroundColor: 'rgba(251,246,230,0.92)',
+      flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
+    }}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+        <Text style={{
+          fontFamily: 'serif', fontStyle: 'italic',
+          fontSize: 30, color: DMV.caBlue, fontWeight: 'bold',
+          lineHeight: 32, letterSpacing: -0.5,
+        }}>
+          California
+        </Text>
+        <Text style={{
+          fontFamily: 'monospace', fontSize: 8, color: DMV.ink,
+          fontWeight: 'bold', letterSpacing: 1, marginLeft: 3, marginBottom: 5,
+        }}>
+          USA
+        </Text>
+      </View>
+      <View style={{ alignItems: 'flex-end' }}>
+        <BearSilhouette size={36} color={DMV.gold} />
+        <Text style={{
+          fontFamily: undefined, fontSize: 11,
+          color: DMV.caBlue, fontWeight: 'bold',
+          letterSpacing: 1, marginTop: 2,
+        }}>
+          CLIMATE PERMIT
+        </Text>
       </View>
     </View>
   );
@@ -78,87 +137,169 @@ export default function LandingScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
-      {/* Subtle background grid for depth */}
-      <View style={{
-        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-        opacity: 0.05,
-      }}>
-        {Array.from({ length: 24 }).map((_, i) => (
-          <View
-            key={`h${i}`}
-            style={{
-              position: 'absolute', left: 0, right: 0,
-              top: i * 40, height: 1,
-              backgroundColor: C.gold,
-            }}
-          />
-        ))}
-      </View>
+    <View style={{ flex: 1, backgroundColor: DMV.paper }}>
+      <DocumentBackground />
+      <OfficialHeader />
 
-      <Animated.View entering={FadeInDown.duration(700).delay(100)} style={{ alignItems: 'center', marginBottom: 40 }}>
-        <Text style={{
-          fontFamily: 'monospace', fontSize: 9, color: C.gold,
-          letterSpacing: 6, textTransform: 'uppercase', marginBottom: 16,
-          opacity: 0.75,
-        }}>
-          ·  An Operator Assessment  ·
-        </Text>
-        <Text style={{
-          fontFamily: 'monospace', fontSize: 38, color: C.goldBright,
-          letterSpacing: 8, textTransform: 'uppercase', textAlign: 'center',
-          fontWeight: 'bold', lineHeight: 44,
-          textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 18,
-        }}>
-          Climate{'\n'}Permit
-        </Text>
-      </Animated.View>
-
-      <Animated.View entering={FadeIn.duration(900).delay(400)}>
-        <Seal />
-      </Animated.View>
-
-      <Animated.View entering={FadeInDown.duration(700).delay(700)} style={{ width: '100%', alignItems: 'center' }}>
-        <Text style={{
-          fontFamily: 'monospace', fontSize: 11, color: C.text,
-          textAlign: 'center', lineHeight: 18, opacity: 0.85,
-          letterSpacing: 1, marginBottom: 32, paddingHorizontal: 8,
-        }}>
-          Your driving personality, classified.{'\n'}
-          60 seconds. 16 archetypes. Test your partner.
-        </Text>
-
-        {/* Premium CTA — embossed gold */}
-        <TouchableOpacity
-          activeOpacity={0.88}
-          onPress={handleStart}
-          style={{
-            width: '100%',
-            paddingVertical: 18,
-            alignItems: 'center',
-            backgroundColor: C.gold,
-            borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
-            borderBottomColor: '#8a7250', borderRightColor: '#8a7250',
-            borderWidth: 1.5,
-            shadowColor: C.gold, shadowOpacity: 0.55, shadowRadius: 18, shadowOffset: { width: 0, height: 6 },
-          }}
-        >
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 26, paddingBottom: 40 }}
+      >
+        <Animated.View entering={FadeInDown.duration(600).delay(100)}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 13, color: C.bg,
-            fontWeight: 'bold', letterSpacing: 4, textTransform: 'uppercase',
+            fontFamily: 'monospace', fontSize: 9, color: DMV.caBlue,
+            fontWeight: 'bold', letterSpacing: 2.4, marginBottom: 6,
           }}>
-            Issue My Permit
+            FORM  21-B  ·  REV  04
           </Text>
-        </TouchableOpacity>
 
-        <Text style={{
-          fontFamily: 'monospace', fontSize: 8, color: C.textMuted,
-          textAlign: 'center', marginTop: 18, letterSpacing: 2.5,
-          textTransform: 'uppercase', opacity: 0.8,
-        }}>
-          Results may be accurate · Not valid for aircraft
-        </Text>
-      </Animated.View>
+          <Text style={{
+            fontFamily: undefined, fontSize: 13, color: DMV.inkSoft,
+            fontWeight: '600', letterSpacing: 0.5, marginBottom: 2,
+          }}>
+            APPLICATION FOR
+          </Text>
+          <Text style={{
+            fontFamily: undefined, fontSize: 32,
+            color: DMV.ink, fontWeight: 'bold',
+            letterSpacing: -0.6, lineHeight: 36,
+          }}>
+            Climate Operator{'\n'}Permit
+          </Text>
+
+          <View style={{ flexDirection: 'row', marginTop: 14, marginBottom: 18, alignItems: 'center', gap: 6 }}>
+            <View style={{ height: 4, width: 70, backgroundColor: DMV.red }} />
+            <View style={{ height: 1, flex: 1, backgroundColor: DMV.caBlue, opacity: 0.5 }} />
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 7,
+              color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1.5,
+            }}>
+              DEPT · OF · CLIMATE · CONTROL
+            </Text>
+          </View>
+        </Animated.View>
+
+        <Animated.View entering={FadeIn.duration(600).delay(250)}>
+          <Text style={{
+            fontFamily: undefined, fontSize: 15, color: DMV.ink,
+            lineHeight: 22, marginBottom: 18, fontWeight: '500',
+          }}>
+            This permit is required for any operator wishing to lawfully configure the cabin climate of a motor vehicle within the State of California.
+          </Text>
+
+          <View style={{
+            borderLeftWidth: 3, borderLeftColor: DMV.red,
+            paddingLeft: 14, paddingVertical: 10, marginBottom: 14,
+            backgroundColor: 'rgba(255,250,225,0.6)',
+          }}>
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue,
+              fontWeight: 'bold', letterSpacing: 1.5, marginBottom: 4,
+            }}>
+              SECTION 1 · ASSESSMENT NOTICE
+            </Text>
+            <Text style={{ fontFamily: undefined, fontSize: 14, color: DMV.ink, fontWeight: '600' }}>
+              Estimated time: 60 seconds.
+            </Text>
+            <Text style={{ fontFamily: undefined, fontSize: 14, color: DMV.ink, marginTop: 2 }}>
+              <Text style={{ color: DMV.red, fontWeight: 'bold' }}>Sixteen</Text>
+              {' '}operator classifications available.
+            </Text>
+            <Text style={{ fontFamily: undefined, fontSize: 14, color: DMV.ink, marginTop: 2 }}>
+              Partner compatibility assessment available upon issuance.
+            </Text>
+          </View>
+
+          <View style={{
+            flexDirection: 'row', gap: 12, marginBottom: 22,
+            justifyContent: 'space-between',
+          }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontFamily: 'monospace', fontSize: 8,
+                color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1.5,
+              }}>
+                3 DOB
+              </Text>
+              <Text style={{ fontFamily: undefined, fontSize: 12, color: DMV.red, fontWeight: 'bold' }}>
+                THE PRESENT
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontFamily: 'monospace', fontSize: 8,
+                color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1.5,
+              }}>
+                4b EXP
+              </Text>
+              <Text style={{ fontFamily: undefined, fontSize: 12, color: DMV.red, fontWeight: 'bold' }}>
+                12/31/2099
+              </Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontFamily: 'monospace', fontSize: 8,
+                color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1.5,
+              }}>
+                12 REST
+              </Text>
+              <Text style={{ fontFamily: undefined, fontSize: 12, color: DMV.ink, fontWeight: 'bold' }}>
+                NONE
+              </Text>
+            </View>
+          </View>
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.duration(600).delay(450)}>
+          <TouchableOpacity
+            onPress={handleStart}
+            activeOpacity={0.82}
+            style={{
+              backgroundColor: DMV.caBlue,
+              paddingVertical: 19,
+              alignItems: 'center',
+              borderWidth: 1.5,
+              borderColor: DMV.caBlueDeep,
+              shadowColor: '#000',
+              shadowOpacity: 0.18,
+              shadowRadius: 6,
+              shadowOffset: { width: 0, height: 3 },
+            }}
+          >
+            <Text style={{
+              fontFamily: undefined, fontSize: 14,
+              color: DMV.paperLight, fontWeight: 'bold',
+              letterSpacing: 3.5, textTransform: 'uppercase',
+            }}>
+              Begin Application
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+
+        <Animated.View entering={FadeIn.duration(600).delay(650)} style={{ marginTop: 28 }}>
+          <View style={{
+            flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8,
+          }}>
+            <View style={{ height: 1, flex: 1, backgroundColor: DMV.divider }} />
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 7,
+              color: DMV.inkDim, letterSpacing: 1.5, fontWeight: 'bold',
+            }}>
+              AUTHORIZED
+            </Text>
+            <View style={{ height: 1, flex: 1, backgroundColor: DMV.divider }} />
+          </View>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim,
+            lineHeight: 12.5, letterSpacing: 0.5, textAlign: 'center',
+          }}>
+            This is a parody application. Not affiliated with{'\n'}
+            the California Department of Motor Vehicles{'\n'}
+            or any governmental body. Submitted{'\n'}
+            under penalty of comfort.
+          </Text>
+        </Animated.View>
+      </ScrollView>
     </View>
   );
 }

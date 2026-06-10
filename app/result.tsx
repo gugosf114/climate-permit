@@ -5,6 +5,7 @@ import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system/legacy';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import Svg, { Path } from 'react-native-svg';
 import Animated, {
   FadeIn, FadeInDown,
   useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay,
@@ -15,7 +16,76 @@ import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
 import { BANNER_AD_UNIT_ID } from '../lib/ads';
 import { compatShareUrl, PLAY_STORE_URL } from '../lib/config';
-import { palette as C, glow, goldBevel } from '../constants/tokens';
+
+const DMV = {
+  paper:       '#f5efde',
+  paperLight:  '#fbf6e6',
+  paperDeep:   '#ede4c2',
+  border:      '#8a7a3a',
+  caBlue:      '#0e2d63',
+  caBlueSoft:  '#1e4385',
+  caBlueDeep:  '#081c44',
+  ink:         '#0a0a0a',
+  inkSoft:     '#2c2c2c',
+  inkDim:      '#7a7a7a',
+  red:         '#b41d23',
+  redDeep:     '#7a1218',
+  gold:        '#c78c19',
+  goldDeep:    '#8b6310',
+  hologram:    '#dba519',
+  divider:     'rgba(20,20,20,0.18)',
+};
+
+function BearSilhouette({ size, color }: { size: number; color: string }) {
+  return (
+    <Svg width={size} height={size * 0.55} viewBox="0 0 100 55">
+      <Path
+        d="M 4 32 C 3 30, 4 27, 8 25 L 11 22 C 13 19, 16 17, 19 19 L 20 14 L 23 19 L 25 14 L 28 19 C 33 14, 41 11, 48 11 C 58 11, 68 13, 77 17 C 84 20, 89 24, 91 27 L 94 24 L 96 28 L 91 30 C 89 36, 86 41, 83 43 L 83 49 C 81 50, 78 50, 76 49 L 76 44 C 70 45, 64 45, 58 44 L 50 49 C 48 50, 45 50, 43 49 L 43 44 L 26 44 L 18 49 C 16 50, 13 50, 11 49 L 11 44 C 8 43, 5 38, 4 34 Z"
+        fill={color}
+      />
+      <Path
+        d="M 55 20 L 56.8 24 L 61 24 L 57.6 26.6 L 58.8 31 L 55 28.4 L 51.2 31 L 52.4 26.6 L 49 24 L 53.2 24 Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function OfficialHeader() {
+  return (
+    <View style={{
+      paddingTop: 50, paddingBottom: 10, paddingHorizontal: 22,
+      borderBottomWidth: 1, borderBottomColor: DMV.divider,
+      backgroundColor: 'rgba(251,246,230,0.92)',
+      flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
+    }}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+        <Text style={{
+          fontFamily: 'serif', fontStyle: 'italic',
+          fontSize: 28, color: DMV.caBlue, fontWeight: 'bold',
+          lineHeight: 30, letterSpacing: -0.5,
+        }}>
+          California
+        </Text>
+        <Text style={{
+          fontFamily: 'monospace', fontSize: 8, color: DMV.ink,
+          fontWeight: 'bold', letterSpacing: 1, marginLeft: 3, marginBottom: 5,
+        }}>
+          USA
+        </Text>
+      </View>
+      <View style={{ alignItems: 'flex-end' }}>
+        <BearSilhouette size={32} color={DMV.gold} />
+        <Text style={{
+          fontFamily: undefined, fontSize: 10,
+          color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1, marginTop: 2,
+        }}>
+          CLIMATE PERMIT
+        </Text>
+      </View>
+    </View>
+  );
+}
 
 /** "ISSUED" official stamp that slams onto the permit just after it appears. */
 function PermitStamp() {
@@ -32,19 +102,25 @@ function PermitStamp() {
   return (
     <Animated.View
       pointerEvents="none"
-      style={[{ position: 'absolute', top: 12, right: 8 }, stampStyle]}
+      style={[{ position: 'absolute', top: 30, right: 14 }, stampStyle]}
     >
       <View style={{
-        borderWidth: 2.5, borderColor: C.red, borderRadius: 6,
-        paddingHorizontal: 10, paddingVertical: 4,
-        backgroundColor: 'rgba(199, 84, 68, 0.10)',
+        borderWidth: 2.5, borderColor: DMV.red, borderRadius: 4,
+        paddingHorizontal: 12, paddingVertical: 5,
+        backgroundColor: 'rgba(180, 29, 35, 0.07)',
         alignItems: 'center',
       }}>
-        <Text style={{ fontFamily: 'monospace', fontSize: 15, fontWeight: 'bold', color: C.red, letterSpacing: 3, ...glow(C.red, 6) }}>
+        <Text style={{
+          fontFamily: 'monospace', fontSize: 16, fontWeight: 'bold',
+          color: DMV.red, letterSpacing: 4,
+        }}>
           ISSUED
         </Text>
-        <Text style={{ fontFamily: 'monospace', fontSize: 6, color: C.red, letterSpacing: 2, opacity: 0.85, marginTop: 1 }}>
-          DEPT · OF · CLIMATE
+        <Text style={{
+          fontFamily: 'monospace', fontSize: 7, color: DMV.red,
+          letterSpacing: 2, opacity: 0.85, marginTop: 1,
+        }}>
+          DEPT · OF · CLIMATE · CONTROL
         </Text>
       </View>
     </Animated.View>
@@ -56,22 +132,34 @@ export default function ResultScreen() {
   const store = useClimateStore();
   const _archetype = ARCHETYPES.find((a) => a.id === store.archetypeId);
 
-  // No archetype on file (e.g. cold deep-link) — never render a blank screen.
   if (!_archetype) {
     return (
-      <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
+      <View style={{ flex: 1, backgroundColor: DMV.paper, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 12, color: C.gold, textTransform: 'uppercase',
-          letterSpacing: 3, textAlign: 'center', marginBottom: 20, opacity: 0.85,
+          fontFamily: 'monospace', fontSize: 11, color: DMV.caBlue,
+          textTransform: 'uppercase', letterSpacing: 3, marginBottom: 4, fontWeight: 'bold',
         }}>
-          No permit on file
+          NO PERMIT ON FILE
+        </Text>
+        <Text style={{
+          fontFamily: undefined, fontSize: 14, color: DMV.ink,
+          marginBottom: 24, textAlign: 'center',
+        }}>
+          The application must be completed in full before a permit is issued.
         </Text>
         <TouchableOpacity
-          style={{ backgroundColor: C.gold, ...goldBevel, paddingVertical: 16, paddingHorizontal: 32 }}
+          style={{
+            backgroundColor: DMV.caBlue,
+            paddingVertical: 16, paddingHorizontal: 36,
+            borderWidth: 1.5, borderColor: DMV.caBlueDeep,
+          }}
           onPress={() => { store.reset(); router.replace('/'); }}
-          activeOpacity={0.88}
+          activeOpacity={0.82}
         >
-          <Text style={{ fontFamily: 'monospace', fontSize: 11, color: C.bg, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2 }}>
+          <Text style={{
+            fontFamily: undefined, fontSize: 13, color: DMV.paperLight,
+            fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3,
+          }}>
             Start Over
           </Text>
         </TouchableOpacity>
@@ -114,36 +202,51 @@ export default function ResultScreen() {
   const hasCompat = Boolean(store.compatPayload);
 
   return (
-    <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 130 }}>
-        {/* Header */}
+    <View style={{ flex: 1, backgroundColor: DMV.paper }}>
+      <OfficialHeader />
+
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 140 }}>
+        {/* Section header */}
         <Animated.View entering={FadeIn.duration(500)} style={{
-          paddingTop: 60, paddingBottom: 18, paddingHorizontal: 24,
-          borderBottomWidth: 1, borderBottomColor: C.divider,
+          paddingTop: 18, paddingBottom: 14, paddingHorizontal: 22,
         }}>
-          <Text style={{
-            fontFamily: 'monospace', fontSize: 9, color: C.gold,
-            opacity: 0.8, textTransform: 'uppercase', letterSpacing: 4,
-          }}>
-            Permit Issued
-          </Text>
-          <Text style={{
-            fontFamily: 'monospace', fontSize: 22, color: C.goldBright,
-            fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3, marginTop: 6,
-            ...glow(C.gold, 14),
-          }}>
-            {archetype.name}
-          </Text>
-          <Text style={{
-            fontFamily: 'monospace', fontSize: 11, color: C.text,
-            marginTop: 8, opacity: 0.8, lineHeight: 17,
-          }}>
-            {archetype.oneLineBurn}
-          </Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontFamily: 'monospace', fontSize: 9, color: DMV.red,
+                fontWeight: 'bold', letterSpacing: 2.4, marginBottom: 4,
+              }}>
+                PERMIT ISSUED · SEE BELOW
+              </Text>
+              <Text style={{
+                fontFamily: undefined, fontSize: 22, color: DMV.ink,
+                fontWeight: 'bold', letterSpacing: -0.3,
+              }}>
+                {archetype.name}
+              </Text>
+              <Text style={{
+                fontFamily: undefined, fontSize: 13, color: DMV.inkSoft,
+                marginTop: 4, lineHeight: 18, fontStyle: 'italic',
+              }}>
+                {archetype.oneLineBurn}
+              </Text>
+            </View>
+            <View style={{
+              width: 32, height: 32,
+              borderWidth: 1.5, borderColor: DMV.red,
+              alignItems: 'center', justifyContent: 'center',
+              backgroundColor: DMV.paperLight,
+            }}>
+              <Text style={{ fontFamily: 'monospace', fontSize: 14, color: DMV.red, fontWeight: 'bold' }}>
+                ✓
+              </Text>
+            </View>
+          </View>
+          <View style={{ height: 3, width: 56, backgroundColor: DMV.red, marginTop: 10 }} />
         </Animated.View>
 
         {/* Permit Card + stamp */}
-        <Animated.View entering={FadeInDown.duration(700).delay(200)} style={{ paddingHorizontal: 18, paddingTop: 22 }}>
+        <Animated.View entering={FadeInDown.duration(700).delay(180)} style={{ paddingHorizontal: 16, paddingTop: 6 }}>
           <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.95 }}>
             <View style={{ position: 'relative' }}>
               <PermitCard archetype={archetype} make={store.make} model={store.model} answers={store.answers} />
@@ -152,68 +255,58 @@ export default function ResultScreen() {
           </ViewShot>
         </Animated.View>
 
-        {/* Quadrant + bias pills */}
-        <Animated.View entering={FadeInDown.duration(500).delay(450)} style={{
-          paddingHorizontal: 22, paddingTop: 18, paddingBottom: 8,
-          flexDirection: 'row', gap: 8, flexWrap: 'wrap',
+        {/* Field box: quadrant + bias */}
+        <Animated.View entering={FadeInDown.duration(500).delay(400)} style={{
+          paddingHorizontal: 22, paddingTop: 22,
         }}>
           <View style={{
-            backgroundColor: C.gold,
-            borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
-            borderBottomColor: C.goldDim, borderRightColor: C.goldDim,
-            borderWidth: 1,
-            paddingHorizontal: 12, paddingVertical: 5,
+            borderLeftWidth: 3, borderLeftColor: DMV.caBlue,
+            paddingLeft: 14, paddingVertical: 10, marginBottom: 14,
+            backgroundColor: 'rgba(255,250,225,0.6)',
           }}>
             <Text style={{
-              fontFamily: 'monospace', fontSize: 9, color: C.bg,
-              fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2,
+              fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue,
+              fontWeight: 'bold', letterSpacing: 1.5, marginBottom: 4,
             }}>
+              9 · QUADRANT · BIAS PROFILE
+            </Text>
+            <Text style={{ fontFamily: undefined, fontSize: 14, color: DMV.ink, fontWeight: 'bold' }}>
               {archetype.quadrant}
             </Text>
-          </View>
-          <View style={{
-            backgroundColor: C.tile,
-            borderTopColor: C.tileHi, borderLeftColor: C.tileHi,
-            borderBottomColor: C.tileLo, borderRightColor: C.tileLo,
-            borderWidth: 1,
-            paddingHorizontal: 12, paddingVertical: 5,
-          }}>
-            <Text style={{
-              fontFamily: 'monospace', fontSize: 9, color: C.text,
-              textTransform: 'uppercase', letterSpacing: 1.5,
-            }}>
+            <Text style={{ fontFamily: undefined, fontSize: 12, color: DMV.inkSoft, marginTop: 2 }}>
               {archetype.xBias === 'self' ? 'Self-Focused' : 'Other-Focused'}  ·  {archetype.yBias === 'controller' ? 'Controller' : 'Chill'}
             </Text>
           </View>
         </Animated.View>
 
-        {/* Compat traits */}
-        <Animated.View entering={FadeInDown.duration(500).delay(600)} style={{ paddingHorizontal: 22, paddingBottom: 24 }}>
+        {/* Compatible traits */}
+        <Animated.View entering={FadeInDown.duration(500).delay(540)} style={{ paddingHorizontal: 22, paddingBottom: 24 }}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 8, color: C.gold,
-            opacity: 0.6, marginBottom: 5, textTransform: 'uppercase', letterSpacing: 2,
+            fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue,
+            fontWeight: 'bold', letterSpacing: 1.5, marginBottom: 4,
           }}>
-            Compatible with
+            18 · COMPATIBLE OPERATORS
           </Text>
-          <Text style={{ fontFamily: 'monospace', fontSize: 11, color: C.text, lineHeight: 18 }}>
+          <Text style={{ fontFamily: undefined, fontSize: 13, color: DMV.ink, lineHeight: 18 }}>
             {archetype.compatTraits.join('  ·  ')}
           </Text>
         </Animated.View>
 
         {/* Actions */}
-        <Animated.View entering={FadeIn.duration(500).delay(800)} style={{ paddingHorizontal: 22, gap: 10 }}>
+        <Animated.View entering={FadeIn.duration(500).delay(720)} style={{ paddingHorizontal: 22, gap: 10 }}>
           <TouchableOpacity
-            activeOpacity={0.88}
+            activeOpacity={0.82}
             onPress={handleShare}
             style={{
-              backgroundColor: C.gold, ...goldBevel,
+              backgroundColor: DMV.caBlue,
+              borderWidth: 1.5, borderColor: DMV.caBlueDeep,
               paddingVertical: 18, alignItems: 'center',
-              shadowColor: C.gold, shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 5 },
+              shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 3 },
             }}
           >
             <Text style={{
-              fontFamily: 'monospace', fontSize: 12, color: C.bg,
-              fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3,
+              fontFamily: undefined, fontSize: 13, color: DMV.paperLight,
+              fontWeight: 'bold', letterSpacing: 3, textTransform: 'uppercase',
             }}>
               Share Your Permit
             </Text>
@@ -221,39 +314,35 @@ export default function ResultScreen() {
 
           {hasCompat ? (
             <TouchableOpacity
-              activeOpacity={0.88}
+              activeOpacity={0.82}
               onPress={() => router.push(`/compat/${store.compatPayload}`)}
               style={{
-                backgroundColor: C.red,
-                borderTopColor: C.redBright, borderLeftColor: C.redBright,
-                borderBottomColor: C.redDeep, borderRightColor: C.redDeep,
-                borderWidth: 1.5,
+                backgroundColor: DMV.red,
+                borderWidth: 1.5, borderColor: DMV.redDeep,
                 paddingVertical: 18, alignItems: 'center',
-                shadowColor: C.red, shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 4 },
+                shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 5, shadowOffset: { width: 0, height: 3 },
               }}
             >
               <Text style={{
-                fontFamily: 'monospace', fontSize: 12, color: C.text,
-                fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3,
+                fontFamily: undefined, fontSize: 13, color: DMV.paperLight,
+                fontWeight: 'bold', letterSpacing: 3, textTransform: 'uppercase',
               }}>
                 View Compatibility  →
               </Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              activeOpacity={0.85}
+              activeOpacity={0.78}
               onPress={handleCompatLink}
               style={{
-                backgroundColor: C.tile,
-                borderTopColor: C.tileHi, borderLeftColor: C.tileHi,
-                borderBottomColor: C.tileLo, borderRightColor: C.tileLo,
-                borderWidth: 1.5,
+                backgroundColor: DMV.paperLight,
+                borderWidth: 1.5, borderColor: DMV.caBlue,
                 paddingVertical: 18, alignItems: 'center',
               }}
             >
               <Text style={{
-                fontFamily: 'monospace', fontSize: 12, color: C.gold,
-                textTransform: 'uppercase', letterSpacing: 2.5,
+                fontFamily: undefined, fontSize: 13, color: DMV.caBlue,
+                fontWeight: 'bold', letterSpacing: 3, textTransform: 'uppercase',
               }}>
                 Test Your Partner  →
               </Text>
@@ -261,13 +350,13 @@ export default function ResultScreen() {
           )}
 
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.6}
             onPress={() => { store.reset(); router.replace('/'); }}
             style={{ paddingVertical: 14, alignItems: 'center' }}
           >
             <Text style={{
-              fontFamily: 'monospace', fontSize: 10, color: C.textMuted,
-              textTransform: 'uppercase', letterSpacing: 2.5,
+              fontFamily: 'monospace', fontSize: 10, color: DMV.inkDim,
+              textTransform: 'uppercase', letterSpacing: 2.5, fontWeight: 'bold',
             }}>
               Start Over
             </Text>
@@ -278,8 +367,9 @@ export default function ResultScreen() {
       {/* Sticky banner ad */}
       <View style={{
         position: 'absolute', bottom: 0, left: 0, right: 0,
-        alignItems: 'center', backgroundColor: C.bg2,
-        borderTopWidth: 1, borderTopColor: C.divider,
+        alignItems: 'center',
+        backgroundColor: DMV.paperDeep,
+        borderTopWidth: 1, borderTopColor: DMV.divider,
       }}>
         <BannerAd
           unitId={BANNER_AD_UNIT_ID}

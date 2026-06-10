@@ -104,4 +104,54 @@ These have to be resolved before Play Store submission:
 - [SESSION_LOG_2026-05-30.md](SESSION_LOG_2026-05-30.md) — dark/gold rebrand, brand logos, vehicle silhouettes, launcher icon, install-referrer flow
 - [SESSION_LOG_2026-06-03.md](SESSION_LOG_2026-06-03.md) — defensive install-referrer, release-APK build path established
 - [SESSION_LOG_2026-06-06.md](SESSION_LOG_2026-06-06.md) — installed yesterday's APK; five iterations on TempStepper landed on OEM rotary dial with PanResponder drag-or-tap
+- [SESSION_LOG_2026-06-09.md](SESSION_LOG_2026-06-09.md) — full pivot to California DMV document aesthetic across every screen + CA Driver License permit card + carbon-fibre A/C-knob launcher icon
 - [FAILURE_LOG.md](FAILURE_LOG.md) — running log of dead ends and wrong turns; read before repeating any of them
+
+---
+
+## What's Left to Ship — Next Session Handoff
+
+**Read this first if you're picking up this project cold.**
+
+The app is currently visually code-complete. Every screen reads as one unified California DMV document — cream paper, navy italic "California" headline, gold bear seal, repeating watermarks, and field-numbered DL-style typography. The permit card is a faithful California Driver License parody. The launcher icon is a custom carbon-fibre A/C knob squircle.
+
+What still has to happen before Play Store submission:
+
+### Ship blockers (must do)
+
+1. **Real AdMob app ID.** `app.json` still has Google's test ID `ca-app-pub-3940256099942544~3347511713`. Register at `platform.admob.com`, get the real app + ad-unit IDs, swap them in `app.json` and `lib/ads.ts`. Half a day with the dashboard.
+
+2. **Play Console listing.** Needs:
+   - 5–8 screenshots **shot against the new DMV aesthetic** (do not reuse the old dark-gold ones — they're not what ships any more)
+   - 1024×500 feature graphic — design from scratch around the new visual language (cream paper + navy "California" + gold bear + the carbon-fibre knob)
+   - Short description (≤80 chars), long description (≤4000 chars)
+   - Content rating questionnaire
+   - Target audience declaration
+   - Privacy policy URL — already published at `gugosf114.github.io/climate-permit/privacy.html`
+   - Parody disclaimer is already on the landing page
+
+3. **End-to-end install-referrer verification.** The "Test Your Partner" flow encodes the user's quiz state into a Play Store install-referrer parameter so a recipient who installs the app via that link gets dropped straight into the compatibility comparison. This cannot be tested with sideloaded APKs — the referrer mechanism only fires on a real Play Store install. So **first internal test track upload is the verification**.
+
+### iOS (deferred)
+
+Not configured. Whole flow has only been built and tested on Android. Treat iOS as a future project, not a v1 blocker.
+
+### Smaller polish on the list
+
+- HUD overlay text labels on the brand-banner dashboard photo are very small at the size they sit. Could bump +1px.
+- The bear silhouette is a hand-coded SVG path and decent but not perfect. A traced PNG from the official state flag (Wikimedia blocks curl — manual download via browser, then convert to white-on-transparent) would be cleaner.
+- Temp-knob dashes are thin on cream. Could bump to 2px from 1.5px.
+- Consider stripping or de-emphasising the "10 SETTINGS REMAINING" footer band on the dashboard quiz — it reads as old chrome.
+
+### What NOT to revisit
+
+- The dashboard quiz framing IS the operating sample (the equivalent of the DL photo). Keep the HVAC panel illustrated as an object inside the form. Do not convert it back into a "photo of the real dashboard."
+- The permit card's CA DL field layout is meticulously matched to the real 2019/2025 specimen. Do not "simplify" the numbered field prefixes (`4d DLN`, `3 DOB`, `9 CLASS`, etc.) — they're the visual signature.
+- The launcher icon is final. Do not regenerate the gold seal version.
+
+### Build + install reminders
+
+- Native rebuild is only needed if a new native module is added. `react-native-svg` is already linked.
+- Standard release build: `cd android && ./gradlew assembleRelease` — 2-3 min on warm cache, 10-12 min cold.
+- Install: `adb -s <device> install -r android/app/build/outputs/apk/release/app-release.apk` (use `install` without `-r` after `uninstall` for a clean install; required when the launcher icon changes because Android caches icons aggressively).
+- Phone wireless ADB rotates ports on reconnect — discover with `adb mdns services` then `adb connect <ip:port>`.

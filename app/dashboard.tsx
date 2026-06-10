@@ -16,22 +16,23 @@ import { getDashboardImage } from '../lib/dashboardImages';
 
 const TEMP_STEPS = [60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80];
 
+// Unified DMV paper palette — matches landing/car-select/result/PermitCard
 const C = {
-  chrome: '#0a0e14',           // app bg (was DoCC green)
-  chromeSoft: 'rgba(201, 168, 117, 0.18)',  // divider
-  chromeDeep: '#0a0e14',       // scrollview bg
-  cream: '#c9a875',            // active button gold (was cream paper)
-  panel: '#14191f',            // panel surface
-  panelLight: '#2a2e36',       // bevel highlight (top/left)
-  panelEdge: 'rgba(201, 168, 117, 0.22)', // section dividers
-  panelHighlight: '#262e38',   // tile bevel top
-  panelShadow: '#06080c',      // bevel shadow (bottom/right)
-  amber: '#c9a875',            // gold (was amber)
-  amberDim: '#5a4730',         // gold dim
-  amberBright: '#e8c98a',      // gold bright
-  silk: '#f0e9d8',             // primary text
-  silkDim: '#a8a193',          // secondary text
-  red: '#c75444',
+  chrome:         '#f5efde',                 // page bg = paper
+  chromeSoft:     'rgba(14, 45, 99, 0.15)',  // soft navy divider
+  chromeDeep:     '#ede4c2',                 // scrollview bg
+  cream:          '#0a0a0a',                 // ink black (for header text — was gold accent)
+  panel:          '#fbf6e6',                 // form panel bg
+  panelLight:     '#e7ddc0',                 // soft paper highlight
+  panelEdge:      'rgba(20,20,20,0.18)',     // hairline rule
+  panelHighlight: '#e7ddc0',                 // form border tile
+  panelShadow:    '#cdbe8a',                 // form border tile shadow
+  amber:          '#0e2d63',                 // PRIMARY accent = navy (was gold)
+  amberDim:       '#7a8aa8',                 // soft navy
+  amberBright:    '#1e4385',                 // brighter navy
+  silk:           '#0a0a0a',                 // primary text on paper = ink black
+  silkDim:        '#4a4a4a',                 // secondary text
+  red:            '#b41d23',                 // CA DL red — ID number / urgent
 };
 
 function BrandBanner({
@@ -72,11 +73,11 @@ function BrandBanner({
         {/* Brand marker — top left */}
         <View style={{
           position: 'absolute', top: 8, left: 8,
-          backgroundColor: 'rgba(20, 20, 16, 0.85)',
+          backgroundColor: 'rgba(245, 239, 222, 0.94)',
           borderWidth: 1, borderColor: C.amber,
           paddingHorizontal: 8, paddingVertical: 3,
         }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, letterSpacing: 2, textTransform: 'uppercase' }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
             {make} · {model}
           </Text>
         </View>
@@ -84,18 +85,22 @@ function BrandBanner({
         {/* HUD — top right */}
         <View style={{
           position: 'absolute', top: 8, right: 8,
-          backgroundColor: 'rgba(20, 20, 16, 0.88)',
+          backgroundColor: 'rgba(245, 239, 222, 0.94)',
           borderWidth: 1.5, borderColor: C.amber,
           paddingVertical: 8, paddingHorizontal: 10, minWidth: 90,
         }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.amber, opacity: 0.65, letterSpacing: 2, textTransform: 'uppercase' }}>
-            Driver Temp
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.amber, fontWeight: 'bold', letterSpacing: 1 }}>
+              16
+            </Text>
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.silkDim, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
+              HGT
+            </Text>
+          </View>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 28, fontWeight: 'bold',
-            color: C.amberBright,
-            letterSpacing: 1, lineHeight: 30,
-            textShadowColor: C.amber, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 10,
+            fontFamily: undefined, fontSize: 28, fontWeight: 'bold',
+            color: C.red,
+            letterSpacing: 0.5, lineHeight: 30,
           }}>
             {temp !== undefined ? `${temp}°` : '--°'}
           </Text>
@@ -103,34 +108,34 @@ function BrandBanner({
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 }}>
             <View style={{
               width: 6, height: 6, borderRadius: 3,
-              backgroundColor: acOn ? C.amberBright : C.amberDim,
-              shadowColor: C.amber, shadowOpacity: acOn ? 0.9 : 0, shadowRadius: 4,
+              backgroundColor: acOn ? C.red : 'transparent',
+              borderWidth: 1, borderColor: acOn ? C.red : C.amber,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: acOn ? C.amber : C.silkDim, letterSpacing: 1.5 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: acOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
               A/C
             </Text>
             <View style={{
               width: 6, height: 6, borderRadius: 3,
-              backgroundColor: autoOn ? C.amberBright : C.amberDim,
-              shadowColor: C.amber, shadowOpacity: autoOn ? 0.9 : 0, shadowRadius: 4,
+              backgroundColor: autoOn ? C.red : 'transparent',
+              borderWidth: 1, borderColor: autoOn ? C.red : C.amber,
               marginLeft: 4,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: autoOn ? C.amber : C.silkDim, letterSpacing: 1.5 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: autoOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
               AUTO
             </Text>
             <View style={{
               width: 6, height: 6, borderRadius: 3,
-              backgroundColor: recircOn ? C.amberBright : C.amberDim,
-              shadowColor: C.amber, shadowOpacity: recircOn ? 0.9 : 0, shadowRadius: 4,
+              backgroundColor: recircOn ? C.red : 'transparent',
+              borderWidth: 1, borderColor: recircOn ? C.red : C.amber,
               marginLeft: 4,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: recircOn ? C.amber : C.silkDim, letterSpacing: 1.5 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: recircOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
               RCRC
             </Text>
           </View>
 
-          <View style={{ marginTop: 6, flexDirection: 'row', gap: 2 }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.amber, opacity: 0.65, letterSpacing: 1.5, marginRight: 4 }}>
+          <View style={{ marginTop: 6, flexDirection: 'row', gap: 2, alignItems: 'center' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.silkDim, letterSpacing: 1.5, marginRight: 4, fontWeight: 'bold' }}>
               FAN
             </Text>
             {[1, 2, 3, 4, 5, 6, 7].map((n) => {
@@ -139,9 +144,9 @@ function BrandBanner({
                 <View
                   key={n}
                   style={{
-                    width: 6, height: 8,
-                    backgroundColor: lit ? C.amberBright : C.amberDim,
-                    shadowColor: C.amber, shadowOpacity: lit ? 0.7 : 0, shadowRadius: 3,
+                    width: 5, height: 8,
+                    backgroundColor: lit ? C.red : 'transparent',
+                    borderWidth: 1, borderColor: lit ? C.red : C.amber,
                   }}
                 />
               );
@@ -152,10 +157,11 @@ function BrandBanner({
         {/* Tap hint — bottom */}
         <View style={{
           position: 'absolute', bottom: 6, alignSelf: 'center',
-          backgroundColor: 'rgba(20, 20, 16, 0.75)',
+          backgroundColor: 'rgba(245, 239, 222, 0.88)',
+          borderWidth: 1, borderColor: C.amber,
           paddingHorizontal: 10, paddingVertical: 3,
         }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, letterSpacing: 2, textTransform: 'uppercase' }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
             Tap · +1   Hold · −1
           </Text>
         </View>
@@ -197,33 +203,36 @@ function LCDReadout({ value, label, big }: { value?: number | 'same'; label: str
   return (
     <View
       style={{
-        borderWidth: 2,
-        borderTopColor: C.panelShadow, borderLeftColor: C.panelShadow,
-        borderBottomColor: C.panelHighlight, borderRightColor: C.panelHighlight,
-        backgroundColor: '#5c2a2a',
+        borderWidth: 1.5,
+        borderColor: C.amber,
+        backgroundColor: C.panel,
         paddingVertical: big ? 14 : 10, paddingHorizontal: 14,
       }}
     >
-      <Text
-        style={{
-          fontFamily: 'monospace', fontSize: 8, color: C.amber, opacity: 0.85,
-          letterSpacing: 2.5, textTransform: 'uppercase', marginBottom: 4,
-        }}
-      >
-        {label}
-      </Text>
+      {/* Field-number prefix matching CA DL convention */}
+      <View style={{ flexDirection: 'row', alignItems: 'baseline', marginBottom: 4, gap: 4 }}>
+        <Text style={{
+          fontFamily: 'monospace', fontSize: 7, color: C.amber,
+          fontWeight: 'bold', letterSpacing: 1,
+        }}>
+          16
+        </Text>
+        <Text style={{
+          fontFamily: 'monospace', fontSize: 8, color: C.silkDim,
+          letterSpacing: 2.5, textTransform: 'uppercase', fontWeight: 'bold',
+        }}>
+          {label}
+        </Text>
+      </View>
       <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center' }}>
         <Text
           style={{
-            fontFamily: 'monospace',
+            fontFamily: undefined,
             fontSize: big ? 42 : 32,
             fontWeight: 'bold',
-            color: C.amberBright,
-            letterSpacing: big ? 3 : 2,
+            color: C.red,
+            letterSpacing: big ? 1 : 0.5,
             lineHeight: big ? 46 : 36,
-            textShadowColor: C.amber,
-            textShadowOffset: { width: 0, height: 0 },
-            textShadowRadius: 12,
           }}
         >
           {display}
@@ -231,12 +240,11 @@ function LCDReadout({ value, label, big }: { value?: number | 'same'; label: str
         {degree && (
           <Text
             style={{
-              fontFamily: 'monospace',
+              fontFamily: undefined,
               fontSize: big ? 14 : 12,
-              color: C.amber,
-              opacity: 0.85,
+              color: C.red,
+              fontWeight: 'bold',
               marginLeft: 3, marginBottom: big ? 6 : 4,
-              textShadowColor: C.amber, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 8,
             }}
           >
             °F
@@ -254,16 +262,18 @@ const LABEL_R = KNOB_RADIUS + 11;
 const KNOB_CONTAINER_W = KNOB_SIZE + 38;
 const KNOB_CONTAINER_H = KNOB_SIZE + 26;
 
-const KNOB_DISC = '#0e1825';
-const KNOB_RIM = '#050810';
-const KNOB_INNER = '#152234';
-const POINTER_WHITE = '#f5f0e0';
-const DASH_COOL = '#5489c4';
-const DASH_COOL_BRIGHT = '#7eb0e6';
-const DASH_NEUTRAL = '#bcb6a4';
-const DASH_NEUTRAL_BRIGHT = '#e8e2d2';
-const DASH_WARM = '#c2604f';
-const DASH_WARM_BRIGHT = '#e88573';
+// Schematic knob colors — navy line art on paper
+const KNOB_DISC = '#fbf6e6';        // paper light (knob face = cream paper)
+const KNOB_RIM = '#0e2d63';         // navy outline (was darkest)
+const KNOB_INNER = '#1e4385';       // softer navy inner ring
+const POINTER_WHITE = '#0e2d63';    // navy pointer (was white)
+const POINTER_ACTIVE = '#b41d23';   // red when locked-in
+const DASH_COOL = '#1e4385';        // navy (was bright blue)
+const DASH_COOL_BRIGHT = '#0e2d63'; // deep navy when active
+const DASH_NEUTRAL = '#5a5a5a';     // grey (was warm beige)
+const DASH_NEUTRAL_BRIGHT = '#0a0a0a'; // ink black when active
+const DASH_WARM = '#a83a36';        // muted red (was bright warm red)
+const DASH_WARM_BRIGHT = '#b41d23'; // CA DL red when active
 
 function dashColor(i: number, active: boolean) {
   if (i <= 3) return active ? DASH_COOL_BRIGHT : DASH_COOL;
@@ -331,20 +341,24 @@ function Knob({
   options, activeKey, onChange,
   size = KNOB_SIZE,
   labelWidth = 16,
+  labelOffset = 11,
   dashColorFn,
+  activeIconColor,
 }: {
   options: KnobOption[];
   activeKey?: string;
   onChange: (key: string) => void;
   size?: number;
   labelWidth?: number;
+  labelOffset?: number;
   dashColorFn?: (i: number, active: boolean) => string;
+  activeIconColor?: string;
 }) {
   const radius = size / 2;
   const dashR = radius - 12;
-  const labelR = radius + 11;
-  const containerW = size + 16 + labelWidth;
-  const containerH = size + 26;
+  const labelR = radius + labelOffset;
+  const containerW = 2 * (labelR + labelWidth / 2) + 8;
+  const containerH = 2 * (labelR + 12);
   const angleStep = options.length > 1 ? 180 / (options.length - 1) : 0;
   const angleForIdx = (i: number) => -90 + i * angleStep;
 
@@ -423,23 +437,30 @@ function Knob({
             }}
           >
             {opt.render ? (
-              opt.render({ color: POINTER_WHITE, opacity: active ? 1 : 0.85, size: active ? 24 : 22 })
+              opt.render({
+                color: active ? (activeIconColor ?? C.amberBright) : POINTER_WHITE,
+                opacity: active ? 1 : 0.7,
+                size: active ? 26 : 22,
+              })
             ) : opt.icon ? (
               <MaterialCommunityIcons
                 name={opt.icon}
-                size={active ? 16 : 14}
-                color={POINTER_WHITE}
-                style={{ opacity: active ? 1 : 0.92 }}
+                size={active ? 17 : 14}
+                color={active ? (activeIconColor ?? C.amberBright) : POINTER_WHITE}
+                style={{ opacity: active ? 1 : 0.85 }}
               />
             ) : (
               <Text
                 style={{
                   fontFamily: 'monospace',
-                  fontSize: active ? 11 : 9.5,
+                  fontSize: active ? 12 : 9.5,
                   fontWeight: 'bold',
-                  color: POINTER_WHITE,
-                  opacity: active ? 1 : 0.92,
+                  color: active ? (activeIconColor ?? C.amberBright) : POINTER_WHITE,
+                  opacity: active ? 1 : 0.85,
                   textAlign: 'center',
+                  textShadowColor: C.amberBright,
+                  textShadowOffset: { width: 0, height: 0 },
+                  textShadowRadius: active ? 8 : 0,
                 }}
               >
                 {opt.label}
@@ -466,13 +487,8 @@ function Knob({
             width: size, height: size,
             borderRadius: radius,
             backgroundColor: KNOB_DISC,
-            borderWidth: 1.5,
+            borderWidth: 2,
             borderColor: KNOB_RIM,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.6,
-            shadowRadius: 8,
-            elevation: 8,
           }}
         />
         <View
@@ -670,7 +686,8 @@ function VentKnob({
         options={VENT_OPTIONS}
         activeKey={value}
         onChange={(k) => onChange(k)}
-        labelWidth={36}
+        labelWidth={42}
+        labelOffset={26}
       />
     </View>
   );
@@ -734,12 +751,9 @@ function CircleButton({
       style={{
         width: size, height: size, borderRadius: size / 2,
         backgroundColor: state === 'on' ? POINTER_WHITE : KNOB_DISC,
-        borderWidth: 1.5,
-        borderColor: state === 'auto' ? POINTER_WHITE : KNOB_RIM,
+        borderWidth: 2,
+        borderColor: state === 'auto' ? POINTER_ACTIVE : KNOB_RIM,
         alignItems: 'center', justifyContent: 'center',
-        shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.55, shadowRadius: 6,
-        elevation: 6,
       }}
     >
       {image ? (
@@ -794,6 +808,86 @@ function cycleTriState(current: 'on' | 'off' | 'auto' | undefined): 'on' | 'off'
   if (current === 'off' || current === undefined) return 'on';
   if (current === 'on') return 'auto';
   return 'off';
+}
+
+function DashButton({
+  active, onPress, label, sub, icon, flex = 1, minWidth,
+}: {
+  active: boolean;
+  onPress: () => void;
+  label: string;
+  sub?: string;
+  icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  flex?: number;
+  minWidth?: number;
+}) {
+  // DMV form-stamped checkbox aesthetic: cream paper bg, navy line outline,
+  // red filled stamp + red text when checked
+  return (
+    <Pressable
+      onPress={async () => { await Haptics.selectionAsync(); onPress(); }}
+      style={({ pressed }) => ({
+        flex,
+        minWidth,
+        paddingVertical: 12, paddingHorizontal: 10,
+        borderRadius: 3,
+        borderWidth: active ? 2.5 : 2,
+        borderColor: active ? C.red : C.amber,
+        backgroundColor: active ? 'rgba(180,29,35,0.08)' : 'rgba(14,45,99,0.045)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity: pressed ? 0.78 : 1,
+      })}
+    >
+      {/* Form-stamp checkbox at top-right */}
+      <View style={{
+        position: 'absolute', top: 5, right: 5,
+        width: 9, height: 9,
+        borderWidth: 1, borderColor: active ? C.red : C.amber,
+        backgroundColor: active ? C.red : 'transparent',
+        alignItems: 'center', justifyContent: 'center',
+      }}>
+        {active && (
+          <Text style={{
+            color: C.panel, fontSize: 7,
+            fontWeight: 'bold', lineHeight: 7,
+          }}>
+            ✓
+          </Text>
+        )}
+      </View>
+      {icon && (
+        <MaterialCommunityIcons
+          name={icon}
+          size={18}
+          color={active ? C.red : C.amber}
+          style={{ marginBottom: 3 }}
+        />
+      )}
+      <Text style={{
+        fontFamily: 'monospace',
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: active ? C.red : C.silk,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+      }}>
+        {label}
+      </Text>
+      {sub && (
+        <Text style={{
+          fontFamily: 'monospace',
+          fontSize: 7.5,
+          color: active ? C.red : C.silkDim,
+          opacity: active ? 0.95 : 0.7,
+          marginTop: 2,
+          letterSpacing: 1,
+        }}>
+          {sub}
+        </Text>
+      )}
+    </Pressable>
+  );
 }
 
 function AutoPill({
@@ -965,40 +1059,92 @@ export default function DashboardScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.chrome }}>
-      {/* DoCC header */}
-      <View style={{ paddingTop: 60, paddingBottom: 16, paddingHorizontal: 20, borderBottomWidth: 1, borderBottomColor: C.chromeSoft }}>
+      {/* DMV official header band — matches landing/car-select/result */}
+      <View style={{
+        paddingTop: 50, paddingBottom: 10, paddingHorizontal: 22,
+        borderBottomWidth: 1, borderBottomColor: C.panelEdge,
+        backgroundColor: 'rgba(251,246,230,0.92)',
+        flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
+      }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+          <Text style={{
+            fontFamily: 'serif', fontStyle: 'italic',
+            fontSize: 28, color: C.amber, fontWeight: 'bold',
+            lineHeight: 30, letterSpacing: -0.5,
+          }}>
+            California
+          </Text>
+          <Text style={{
+            fontFamily: 'monospace', fontSize: 8, color: C.silk,
+            fontWeight: 'bold', letterSpacing: 1, marginLeft: 3, marginBottom: 5,
+          }}>
+            USA
+          </Text>
+        </View>
+        <View style={{ alignItems: 'flex-end' }}>
+          <Text style={{
+            fontFamily: undefined, fontSize: 10,
+            color: C.amber, fontWeight: 'bold', letterSpacing: 1, marginTop: 2,
+          }}>
+            CLIMATE PERMIT
+          </Text>
+        </View>
+      </View>
+
+      {/* Section 2 header */}
+      <View style={{ paddingTop: 16, paddingBottom: 10, paddingHorizontal: 22 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <View style={{ flex: 1 }}>
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 9, color: C.amber,
+              fontWeight: 'bold', letterSpacing: 2.2, marginBottom: 4,
+            }}>
+              SECTION 2 · OPERATING SAMPLE
+            </Text>
+            <Text style={{
+              fontFamily: undefined, fontSize: 22, color: C.silk,
+              fontWeight: 'bold', letterSpacing: -0.3, textTransform: 'uppercase',
+            }}>
+              {make} {model}
+            </Text>
+            <Text style={{
+              fontFamily: undefined, fontSize: 13, color: C.silkDim,
+              marginTop: 4, fontWeight: '500',
+            }}>
+              Operate the climate panel exactly as you would in real life.
+            </Text>
+          </View>
+          <View style={{
+            width: 32, height: 32,
+            borderWidth: 1.5, borderColor: C.red,
+            alignItems: 'center', justifyContent: 'center',
+            backgroundColor: C.panel,
+          }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 14, color: C.red, fontWeight: 'bold' }}>
+              2
+            </Text>
+          </View>
+        </View>
+        <View style={{ height: 3, width: 56, backgroundColor: C.red, marginTop: 10 }} />
+
         <TouchableOpacity
           onPress={() => router.back()}
           activeOpacity={0.7}
           style={{
             alignSelf: 'flex-start',
-            flexDirection: 'row', alignItems: 'center', gap: 6,
-            paddingHorizontal: 14, paddingVertical: 10,
-            marginBottom: 14,
-            backgroundColor: C.panel,
-            borderTopColor: C.panelHighlight, borderLeftColor: C.panelHighlight,
-            borderBottomColor: C.panelShadow, borderRightColor: C.panelShadow,
-            borderWidth: 1.5,
-            shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 4, shadowOffset: { width: 0, height: 2 },
+            flexDirection: 'row', alignItems: 'center', gap: 4,
+            paddingVertical: 6,
+            marginTop: 10,
           }}
         >
-          <MaterialCommunityIcons name="chevron-left" size={18} color={C.amberBright} />
+          <MaterialCommunityIcons name="chevron-left" size={14} color={C.amber} />
           <Text style={{
-            fontFamily: 'monospace', fontSize: 12, color: C.amberBright,
-            textTransform: 'uppercase', letterSpacing: 2.5, fontWeight: '600',
+            fontFamily: 'monospace', fontSize: 10, color: C.amber,
+            textTransform: 'uppercase', letterSpacing: 2, fontWeight: 'bold',
           }}>
-            Change Vehicle
+            RETURN TO SECTION 1
           </Text>
         </TouchableOpacity>
-        <Text style={{ fontFamily: 'monospace', fontSize: 9, color: C.cream, opacity: 0.5, textTransform: 'uppercase', letterSpacing: 2 }}>
-          Step 2 of 2 — Operator Evaluation
-        </Text>
-        <Text style={{ fontFamily: 'monospace', fontSize: 16, color: C.cream, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2, marginTop: 4 }}>
-          {make} {model}
-        </Text>
-        <Text style={{ fontFamily: 'monospace', fontSize: 9, color: C.cream, opacity: 0.45, marginTop: 3 }}>
-          Operate the climate panel exactly as you would in real life.
-        </Text>
       </View>
 
       {/* The HVAC Panel */}
@@ -1100,81 +1246,92 @@ export default function DashboardScreen() {
 
           {/* CLIMATE MODE */}
           <SectionLabel>Climate Mode</SectionLabel>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <PanelButton
+          <View style={{ flexDirection: 'row', gap: 6 }}>
+            <DashButton
               active={answers.climateMode === 'auto'}
               onPress={() => set('climateMode', 'auto')}
               label="Auto"
               sub="Trust the system"
+              icon="cog-sync"
             />
-            <PanelButton
+            <DashButton
               active={answers.climateMode === 'manual'}
               onPress={() => set('climateMode', 'manual')}
               label="Manual"
               sub="I know better"
+              icon="account-cog"
             />
           </View>
 
           {/* REAR VENTS */}
           <SectionLabel icon="car-back">Rear Vents</SectionLabel>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <PanelButton
+          <View style={{ flexDirection: 'row', gap: 6 }}>
+            <DashButton
               active={answers.rearVents === 'open'}
               onPress={() => set('rearVents', 'open')}
               label="Open"
+              icon="window-open-variant"
             />
-            <PanelButton
+            <DashButton
               active={answers.rearVents === 'closed'}
               onPress={() => set('rearVents', 'closed')}
               label="Closed"
+              icon="window-closed-variant"
             />
-            <PanelButton
+            <DashButton
               active={answers.rearVents === 'what'}
               onPress={() => set('rearVents', 'what')}
               label="What"
               sub="rear vents?"
+              icon="help-circle-outline"
               flex={1.3}
             />
           </View>
 
           {/* HEATED SEATS */}
           <SectionLabel icon="car-seat-heater">Heated / Cooled Seats</SectionLabel>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <PanelButton
+          <View style={{ flexDirection: 'row', gap: 6 }}>
+            <DashButton
               active={answers.heatedSeats === 'always'}
               onPress={() => set('heatedSeats', 'always')}
               label="Always"
+              icon="car-seat-heater"
             />
-            <PanelButton
+            <DashButton
               active={answers.heatedSeats === 'sometimes'}
               onPress={() => set('heatedSeats', 'sometimes')}
               label="Sometimes"
+              icon="car-seat"
             />
-            <PanelButton
+            <DashButton
               active={answers.heatedSeats === 'never'}
               onPress={() => set('heatedSeats', 'never')}
               label="Never"
+              icon="cancel"
             />
           </View>
 
           {/* PRE-COOL */}
           <SectionLabel icon="clock-time-eight-outline">Pre-Cool Before Drive</SectionLabel>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            <PanelButton
+          <View style={{ flexDirection: 'row', gap: 6 }}>
+            <DashButton
               active={answers.preCool === 'yes'}
               onPress={() => set('preCool', 'yes')}
               label="Always"
               sub="forecast checked"
+              icon="weather-cloudy-clock"
             />
-            <PanelButton
+            <DashButton
               active={answers.preCool === 'sometimes'}
               onPress={() => set('preCool', 'sometimes')}
               label="Sometimes"
+              icon="clock-outline"
             />
-            <PanelButton
+            <DashButton
               active={answers.preCool === 'never'}
               onPress={() => set('preCool', 'never')}
               label="Never"
+              icon="cancel"
             />
           </View>
 

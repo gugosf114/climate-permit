@@ -108,5 +108,50 @@ These have to be resolved before Play Store submission:
 - [SESSION_LOG_2026-05-30.md](SESSION_LOG_2026-05-30.md) — dark/gold rebrand, brand logos, vehicle silhouettes, launcher icon, install-referrer flow
 - [SESSION_LOG_2026-06-03.md](SESSION_LOG_2026-06-03.md) — defensive install-referrer, release-APK build path established
 - [SESSION_LOG_2026-06-06.md](SESSION_LOG_2026-06-06.md) — installed yesterday's APK; five iterations on TempStepper landed on OEM rotary dial with PanResponder drag-or-tap
-- [SESSION_LOG_2026-06-25.md](SESSION_LOG_2026-06-25.md) — premium design pass (Cinzel two-voice type, metallic gradients, real QR), centralized themeable palette + dark mode, vehicle-logo background fix. New build NOT yet installed — no toolchain in the session env.
+- 2026-06-25 — premium design pass, themeable palette + dark mode, vehicle-logo fix (full log inlined at the bottom of this README)
 - [FAILURE_LOG.md](FAILURE_LOG.md) — running log of dead ends and wrong turns; read before repeating any of them
+
+---
+
+# Session Log — 2026-06-25
+
+Premium design pass + theming, plus a vehicle-logo asset fix. Three code commits + one docs commit landed on `master`. The new build was **not** installed — this session ran in a Termux/PRoot environment with no Android build toolchain (no Java/SDK/gradle, no `android/` dir), so producing an APK was impossible here.
+
+## What shipped
+
+**1. Premium design pass (`4c26fa1`)**
+- **Brand consistency.** `CompatResult` and the whole `app/compat/[code].tsx` route (incl. the recipient's first post-install screen) were still in the legacy cream/green/maroon government palette. Rebranded both to dark-gold. No off-brand colors remain.
+- **Centralized theme.** The duplicated `const C = {…}` palette (copy-pasted in 5 files, drifting) pulled into one source of truth: `constants/palette.ts`.
+- **Typography — two voices.** Added Cinzel display face. Cinzel = certificate/brand voice (wordmarks, headers, classification, compat score); monospace = machine/data voice (HVAC panel, fields). Sized Cinzel down after long names ("Windows-Down Purist", 21 chars) would overflow.
+- **Metallic gold.** `MetalButton`/`GoldSurface` via expo-linear-gradient on every primary CTA + classification bars; `elevation` for Android depth.
+- **Real QR.** Replaced the ASCII fake QR with a real scannable one (dark-on-light so it actually scans), deep-linking to the Play Store.
+- **Cleanup.** Deleted the orphaned Expo-template cluster + off-brand `DashboardKnob`; legacy tailwind colors → brand tokens. Net −206 lines.
+
+**2. Light + dark theme (`81ee98a`)**
+- Current navy+gold preserved unchanged as **LIGHT** (default). Added **DARK** (true-black AMOLED, gold brightened to pop) + sun/moon toggle on the landing screen.
+- `LIGHT`/`DARK` palettes in `constants/palette.ts`, each with its own gradients, + `useTheme()` hook.
+- `themeMode` + `toggleTheme()` in the Zustand store, kept outside `initial` so `reset()` never wipes it.
+- Every component reads `const C = useTheme()` (dashboard uses `useDashC()`), so all existing `C.xxx` refs theme automatically. `_layout` stack bg follows theme.
+
+**3. Vehicle-logo fix (`90245cb`)**
+- Make-select badges showed ford/honda/nissan as mismatched dark boxes. Cause: those 3 shipped as RGB PNGs with a baked dark-navy background, while the other 7 were transparent RGBA marks. Keyed out the navy (corners + enclosed regions) with ImageMagick → all 10 now consistent gold marks. Verified by eye via a rendered montage. (These files predated and were untouched by the design commit.)
+
+## Verification
+
+No device render possible (Android app; web bundler bus-errors on memory here). Verified via TypeScript (clean) + ESLint (no new issues) on every change. Logo fix verified visually via montage.
+
+## TODO — carry-over for next session
+
+**Blocked this session (environment):**
+1. **Install the newest build on the phone** — the explicit ask, undoable here: no Android toolchain, no Expo auth (`eas login` couldn't complete through the `!` one-shot; `~/.expo/state.json` has only a device UUID). Device IS reachable over adb (`127.0.0.1:5555`), so install is one command once an APK exists. Either: **laptop** → `cd android && ./gradlew assembleRelease` then `adb uninstall app.climatepermit.android && adb install …/app-release.apk`; or **EAS** → token at https://expo.dev/settings/access-tokens, set `EXPO_TOKEN`, `npx eas-cli build -p android --profile preview`, `adb install`.
+2. **Eyeball new visuals on-device** — Cinzel hero sizes, gold gradient direction, and the `DARK` palette values (all tuned blind; two-line tweaks in `constants/palette.ts`).
+
+**Pre-existing ship blockers (unchanged):**
+3. Real AdMob app ID — `app.json` still has Google's test ID. Android-only, so no `iosAppId` needed.
+4. Play Console listing — screenshots (update for new look + dark mode), feature graphic, descriptions, rating.
+5. Play Install Referrer flow not verified end-to-end (needs publish).
+6. iOS not configured. Android-first.
+
+**Nice-to-have:**
+7. Persist theme across launches (`themeMode` is in-memory; add zustand `persist` + AsyncStorage).
+8. Pre-existing lint nits left as-is (expo-image type warnings, unescaped quotes, a few exhaustive-deps).

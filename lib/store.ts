@@ -14,6 +14,8 @@ export interface Answers {
   preCool?: 'yes' | 'sometimes' | 'never';
 }
 
+export type ThemeMode = 'light' | 'dark';
+
 interface ClimateStore {
   make: string;
   model: string;
@@ -25,10 +27,13 @@ interface ClimateStore {
   xScore: number;
   yScore: number;
   compatPayload: string | null;
+  // Theme lives outside `initial` so reset() (new quiz) never changes it.
+  themeMode: ThemeMode;
   setVehicle: (make: string, model: string, hasDualZone: boolean, hasRearVents: boolean, style: DashboardStyle) => void;
   setAnswer: <K extends keyof Answers>(key: K, value: Answers[K]) => void;
   setResult: (archetypeId: string, x: number, y: number) => void;
   setCompatPayload: (payload: string | null) => void;
+  toggleTheme: () => void;
   reset: () => void;
 }
 
@@ -47,6 +52,7 @@ const initial = {
 
 export const useClimateStore = create<ClimateStore>((set) => ({
   ...initial,
+  themeMode: 'light',
   setVehicle: (make, model, hasDualZone, hasRearVents, dashboardStyle) =>
     set({ make, model, hasDualZone, hasRearVents, dashboardStyle }),
   setAnswer: (key, value) =>
@@ -54,5 +60,6 @@ export const useClimateStore = create<ClimateStore>((set) => ({
   setResult: (archetypeId, xScore, yScore) =>
     set({ archetypeId, xScore, yScore }),
   setCompatPayload: (compatPayload) => set({ compatPayload }),
+  toggleTheme: () => set((s) => ({ themeMode: s.themeMode === 'light' ? 'dark' : 'light' })),
   reset: () => set(initial),
 }));

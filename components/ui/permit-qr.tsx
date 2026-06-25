@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import { C } from '../../constants/palette';
+import { useTheme } from '../../constants/palette';
 
 // Scanners need DARK modules on a LIGHT field — an inverted (light-on-dark)
 // QR is unreliable. We render deep-navy modules on a warm paper field, framed
@@ -13,6 +13,7 @@ const QR_LIGHT = '#efe7d4';
  * shareable artifact actually links back.
  */
 export function PermitQR({ value, size = 64 }: { value: string; size?: number }) {
+  const C = useTheme();
   return (
     <View
       style={{

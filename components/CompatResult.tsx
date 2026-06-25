@@ -7,7 +7,7 @@ import { PermitCard } from './PermitCard';
 import { Archetype } from '../data/archetypes';
 import { Answers } from '../lib/store';
 import { compatScore, compatVerdict } from '../lib/encode';
-import { C, F } from '../constants/palette';
+import { useTheme, F } from '../constants/palette';
 import { MetalButton } from './ui/gold';
 
 interface Props {
@@ -20,6 +20,7 @@ interface Props {
 }
 
 export function CompatResult(p: Props) {
+  const C = useTheme();
   const ref = useRef<ViewShot>(null);
   const score = compatScore(p.myX, p.myY, p.partnerX, p.partnerY);
   const verdict = compatVerdict(score);

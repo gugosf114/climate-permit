@@ -6,10 +6,11 @@ import { useClimateStore } from '../../lib/store';
 import { loadAndShowInterstitial } from '../../lib/ads';
 import { CompatResult } from '../../components/CompatResult';
 import { ARCHETYPES } from '../../data/archetypes';
-import { C, F } from '../../constants/palette';
+import { useTheme, F } from '../../constants/palette';
 import { MetalButton } from '../../components/ui/gold';
 
 export default function CompatScreen() {
+  const C = useTheme();
   const { code } = useLocalSearchParams<{ code: string }>();
   const store = useClimateStore();
   const [partnerPayload, setPartnerPayload] = useState<CompatPayload | null>(null);

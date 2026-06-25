@@ -1,13 +1,16 @@
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { useEffect } from 'react';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing, FadeIn, FadeInDown } from 'react-native-reanimated';
-import { C, F, PANEL_GRADIENT, GRAD_TOP, GRAD_BOTTOM } from '../constants/palette';
+import { useTheme, F, GRAD_TOP, GRAD_BOTTOM } from '../constants/palette';
 import { MetalButton } from '../components/ui/gold';
+import { useClimateStore } from '../lib/store';
 
 function Seal() {
+  const C = useTheme();
   const pulse = useSharedValue(0.85);
   useEffect(() => {
     pulse.value = withRepeat(withTiming(1, { duration: 2400, easing: Easing.inOut(Easing.sin) }), -1, true);
@@ -49,7 +52,7 @@ function Seal() {
         >
           {/* deepest ring — subtle metallic vignette */}
           <LinearGradient
-            colors={PANEL_GRADIENT}
+            colors={C.panelGradient}
             start={GRAD_TOP}
             end={GRAD_BOTTOM}
             style={{
@@ -76,13 +79,40 @@ function Seal() {
 }
 
 export default function LandingScreen() {
+  const C = useTheme();
+  const mode = useClimateStore((s) => s.themeMode);
+  const toggleTheme = useClimateStore((s) => s.toggleTheme);
+
   async function handleStart() {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.push('/car-select');
   }
 
+  async function handleToggleTheme() {
+    await Haptics.selectionAsync();
+    toggleTheme();
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
+      {/* Theme toggle — top right */}
+      <Pressable
+        onPress={handleToggleTheme}
+        hitSlop={12}
+        style={{
+          position: 'absolute', top: 56, right: 24, zIndex: 10,
+          width: 40, height: 40, borderRadius: 20,
+          alignItems: 'center', justifyContent: 'center',
+          borderWidth: 1, borderColor: C.border,
+          backgroundColor: C.bg2,
+        }}
+      >
+        <MaterialCommunityIcons
+          name={mode === 'dark' ? 'weather-night' : 'white-balance-sunny'}
+          size={18}
+          color={C.goldBright}
+        />
+      </Pressable>
       {/* Subtle background grid for depth */}
       <View style={{
         position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,

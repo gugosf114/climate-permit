@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { Archetype } from '../data/archetypes';
 import { Answers } from '../lib/store';
 import { getVehicleImage } from '../lib/vehicleImages';
-import { C, F } from '../constants/palette';
+import { useTheme, F } from '../constants/palette';
 import { GoldSurface } from './ui/gold';
 import { PermitQR } from './ui/permit-qr';
 import { PLAY_STORE_URL } from '../lib/config';
@@ -41,6 +41,7 @@ function todayIssueDate(): string {
 
 
 export function PermitCard({ archetype, make, model, answers, compact = false }: Props) {
+  const C = useTheme();
   const issueDate = todayIssueDate();
 
   const T = ({ style, children, ...rest }: any) => (

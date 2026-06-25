@@ -1,6 +1,6 @@
 import { TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { C, GOLD_GRADIENT, GRAD_TOP, GRAD_BOTTOM } from '../../constants/palette';
+import { useTheme, GRAD_TOP, GRAD_BOTTOM } from '../../constants/palette';
 
 /** Pressable metallic-gold pill — bright sheen top, deep edge bottom. */
 export function MetalButton({
@@ -18,6 +18,7 @@ export function MetalButton({
   activeOpacity?: number;
   disabled?: boolean;
 }) {
+  const C = useTheme();
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -35,7 +36,7 @@ export function MetalButton({
       ]}
     >
       <LinearGradient
-        colors={GOLD_GRADIENT}
+        colors={C.goldGradient}
         start={GRAD_TOP}
         end={GRAD_BOTTOM}
         style={[
@@ -66,9 +67,10 @@ export function GoldSurface({
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
 }) {
+  const C = useTheme();
   return (
     <LinearGradient
-      colors={GOLD_GRADIENT}
+      colors={C.goldGradient}
       start={GRAD_TOP}
       end={GRAD_BOTTOM}
       style={[

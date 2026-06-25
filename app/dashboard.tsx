@@ -8,31 +8,37 @@ import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Eas
 import { useClimateStore, Answers } from '../lib/store';
 import { pickArchetype } from '../lib/scoring';
 import { getDashboardImage } from '../lib/dashboardImages';
-import { C as P } from '../constants/palette';
+import { useTheme, Palette } from '../constants/palette';
 import { MetalButton } from '../components/ui/gold';
 
 const TEMP_STEPS = [60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80];
 
 // The dashboard speaks in the "machine panel" voice — monospace + amber/silk
-// HVAC vocabulary. Hex values are sourced from the central palette so there's
-// one source of truth; only the semantic aliases live here.
-const C = {
-  chrome: P.bg,                // app bg
-  chromeSoft: 'rgba(201, 168, 117, 0.18)',  // divider
-  chromeDeep: P.bg,            // scrollview bg
-  cream: P.gold,               // active button gold
-  panel: P.bg2,                // panel surface
-  panelLight: '#2a2e36',       // bevel highlight (top/left)
-  panelEdge: 'rgba(201, 168, 117, 0.22)', // section dividers
-  panelHighlight: P.tileHi,    // tile bevel top
-  panelShadow: P.cardDark,     // bevel shadow (bottom/right)
-  amber: P.gold,               // gold
-  amberDim: P.goldDim,         // gold dim
-  amberBright: P.goldBright,   // gold bright
-  silk: P.text,                // primary text
-  silkDim: P.textDim,          // secondary text
-  red: P.red,
-};
+// HVAC vocabulary. Hex values are sourced from the active palette so there's
+// one source of truth; only the semantic aliases live here. Each component
+// pulls the themed set via useDashC().
+function dashColors(P: Palette) {
+  return {
+    chrome: P.bg,                // app bg
+    chromeSoft: 'rgba(201, 168, 117, 0.18)',  // divider
+    chromeDeep: P.bg,            // scrollview bg
+    cream: P.gold,               // active button gold
+    panel: P.bg2,                // panel surface
+    panelLight: '#2a2e36',       // bevel highlight (top/left)
+    panelEdge: 'rgba(201, 168, 117, 0.22)', // section dividers
+    panelHighlight: P.tileHi,    // tile bevel top
+    panelShadow: P.cardDark,     // bevel shadow (bottom/right)
+    amber: P.gold,               // gold
+    amberDim: P.goldDim,         // gold dim
+    amberBright: P.goldBright,   // gold bright
+    silk: P.text,                // primary text
+    silkDim: P.textDim,          // secondary text
+    red: P.red,
+  };
+}
+function useDashC() {
+  return dashColors(useTheme());
+}
 
 function BrandBanner({
   make, model, answers, onCycleTemp,
@@ -42,6 +48,7 @@ function BrandBanner({
   answers: Answers;
   onCycleTemp: (direction: 'up' | 'down') => void;
 }) {
+  const C = useDashC();
   const temp = answers.driverTemp;
   const fan = answers.fanSpeed;
   const acOn = answers.acCompressor === 'on';
@@ -165,6 +172,7 @@ function BrandBanner({
 }
 
 function PowerDot({ on }: { on: boolean }) {
+  const C = useDashC();
   const s = useSharedValue(0.6);
   useEffect(() => {
     if (on) {
@@ -189,6 +197,7 @@ function PowerDot({ on }: { on: boolean }) {
 }
 
 function LCDReadout({ value, label, big }: { value?: number | 'same'; label: string; big?: boolean }) {
+  const C = useDashC();
   let display: string;
   let degree = false;
   if (value === undefined) display = '—';
@@ -544,6 +553,7 @@ function SamePill({
 }
 
 function SectionLabel({ children, icon }: { children: React.ReactNode; icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'] }) {
+  const C = useDashC();
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 14, marginBottom: 8 }}>
       <View style={{ flex: 0, height: 1, width: 12, backgroundColor: C.panelEdge }} />
@@ -570,6 +580,7 @@ function PanelButton({
   flex?: number;
   wide?: boolean;
 }) {
+  const C = useDashC();
   return (
     <Pressable
       onPress={async () => { await Haptics.selectionAsync(); onPress(); }}
@@ -636,6 +647,7 @@ function VentArrows({ direction }: { direction: 'face' | 'feet' | 'defrost' | 'm
 }
 
 export default function DashboardScreen() {
+  const C = useDashC();
   const { make, model, hasDualZone, hasRearVents, answers, setAnswer, setResult } = useClimateStore();
 
   const required: (keyof Answers)[] = [
@@ -958,7 +970,7 @@ export default function DashboardScreen() {
           <MetalButton onPress={handleSubmit}>
             <Text style={{
               fontFamily: 'monospace', fontSize: 12, fontWeight: 'bold',
-              textTransform: 'uppercase', letterSpacing: 3, color: P.bg,
+              textTransform: 'uppercase', letterSpacing: 3, color: C.chrome,
             }}>
               Submit Configuration
             </Text>

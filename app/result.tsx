@@ -12,10 +12,11 @@ import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
 import { BANNER_AD_UNIT_ID } from '../lib/ads';
 import { compatShareUrl, PLAY_STORE_URL } from '../lib/config';
-import { C, F } from '../constants/palette';
+import { useTheme, F } from '../constants/palette';
 import { MetalButton, GoldSurface } from '../components/ui/gold';
 
 export default function ResultScreen() {
+  const C = useTheme();
   const viewShotRef = useRef<ViewShot>(null);
   const store = useClimateStore();
   const _archetype = ARCHETYPES.find((a) => a.id === store.archetypeId);

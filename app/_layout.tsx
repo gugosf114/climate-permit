@@ -16,6 +16,8 @@ export default function RootLayout() {
     Cinzel_700Bold,
     Cinzel_800ExtraBold,
   });
+  const themeMode = useClimateStore((s) => s.themeMode);
+  const stackBg = themeMode === 'dark' ? '#000000' : '#0a0e14';
 
   useEffect(() => {
     initAds();
@@ -46,7 +48,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#0a0e14' },
+          contentStyle: { backgroundColor: stackBg },
           animation: 'slide_from_right',
         }}
       />

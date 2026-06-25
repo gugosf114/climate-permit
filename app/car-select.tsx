@@ -8,7 +8,7 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { CARS, CarEntry, MAKES, DashboardStyle } from '../data/cars';
 import { useClimateStore } from '../lib/store';
 import { getBrandLogo, hasBrandLogo } from '../lib/brandLogos';
-import { C, F } from '../constants/palette';
+import { useTheme, F } from '../constants/palette';
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -29,6 +29,7 @@ function PillRow({
   onPress: () => void;
   idx: number;
 }) {
+  const C = useTheme();
   return (
     <Animated.View entering={FadeInDown.duration(360).delay(40 + idx * 28)}>
       <TouchableOpacity
@@ -69,6 +70,7 @@ function PillRow({
 }
 
 export default function CarSelectScreen() {
+  const C = useTheme();
   const [selectedMake, setSelectedMake] = useState<string | null>(null);
   const setVehicle = useClimateStore((s) => s.setVehicle);
 

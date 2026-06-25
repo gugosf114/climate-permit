@@ -8,25 +8,30 @@ import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Eas
 import { useClimateStore, Answers } from '../lib/store';
 import { pickArchetype } from '../lib/scoring';
 import { getDashboardImage } from '../lib/dashboardImages';
+import { C as P } from '../constants/palette';
+import { MetalButton } from '../components/ui/gold';
 
 const TEMP_STEPS = [60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80];
 
+// The dashboard speaks in the "machine panel" voice — monospace + amber/silk
+// HVAC vocabulary. Hex values are sourced from the central palette so there's
+// one source of truth; only the semantic aliases live here.
 const C = {
-  chrome: '#0a0e14',           // app bg (was DoCC green)
+  chrome: P.bg,                // app bg
   chromeSoft: 'rgba(201, 168, 117, 0.18)',  // divider
-  chromeDeep: '#0a0e14',       // scrollview bg
-  cream: '#c9a875',            // active button gold (was cream paper)
-  panel: '#14191f',            // panel surface
+  chromeDeep: P.bg,            // scrollview bg
+  cream: P.gold,               // active button gold
+  panel: P.bg2,                // panel surface
   panelLight: '#2a2e36',       // bevel highlight (top/left)
   panelEdge: 'rgba(201, 168, 117, 0.22)', // section dividers
-  panelHighlight: '#262e38',   // tile bevel top
-  panelShadow: '#06080c',      // bevel shadow (bottom/right)
-  amber: '#c9a875',            // gold (was amber)
-  amberDim: '#5a4730',         // gold dim
-  amberBright: '#e8c98a',      // gold bright
-  silk: '#f0e9d8',             // primary text
-  silkDim: '#a8a193',          // secondary text
-  red: '#c75444',
+  panelHighlight: P.tileHi,    // tile bevel top
+  panelShadow: P.cardDark,     // bevel shadow (bottom/right)
+  amber: P.gold,               // gold
+  amberDim: P.goldDim,         // gold dim
+  amberBright: P.goldBright,   // gold bright
+  silk: P.text,                // primary text
+  silkDim: P.textDim,          // secondary text
+  red: P.red,
 };
 
 function BrandBanner({
@@ -949,26 +954,28 @@ export default function DashboardScreen() {
 
       {/* Submit footer */}
       <View style={{ paddingHorizontal: 16, paddingBottom: 40, paddingTop: 14, borderTopWidth: 1, borderTopColor: C.chromeSoft, backgroundColor: C.chrome }}>
-        <TouchableOpacity
-          style={{
+        {allAnswered ? (
+          <MetalButton onPress={handleSubmit}>
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 12, fontWeight: 'bold',
+              textTransform: 'uppercase', letterSpacing: 3, color: P.bg,
+            }}>
+              Submit Configuration
+            </Text>
+          </MetalButton>
+        ) : (
+          <View style={{
             paddingVertical: 18, alignItems: 'center',
-            backgroundColor: allAnswered ? C.cream : 'transparent',
-            borderWidth: allAnswered ? 0 : 1,
-            borderColor: C.chromeSoft,
-            opacity: allAnswered ? 1 : 0.55,
-          }}
-          onPress={handleSubmit}
-          disabled={!allAnswered}
-          activeOpacity={0.85}
-        >
-          <Text style={{
-            fontFamily: 'monospace', fontSize: 12, fontWeight: 'bold',
-            textTransform: 'uppercase', letterSpacing: 3,
-            color: allAnswered ? '#0a0e14' : C.silk,
+            borderWidth: 1, borderColor: C.chromeSoft, opacity: 0.55,
           }}>
-            {allAnswered ? 'Submit Configuration' : `${remainingCount} setting${remainingCount === 1 ? '' : 's'} remaining`}
-          </Text>
-        </TouchableOpacity>
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 12, fontWeight: 'bold',
+              textTransform: 'uppercase', letterSpacing: 3, color: C.silk,
+            }}>
+              {remainingCount} setting{remainingCount === 1 ? '' : 's'} remaining
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );

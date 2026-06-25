@@ -8,13 +8,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        paper: '#f4f0e6',
-        gov: '#1a3a1a',
-        govdark: '#0f2410',
-        govmid: '#2d5a2d',
-        seal: '#8b2020',
+        bg: '#0a0e14',
+        surface: '#14191f',
+        gold: '#c9a875',
+        goldbright: '#e8c98a',
+        ink: '#f0e9d8',
+        inkdim: '#a8a193',
       },
       fontFamily: {
+        display: ['Cinzel_700Bold', 'serif'],
         mono: ['Courier New', 'monospace'],
       },
     },

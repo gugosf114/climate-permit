@@ -8,6 +8,7 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { CARS, CarEntry, MAKES, DashboardStyle } from '../data/cars';
 import { useClimateStore } from '../lib/store';
 import { getBrandLogo, hasBrandLogo } from '../lib/brandLogos';
+import { C, F } from '../constants/palette';
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -17,23 +18,6 @@ const STYLE_ICON: Record<DashboardStyle, IconName> = {
   suv: 'car-estate',
   truck: 'truck',
   luxury: 'car-sports',
-};
-
-const C = {
-  bg:        '#0a0e14',
-  bg2:       '#14191f',
-  bg3:       '#1f262e',
-  tile:      '#1c232b',
-  tileHi:    '#262e38',
-  tileLo:    '#0d1218',
-  gold:      '#c9a875',
-  goldBright:'#e8c98a',
-  goldDim:   '#5a4730',
-  text:      '#f0e9d8',
-  textDim:   '#a8a193',
-  textMuted: '#6b6760',
-  divider:   'rgba(201, 168, 117, 0.12)',
-  border:    'rgba(201, 168, 117, 0.22)',
 };
 
 function PillRow({
@@ -117,8 +101,8 @@ export default function CarSelectScreen() {
               Step 1 of 2
             </Text>
             <Text style={{
-              fontFamily: 'monospace', fontSize: 22, color: C.goldBright,
-              fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 4,
+              fontFamily: F.display, fontSize: 24, color: C.goldBright,
+              textTransform: 'uppercase', letterSpacing: 2,
               textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 12,
             }}>
               {selectedMake ?? 'Vehicle'}

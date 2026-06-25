@@ -3,6 +3,10 @@ import { Image } from 'expo-image';
 import { Archetype } from '../data/archetypes';
 import { Answers } from '../lib/store';
 import { getVehicleImage } from '../lib/vehicleImages';
+import { C, F } from '../constants/palette';
+import { GoldSurface } from './ui/gold';
+import { PermitQR } from './ui/permit-qr';
+import { PLAY_STORE_URL } from '../lib/config';
 
 interface Props {
   archetype: Archetype;
@@ -11,23 +15,6 @@ interface Props {
   answers: Answers;
   compact?: boolean;
 }
-
-const C = {
-  bg:        '#0a0e14',
-  bg2:       '#14191f',
-  bg3:       '#1f262e',
-  cardLight: '#262e38',
-  cardDark:  '#06080c',
-  gold:      '#c9a875',
-  goldBright:'#e8c98a',
-  goldDim:   '#5a4730',
-  text:      '#f0e9d8',
-  textDim:   '#a8a193',
-  textMuted: '#6b6760',
-  divider:   'rgba(201, 168, 117, 0.18)',
-  border:    'rgba(201, 168, 117, 0.4)',
-  red:       '#c75444',
-};
 
 function zoneSummary(answers: Answers): string {
   const parts: string[] = [];
@@ -52,13 +39,6 @@ function todayIssueDate(): string {
     .toUpperCase();
 }
 
-const QR_ROWS = [
-  '▓▓▓ ░ ▓ ░░░ ▓▓▓',
-  '▓ ░ ▓ ░ ▓ ░ ▓ ░',
-  '▓▓▓ ░ ░▓░ ░ ▓▓▓',
-  '░ ▓ ░▓ ░ ░▓ ░ ░',
-  '▓▓▓ ▓ ░ ▓ ▓ ▓▓▓',
-];
 
 export function PermitCard({ archetype, make, model, answers, compact = false }: Props) {
   const issueDate = todayIssueDate();
@@ -111,8 +91,9 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
           <View style={{ flex: 1, height: 1, backgroundColor: C.gold, opacity: 0.5 }} />
           <T style={{
-            fontSize: compact ? 11 : 14, fontWeight: 'bold',
-            textTransform: 'uppercase', letterSpacing: 4, marginHorizontal: 10,
+            fontFamily: F.display,
+            fontSize: compact ? 12 : 15,
+            textTransform: 'uppercase', letterSpacing: compact ? 1.5 : 2.5, marginHorizontal: 10,
             color: C.goldBright,
             textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 8,
           }}>
@@ -162,22 +143,20 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
         <T style={{ fontSize: compact ? 6 : 8, color: C.textMuted, textTransform: 'uppercase', letterSpacing: 3, marginBottom: 6 }}>
           Classification
         </T>
-        <View style={{
-          backgroundColor: C.gold,
-          borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
-          borderBottomColor: C.goldDim, borderRightColor: C.goldDim,
-          borderWidth: 1.5,
+        <GoldSurface style={{
           paddingHorizontal: 14, paddingVertical: compact ? 8 : 12,
           width: '100%', alignItems: 'center',
           shadowColor: C.gold, shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 },
         }}>
           <T style={{
-            fontSize: compact ? 12 : 16, fontWeight: 'bold', color: C.bg,
-            textTransform: 'uppercase', letterSpacing: compact ? 1.5 : 2.5, textAlign: 'center',
+            fontFamily: F.display,
+            fontSize: compact ? 11 : 15, color: C.bg,
+            textTransform: 'uppercase', letterSpacing: compact ? 0.5 : 1,
+            lineHeight: compact ? 15 : 20, textAlign: 'center',
           }}>
             {archetype.name}
           </T>
-        </View>
+        </GoldSurface>
       </View>
 
       {/* Vehicle + zone */}
@@ -216,12 +195,8 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
           "Issued under penalty of comfort"
         </T>
 
-        <View style={{ borderWidth: 1, borderColor: C.divider, padding: compact ? 4 : 6, marginBottom: compact ? 6 : 8 }}>
-          {QR_ROWS.map((row, i) => (
-            <T key={i} style={{ fontSize: compact ? 5 : 7, letterSpacing: 1, color: C.gold, opacity: 0.35, textAlign: 'center' }}>
-              {row}
-            </T>
-          ))}
+        <View style={{ marginBottom: compact ? 6 : 8 }}>
+          <PermitQR value={PLAY_STORE_URL} size={compact ? 44 : 64} />
         </View>
 
         <T style={{ fontSize: compact ? 6 : 8, color: C.gold, textTransform: 'uppercase', letterSpacing: 3, opacity: 0.75 }}>

@@ -12,24 +12,8 @@ import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
 import { BANNER_AD_UNIT_ID } from '../lib/ads';
 import { compatShareUrl, PLAY_STORE_URL } from '../lib/config';
-
-const C = {
-  bg:        '#0a0e14',
-  bg2:       '#14191f',
-  bg3:       '#1f262e',
-  tile:      '#1c232b',
-  tileHi:    '#262e38',
-  tileLo:    '#0d1218',
-  gold:      '#c9a875',
-  goldBright:'#e8c98a',
-  goldDim:   '#5a4730',
-  text:      '#f0e9d8',
-  textDim:   '#a8a193',
-  textMuted: '#6b6760',
-  divider:   'rgba(201, 168, 117, 0.18)',
-  border:    'rgba(201, 168, 117, 0.3)',
-  red:       '#c75444',
-};
+import { C, F } from '../constants/palette';
+import { MetalButton, GoldSurface } from '../components/ui/gold';
 
 export default function ResultScreen() {
   const viewShotRef = useRef<ViewShot>(null);
@@ -80,20 +64,21 @@ export default function ResultScreen() {
           borderBottomWidth: 1, borderBottomColor: C.divider,
         }}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 9, color: C.gold,
+            fontFamily: F.mono, fontSize: 9, color: C.gold,
             opacity: 0.8, textTransform: 'uppercase', letterSpacing: 4,
           }}>
             Permit Issued
           </Text>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 22, color: C.goldBright,
-            fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3, marginTop: 6,
+            fontFamily: F.display, fontSize: 22, color: C.goldBright,
+            textTransform: 'uppercase', letterSpacing: 1, marginTop: 8,
+            lineHeight: 28,
             textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 14,
           }}>
             {archetype.name}
           </Text>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 11, color: C.text,
+            fontFamily: F.mono, fontSize: 11, color: C.text,
             marginTop: 8, opacity: 0.8, lineHeight: 17,
           }}>
             {archetype.oneLineBurn}
@@ -112,20 +97,14 @@ export default function ResultScreen() {
           paddingHorizontal: 22, paddingTop: 18, paddingBottom: 8,
           flexDirection: 'row', gap: 8, flexWrap: 'wrap',
         }}>
-          <View style={{
-            backgroundColor: C.gold,
-            borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
-            borderBottomColor: C.goldDim, borderRightColor: C.goldDim,
-            borderWidth: 1,
-            paddingHorizontal: 12, paddingVertical: 5,
-          }}>
+          <GoldSurface style={{ paddingHorizontal: 12, paddingVertical: 5 }}>
             <Text style={{
-              fontFamily: 'monospace', fontSize: 9, color: C.bg,
+              fontFamily: F.mono, fontSize: 9, color: C.bg,
               fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 2,
             }}>
               {archetype.quadrant}
             </Text>
-          </View>
+          </GoldSurface>
           <View style={{
             backgroundColor: C.tile,
             borderTopColor: C.tileHi, borderLeftColor: C.tileHi,
@@ -134,7 +113,7 @@ export default function ResultScreen() {
             paddingHorizontal: 12, paddingVertical: 5,
           }}>
             <Text style={{
-              fontFamily: 'monospace', fontSize: 9, color: C.text,
+              fontFamily: F.mono, fontSize: 9, color: C.text,
               textTransform: 'uppercase', letterSpacing: 1.5,
             }}>
               {archetype.xBias === 'self' ? 'Self-Focused' : 'Other-Focused'}  ·  {archetype.yBias === 'controller' ? 'Controller' : 'Chill'}
@@ -145,37 +124,26 @@ export default function ResultScreen() {
         {/* Compat traits */}
         <Animated.View entering={FadeInDown.duration(500).delay(600)} style={{ paddingHorizontal: 22, paddingBottom: 24 }}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 8, color: C.gold,
+            fontFamily: F.mono, fontSize: 8, color: C.gold,
             opacity: 0.6, marginBottom: 5, textTransform: 'uppercase', letterSpacing: 2,
           }}>
             Compatible with
           </Text>
-          <Text style={{ fontFamily: 'monospace', fontSize: 11, color: C.text, lineHeight: 18 }}>
+          <Text style={{ fontFamily: F.mono, fontSize: 11, color: C.text, lineHeight: 18 }}>
             {archetype.compatTraits.join('  ·  ')}
           </Text>
         </Animated.View>
 
         {/* Actions */}
         <Animated.View entering={FadeIn.duration(500).delay(800)} style={{ paddingHorizontal: 22, gap: 10 }}>
-          <TouchableOpacity
-            activeOpacity={0.88}
-            onPress={handleShare}
-            style={{
-              backgroundColor: C.gold,
-              borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
-              borderBottomColor: '#8a7250', borderRightColor: '#8a7250',
-              borderWidth: 1.5,
-              paddingVertical: 18, alignItems: 'center',
-              shadowColor: C.gold, shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 5 },
-            }}
-          >
+          <MetalButton onPress={handleShare}>
             <Text style={{
-              fontFamily: 'monospace', fontSize: 12, color: C.bg,
+              fontFamily: F.mono, fontSize: 12, color: C.bg,
               fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3,
             }}>
               Share Your Permit
             </Text>
-          </TouchableOpacity>
+          </MetalButton>
 
           {hasCompat ? (
             <TouchableOpacity
@@ -191,7 +159,7 @@ export default function ResultScreen() {
               }}
             >
               <Text style={{
-                fontFamily: 'monospace', fontSize: 12, color: C.text,
+                fontFamily: F.mono, fontSize: 12, color: C.text,
                 fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3,
               }}>
                 View Compatibility  →
@@ -210,7 +178,7 @@ export default function ResultScreen() {
               }}
             >
               <Text style={{
-                fontFamily: 'monospace', fontSize: 12, color: C.gold,
+                fontFamily: F.mono, fontSize: 12, color: C.gold,
                 textTransform: 'uppercase', letterSpacing: 2.5,
               }}>
                 Test Your Partner  →
@@ -224,7 +192,7 @@ export default function ResultScreen() {
             style={{ paddingVertical: 14, alignItems: 'center' }}
           >
             <Text style={{
-              fontFamily: 'monospace', fontSize: 10, color: C.textMuted,
+              fontFamily: F.mono, fontSize: 10, color: C.textMuted,
               textTransform: 'uppercase', letterSpacing: 2.5,
             }}>
               Start Over
@@ -238,7 +206,15 @@ export default function ResultScreen() {
         position: 'absolute', bottom: 0, left: 0, right: 0,
         alignItems: 'center', backgroundColor: C.bg2,
         borderTopWidth: 1, borderTopColor: C.divider,
+        paddingTop: 5,
       }}>
+        <Text style={{
+          fontFamily: F.mono, fontSize: 7, color: C.textMuted,
+          letterSpacing: 2.5, textTransform: 'uppercase', opacity: 0.7,
+          marginBottom: 3,
+        }}>
+          Advertisement
+        </Text>
         <BannerAd
           unitId={BANNER_AD_UNIT_ID}
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}

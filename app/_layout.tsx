@@ -2,11 +2,21 @@ import '../global.css';
 import { Stack, router } from 'expo-router';
 import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import {
+  useFonts,
+  Cinzel_700Bold,
+  Cinzel_800ExtraBold,
+} from '@expo-google-fonts/cinzel';
 import { initAds } from '../lib/ads';
 import { readInstallReferrer, parseCompatPayload } from '../lib/installReferrer';
 import { useClimateStore } from '../lib/store';
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    Cinzel_700Bold,
+    Cinzel_800ExtraBold,
+  });
+
   useEffect(() => {
     initAds();
   }, []);
@@ -25,6 +35,10 @@ export default function RootLayout() {
       setTimeout(() => router.push(`/compat/${payload}`), 0);
     })();
   }, []);
+
+  // Hold first paint until the display face is ready so hero type never
+  // flashes a fallback. The native splash (deep navy) covers this gap.
+  if (!fontsLoaded) return null;
 
   return (
     <>

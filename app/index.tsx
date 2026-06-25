@@ -1,25 +1,11 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import { useEffect } from 'react';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing, FadeIn, FadeInDown } from 'react-native-reanimated';
-
-const C = {
-  bg:        '#0a0e14',
-  bg2:       '#14191f',
-  bg3:       '#1f262e',
-  surface:   'rgba(255, 248, 232, 0.04)',
-  gold:      '#c9a875',
-  goldBright:'#e8c98a',
-  goldDim:   '#5a4730',
-  goldShadow:'rgba(201, 168, 117, 0.4)',
-  text:      '#f0e9d8',
-  textDim:   '#a8a193',
-  textMuted: '#6b6760',
-  border:    'rgba(201, 168, 117, 0.25)',
-  borderHi:  'rgba(232, 201, 138, 0.55)',
-  divider:   'rgba(201, 168, 117, 0.12)',
-};
+import { C, F, PANEL_GRADIENT, GRAD_TOP, GRAD_BOTTOM } from '../constants/palette';
+import { MetalButton } from '../components/ui/gold';
 
 function Seal() {
   const pulse = useSharedValue(0.85);
@@ -61,26 +47,28 @@ function Seal() {
             alignItems: 'center', justifyContent: 'center',
           }}
         >
-          {/* deepest ring */}
-          <View
+          {/* deepest ring — subtle metallic vignette */}
+          <LinearGradient
+            colors={PANEL_GRADIENT}
+            start={GRAD_TOP}
+            end={GRAD_BOTTOM}
             style={{
               width: 108, height: 108, borderRadius: 54,
               borderWidth: 1, borderColor: 'rgba(201, 168, 117, 0.35)',
               alignItems: 'center', justifyContent: 'center',
-              backgroundColor: C.bg,
             }}
           >
             <Text style={{ fontSize: 48, color: C.goldBright, textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 12 }}>
               ❄
             </Text>
             <Text style={{
-              fontFamily: 'monospace', fontSize: 7, color: C.gold,
+              fontFamily: F.mono, fontSize: 7, color: C.gold,
               letterSpacing: 3, textTransform: 'uppercase', marginTop: 4,
               opacity: 0.7,
             }}>
               Certified
             </Text>
-          </View>
+          </LinearGradient>
         </View>
       </View>
     </View>
@@ -114,16 +102,16 @@ export default function LandingScreen() {
 
       <Animated.View entering={FadeInDown.duration(700).delay(100)} style={{ alignItems: 'center', marginBottom: 40 }}>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 9, color: C.gold,
-          letterSpacing: 6, textTransform: 'uppercase', marginBottom: 16,
+          fontFamily: F.mono, fontSize: 9, color: C.gold,
+          letterSpacing: 6, textTransform: 'uppercase', marginBottom: 18,
           opacity: 0.75,
         }}>
           ·  An Operator Assessment  ·
         </Text>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 38, color: C.goldBright,
-          letterSpacing: 8, textTransform: 'uppercase', textAlign: 'center',
-          fontWeight: 'bold', lineHeight: 44,
+          fontFamily: F.displayBlack, fontSize: 40, color: C.goldBright,
+          letterSpacing: 4, textTransform: 'uppercase', textAlign: 'center',
+          lineHeight: 48,
           textShadowColor: C.gold, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 18,
         }}>
           Climate{'\n'}Permit
@@ -136,7 +124,7 @@ export default function LandingScreen() {
 
       <Animated.View entering={FadeInDown.duration(700).delay(700)} style={{ width: '100%', alignItems: 'center' }}>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 11, color: C.text,
+          fontFamily: F.mono, fontSize: 11, color: C.text,
           textAlign: 'center', lineHeight: 18, opacity: 0.85,
           letterSpacing: 1, marginBottom: 32, paddingHorizontal: 8,
         }}>
@@ -144,31 +132,18 @@ export default function LandingScreen() {
           60 seconds. 16 archetypes. Test your partner.
         </Text>
 
-        {/* Premium CTA — embossed gold */}
-        <TouchableOpacity
-          activeOpacity={0.88}
-          onPress={handleStart}
-          style={{
-            width: '100%',
-            paddingVertical: 18,
-            alignItems: 'center',
-            backgroundColor: C.gold,
-            borderTopColor: C.goldBright, borderLeftColor: C.goldBright,
-            borderBottomColor: '#8a7250', borderRightColor: '#8a7250',
-            borderWidth: 1.5,
-            shadowColor: C.gold, shadowOpacity: 0.55, shadowRadius: 18, shadowOffset: { width: 0, height: 6 },
-          }}
-        >
+        {/* Premium CTA — metallic gold */}
+        <MetalButton onPress={handleStart} style={{ width: '100%' }}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 13, color: C.bg,
+            fontFamily: F.mono, fontSize: 13, color: C.bg,
             fontWeight: 'bold', letterSpacing: 4, textTransform: 'uppercase',
           }}>
             Issue My Permit
           </Text>
-        </TouchableOpacity>
+        </MetalButton>
 
         <Text style={{
-          fontFamily: 'monospace', fontSize: 8, color: C.textMuted,
+          fontFamily: F.mono, fontSize: 8, color: C.textMuted,
           textAlign: 'center', marginTop: 18, letterSpacing: 2.5,
           textTransform: 'uppercase', opacity: 0.8,
         }}>

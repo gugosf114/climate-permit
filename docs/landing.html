@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0e2d63">
+<title>Climate Permit — Application for Climate Operator Permit, Form 21-B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+:root{
+ --paper:#f5efde; --paperLt:#fbf6e6; --paperEdge:#e7ddc0;
+ --navy:#0e2d63; --navySoft:#1e4385; --navyDeep:#081c44;
+ --ink:#0a0a0a; --inkSoft:#2c2c2c; --inkDim:#7a7a7a;
+ --red:#b41d23; --redDeep:#7a1218;
+ --gold:#c78c19; --goldDeep:#8b6310; --goldLt:#e8b32a; --holo:#dba519;
+ --border:#8a7a3a; --divider:rgba(20,20,20,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+ font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ color:var(--ink);background:var(--paper);line-height:1.55;overflow-x:hidden;
+ background-image:
+   repeating-linear-gradient(0deg,transparent 0 27px,rgba(199,140,25,.035) 27px 28px),
+   radial-gradient(120% 80% at 50% -10%,rgba(14,45,99,.05),transparent 60%);
+}
+/* paper grain */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.5;mix-blend-mode:multiply;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");}
+.wrap{position:relative;z-index:2;max-width:1040px;margin:0 auto;padding:0 18px;}
+.mono{font-family:"IBM Plex Mono",monospace;}
+.cal{font-family:"Libre Caslon Text",Georgia,serif;}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--navySoft);}
+.fieldnum{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--navy);}
+
+/* watermark bears behind */
+.bearwm{position:absolute;z-index:0;pointer-events:none;opacity:.05;}
+
+/* ===== document header ===== */
+header{position:sticky;top:0;z-index:20;background:rgba(245,239,222,.92);backdrop-filter:blur(7px);border-bottom:1.5px solid var(--navy);}
+header .bar{max-width:1040px;margin:0 auto;padding:9px 18px;display:flex;align-items:center;gap:11px;}
+header .seal{width:30px;height:30px;flex:none;}
+header .dept{flex:1;min-width:0;}
+header .dept .l1{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.16em;color:var(--navy);font-weight:600;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+header .dept .l2{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.18em;color:var(--inkDim);text-transform:uppercase;}
+header .form{font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--red);font-weight:600;letter-spacing:.1em;white-space:nowrap;}
+
+/* ===== hero ===== */
+.hero{padding:46px 0 30px;text-align:center;position:relative;}
+.hero .kicker{margin-bottom:18px;}
+.hero h1{font-family:"Libre Caslon Text",Georgia,serif;font-weight:700;font-size:clamp(2.3rem,9vw,4.4rem);line-height:1.02;letter-spacing:-.015em;color:var(--ink);}
+.hero h1 em{font-style:italic;color:var(--navy);}
+.hero .sub{max-width:540px;margin:18px auto 0;font-size:clamp(15px,2.6vw,18px);color:var(--inkSoft);}
+.hero .sub b{color:var(--red);font-weight:600;}
+
+/* permit card */
+.cardstage{margin:34px auto 6px;max-width:430px;position:relative;perspective:1400px;}
+.stamp{position:absolute;z-index:6;top:-14px;right:6px;font-family:"IBM Plex Mono",monospace;font-weight:700;font-size:13px;letter-spacing:.12em;
+ color:var(--red);border:2.5px solid var(--red);border-radius:6px;padding:5px 9px;transform:rotate(8deg);opacity:.82;
+ box-shadow:0 0 0 2px rgba(180,29,35,.12);text-transform:uppercase;background:rgba(245,239,222,.4);}
+.permit{position:relative;background:var(--paper);border:1.5px solid var(--border);border-radius:11px;overflow:hidden;
+ box-shadow:0 26px 50px -18px rgba(8,28,68,.45),0 4px 12px rgba(0,0,0,.15);transform:rotate(-1.4deg);
+ transition:transform .5s cubic-bezier(.2,.8,.2,1);cursor:pointer;aspect-ratio:1.585;}
+.cardstage:hover .permit{transform:rotate(0deg) translateY(-4px);}
+.permit .pwm{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.permit .socca{position:absolute;left:-10%;right:-10%;text-align:center;font-family:"IBM Plex Mono",monospace;font-weight:700;
+ font-size:7px;letter-spacing:.22em;color:var(--navy);opacity:.06;white-space:nowrap;}
+.permit .golden{position:absolute;top:46%;left:-12%;right:-12%;text-align:center;font-family:"Libre Caslon Text",serif;font-style:italic;
+ font-weight:700;font-size:clamp(13px,4.4vw,19px);letter-spacing:.34em;color:var(--gold);opacity:.14;}
+.permit .bigca{position:absolute;top:62%;left:-14%;right:-14%;text-align:center;font-weight:800;font-size:clamp(20px,7vw,32px);
+ letter-spacing:.2em;color:var(--navy);opacity:.06;transform:rotate(-8deg);}
+.permit .pbear{position:absolute;top:30%;left:50%;width:54%;transform:translateX(-50%);opacity:.06;}
+.permit .grid{position:absolute;left:7%;right:5%;height:1px;background:var(--gold);opacity:.045;}
+.phead{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:space-between;
+ padding:2.4% 3.5% 1.8% 7%;border-bottom:1px solid var(--divider);}
+.phead .ca{font-family:"Libre Caslon Text",serif;font-style:italic;font-weight:700;color:var(--navy);
+ font-size:clamp(20px,7vw,30px);line-height:.9;letter-spacing:-.01em;}
+.phead .usa{font-family:"IBM Plex Mono",monospace;font-size:7px;font-weight:700;color:var(--ink);letter-spacing:.1em;margin-left:4px;}
+.phead .cp{font-weight:800;color:var(--navy);font-size:clamp(10px,3.4vw,15px);letter-spacing:.06em;}
+.pseal{position:absolute;z-index:3;top:13%;right:4%;width:13%;}
+.pbody{position:relative;z-index:2;display:flex;gap:3%;padding:2.4% 5% 1.5% 7%;}
+.photo{width:25%;flex:none;}
+.photo .frame{border:1px solid var(--border);background:var(--paperLt);border-radius:3px;padding:4%;aspect-ratio:.82;display:grid;place-items:center;position:relative;overflow:hidden;}
+.photo .frame svg{width:92%;}
+.photo .specimen{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%) rotate(-58deg);font-family:"IBM Plex Mono",monospace;
+ font-weight:700;font-size:8px;letter-spacing:.4em;color:var(--ink);opacity:.22;}
+.photo .ssc{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:5.5px;font-weight:700;color:var(--goldDeep);opacity:.5;margin-top:2px;}
+.pfields{flex:1;min-width:0;display:flex;flex-direction:column;gap:1.5%;}
+.row{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px;}
+.row .n{font-family:"IBM Plex Mono",monospace;font-size:7px;font-weight:700;color:var(--navy);}
+.row .lb{font-family:"IBM Plex Mono",monospace;font-size:7px;font-weight:700;color:var(--inkSoft);letter-spacing:.05em;}
+.row .v{font-size:9.5px;font-weight:700;letter-spacing:.02em;color:var(--ink);}
+.row .v.red{color:var(--red);} .row .v.navy{color:var(--navy);} .row .v.dim{color:var(--inkDim);font-weight:500;}
+.row .v.big{font-size:12px;}
+.tworow{display:flex;justify-content:space-between;}
+.classbox{position:relative;z-index:2;margin:1% 5% 0 7%;padding:2.4% 3%;border-top:1px solid var(--divider);border-left:3px solid var(--red);background:rgba(255,250,230,.5);}
+.classbox .ct{font-family:"IBM Plex Mono",monospace;font-size:7px;font-weight:700;color:var(--navy);letter-spacing:.14em;margin-bottom:2px;}
+.classbox .cn{font-weight:800;font-size:clamp(11px,3.6vw,14px);letter-spacing:.04em;margin-bottom:3px;}
+.classbox .cd{font-size:clamp(9px,2.7vw,11px);line-height:1.4;color:var(--inkSoft);}
+.psig{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:space-between;padding:1.5% 5% 1.2% 7%;}
+.psig .sigwrap{flex:1;}
+.psig .sig{font-family:"Sacramento",cursive;font-size:clamp(17px,5.5vw,23px);color:var(--ink);line-height:.8;}
+.psig .sigline{height:1px;background:var(--ink);opacity:.4;margin-top:1px;}
+.psig .siglb{font-family:"IBM Plex Mono",monospace;font-size:6px;color:var(--inkDim);letter-spacing:.12em;margin-top:2px;}
+.psig .ghost{width:13%;aspect-ratio:.82;border:.5px solid var(--border);background:var(--paperLt);padding:3px;opacity:.7;display:grid;place-items:center;}
+.psig .ghost svg{width:90%;opacity:.5;}
+.pholo{position:relative;z-index:2;background:linear-gradient(100deg,var(--holo),var(--goldLt) 40%,var(--holo));
+ padding:1.4% 4%;display:flex;align-items:center;justify-content:space-between;border-top:.5px solid var(--goldDeep);}
+.pholo span{font-family:"IBM Plex Mono",monospace;font-size:6.5px;font-weight:700;color:var(--paper);letter-spacing:.14em;}
+.pholo .mid{font-family:"Libre Caslon Text",serif;font-style:italic;font-weight:400;font-size:7.5px;letter-spacing:0;}
+.tap-hint{text-align:center;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;color:var(--inkDim);margin-top:14px;text-transform:uppercase;}
+
+/* CTA */
+.cta-row{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:26px;}
+.gplay{display:inline-flex;align-items:center;gap:11px;background:var(--ink);color:#fff;border-radius:11px;padding:11px 20px 11px 16px;text-decoration:none;border:1px solid #000;box-shadow:0 8px 20px -8px rgba(0,0,0,.5);transition:transform .15s;}
+.gplay:active{transform:scale(.97);}
+.gplay svg{width:24px;height:24px;}
+.gplay .g1{font-size:9px;letter-spacing:.08em;opacity:.85;text-transform:uppercase;line-height:1;}
+.gplay .g2{font-size:17px;font-weight:600;line-height:1.1;}
+.cta-row .fine{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;color:var(--inkDim);}
+
+/* section frame */
+.section{padding:40px 0 8px;position:relative;}
+.sechead{display:flex;align-items:baseline;gap:12px;margin-bottom:22px;}
+.sechead .sn{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--red);letter-spacing:.08em;white-space:nowrap;}
+.sechead h2{font-family:"Libre Caslon Text",serif;font-weight:700;font-size:clamp(1.5rem,5vw,2.3rem);color:var(--navy);line-height:1.05;}
+.sechead .ln{flex:1;height:1px;background:var(--divider);align-self:center;}
+
+/* matrix */
+.matrix-intro{font-size:15px;color:var(--inkSoft);max-width:560px;margin-bottom:22px;}
+.matrix{position:relative;max-width:560px;margin:0 auto;}
+.maxis{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--navy);font-weight:600;text-align:center;}
+.mrow{display:flex;align-items:stretch;gap:10px;}
+.mside{writing-mode:vertical-rl;transform:rotate(180deg);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;
+ text-transform:uppercase;color:var(--navy);font-weight:600;display:flex;align-items:center;justify-content:space-between;padding:8px 0;}
+.quadgrid{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0;}
+.quad{border:1.5px solid var(--border);border-radius:10px;padding:15px 14px;background:var(--paperLt);position:relative;overflow:hidden;}
+.quad .qt{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.12em;margin-bottom:5px;}
+.quad .qd{font-size:12.5px;color:var(--inkSoft);line-height:1.35;}
+.quad.tyrant{border-left:4px solid var(--red);} .quad.tyrant .qt{color:var(--red);}
+.quad.oblivious{border-left:4px solid var(--goldDeep);} .quad.oblivious .qt{color:var(--goldDeep);}
+.quad.concierge{border-left:4px solid var(--navy);} .quad.concierge .qt{color:var(--navy);}
+.quad.diplomat{border-left:4px solid var(--inkSoft);} .quad.diplomat .qt{color:var(--inkSoft);}
+
+/* 16 stubs */
+.fam{margin-bottom:26px;}
+.famhead{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+.famchip{font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.12em;padding:3px 9px;border-radius:5px;color:#fff;text-transform:uppercase;}
+.famchip.tyrant{background:var(--red);} .famchip.oblivious{background:var(--goldDeep);}
+.famchip.concierge{background:var(--navy);} .famchip.diplomat{background:var(--inkSoft);}
+.famhead .fd{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--inkDim);letter-spacing:.04em;}
+.stubs{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;}
+.stub{border:1px solid var(--border);border-radius:10px;background:var(--paperLt);padding:14px 15px;position:relative;overflow:hidden;
+ opacity:0;transform:translateY(14px);transition:opacity .6s,transform .6s,box-shadow .2s,border-color .2s;}
+.stub.in{opacity:1;transform:none;}
+.stub:hover{border-color:var(--gold);box-shadow:0 8px 22px -10px rgba(139,99,16,.45);}
+.stub::after{content:"";position:absolute;top:0;right:0;width:40px;height:40px;
+ background:radial-gradient(circle at 70% 30%,rgba(199,140,25,.14),transparent 70%);}
+.stub .sdln{font-family:"IBM Plex Mono",monospace;font-size:8px;font-weight:600;color:var(--gold);letter-spacing:.1em;}
+.stub .sname{font-family:"Libre Caslon Text",serif;font-weight:700;font-size:17px;color:var(--ink);margin:3px 0 6px;line-height:1.1;}
+.stub .sburn{font-size:13px;color:var(--inkSoft);line-height:1.4;}
+
+/* steps */
+.steps{display:grid;gap:14px;}
+.step{display:flex;gap:15px;align-items:flex-start;border-left:3px solid var(--navy);padding:4px 0 4px 16px;}
+.step .sno{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;color:var(--red);flex:none;padding-top:2px;width:34px;}
+.step .sh{font-weight:700;font-size:16px;color:var(--navy);margin-bottom:2px;}
+.step .sp{font-size:14px;color:var(--inkSoft);}
+
+/* final cta band */
+.band{margin:44px 0 0;border:1.5px solid var(--navy);border-radius:14px;background:
+ repeating-linear-gradient(135deg,rgba(14,45,99,.03) 0 10px,transparent 10px 20px),var(--paperLt);
+ padding:34px 24px;text-align:center;position:relative;overflow:hidden;}
+.band h2{font-family:"Libre Caslon Text",serif;font-weight:700;font-size:clamp(1.5rem,5.5vw,2.3rem);color:var(--ink);line-height:1.08;margin-bottom:8px;}
+.band h2 em{font-style:italic;color:var(--navy);}
+.band p{font-size:14px;color:var(--inkSoft);max-width:440px;margin:0 auto 20px;}
+
+/* footer */
+footer{margin-top:48px;border-top:1.5px solid var(--navy);padding:26px 0 60px;}
+footer .frow{display:flex;align-items:flex-start;gap:14px;}
+footer .fseal{width:38px;flex:none;}
+footer .ftxt{font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.7;color:var(--inkDim);letter-spacing:.02em;}
+footer .ftxt b{color:var(--navy);font-weight:600;}
+footer .ftxt a{color:var(--navySoft);}
+footer .disc{margin-top:12px;font-style:normal;color:var(--inkDim);opacity:.85;}
+
+@media(max-width:560px){
+ .mside{font-size:8px;} .maxis{font-size:8px;}
+ .quad{padding:12px 11px;} .quad .qd{font-size:11.5px;}
+ .stub .sname{font-size:15.5px;} .stub .sburn{font-size:12.5px;}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}.stub{opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+
+<!-- bear symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="bear" viewBox="0 0 100 55">
+ <path d="M 4 32 C 3 30,4 27,8 25 L 11 22 C 13 19,16 17,19 19 L 20 14 L 23 19 L 25 14 L 28 19 C 33 14,41 11,48 11 C 58 11,68 13,77 17 C 84 20,89 24,91 27 L 94 24 L 96 28 L 91 30 C 89 36,86 41,83 43 L 83 49 C 81 50,78 50,76 49 L 76 44 C 70 45,64 45,58 44 L 50 49 C 48 50,45 50,43 49 L 43 44 L 26 44 L 18 49 C 16 50,13 50,11 49 L 11 44 C 8 43,5 38,4 34 Z"/>
+ <path d="M 55 20 L 56.8 24 L 61 24 L 57.6 26.6 L 58.8 31 L 55 28.4 L 51.2 31 L 52.4 26.6 L 49 24 L 53.2 24 Z"/>
+</symbol>
+<symbol id="car" viewBox="0 0 100 44">
+ <path d="M6 34 Q6 26 16 25 L26 16 Q30 12 38 12 L60 12 Q68 12 74 18 L86 24 Q94 26 94 33 L94 35 Q94 37 91 37 L83 37 Q82 31 76 31 Q70 31 69 37 L33 37 Q32 31 26 31 Q20 31 19 37 L9 37 Q6 37 6 35 Z" fill="#0e2d63"/>
+ <circle cx="26" cy="37" r="5.4" fill="#0a0a0a"/><circle cx="76" cy="37" r="5.4" fill="#0a0a0a"/>
+ <path d="M31 17 L57 17 L62 23 L31 23 Z" fill="#1e4385"/>
+</symbol>
+</svg>
+
+<header><div class="bar">
+ <svg class="seal" viewBox="0 0 100 55" fill="#c78c19"><use href="#bear"/></svg>
+ <div class="dept">
+  <div class="l1">California Department of Climate Control</div>
+  <div class="l2">Bureau of Cabin Operations</div>
+ </div>
+ <div class="form">FORM 21-B</div>
+</div></header>
+
+<div class="wrap">
+
+<!-- HERO -->
+<section class="hero">
+ <div class="kicker eyebrow">State of California &middot; Penalty of Comfort</div>
+ <h1>You are operating<br>a <em>climate.</em></h1>
+ <p class="sub">Every driver runs the cabin a certain way. Form 21-B reads how you set ten controls, classifies you as one of <b>16 operators</b>, and issues the permit. <b>Appeals are denied.</b></p>
+
+ <div class="cardstage">
+  <div class="stamp" id="stamp">Classified</div>
+  <div class="permit" id="permit" role="button" tabindex="0" aria-label="Operator permit — tap to re-issue">
+   <div class="pwm" id="pwm"></div>
+   <div class="phead">
+    <div><span class="ca">California</span><span class="usa">USA</span></div>
+    <div class="cp">CLIMATE PERMIT</div>
+   </div>
+   <svg class="pseal" viewBox="0 0 100 55" fill="#c78c19"><use href="#bear"/></svg>
+   <div class="pbody">
+    <div class="photo">
+     <div class="frame"><svg viewBox="0 0 100 44"><use href="#car"/></svg>
+      <div class="specimen">CLIMATE</div></div>
+     <div class="ssc mono" id="ssc">000/000/000</div>
+    </div>
+    <div class="pfields">
+     <div class="tworow">
+      <div class="row"><span class="n">4d</span><span class="lb">DLN</span><span class="v red big" id="f_dln">A0000000</span></div>
+      <div class="row"><span class="n">4b</span><span class="lb">EXP</span><span class="v red">12/31/2099</span></div>
+     </div>
+     <div class="row"><span class="n">3</span><span class="lb">DOB</span><span class="v red" id="f_dob">01/01/1970</span></div>
+     <div class="row"><span class="n">1</span><span class="lb">LN</span><span class="v navy" id="f_ln">OPERATOR</span></div>
+     <div class="row"><span class="n">2</span><span class="lb">FN</span><span class="v" id="f_fn">CLIMATE</span></div>
+     <div class="row"><span class="n">8</span><span class="v" id="f_veh">SUBARU OUTBACK</span></div>
+     <div class="row"><span class="v dim">SACRAMENTO, CA 95818</span></div>
+     <div class="tworow">
+      <div class="row"><span class="n">9</span><span class="lb">CLASS</span><span class="v navy" id="f_cls">ST</span></div>
+      <div class="row"><span class="n">9a</span><span class="lb">END</span><span class="v">NONE</span></div>
+      <div class="row"><span class="n">4a</span><span class="lb">ISS</span><span class="v red" id="f_iss">01/01/2026</span></div>
+     </div>
+    </div>
+   </div>
+   <div class="classbox">
+    <div class="ct">12 RESTRICTIONS &middot; CLASSIFICATION</div>
+    <div class="cn" id="f_name">SUBARCTIC TYRANT</div>
+    <div class="cd" id="f_text">This operator maintains cabin temperature at or below 64°F regardless of passenger consensus, seasonal conditions, or basic human decency.</div>
+   </div>
+   <div class="psig">
+    <div class="sigwrap">
+     <div class="sig" id="f_sig">Climate operator</div>
+     <div class="sigline"></div>
+     <div class="siglb">OPERATOR SIGNATURE</div>
+    </div>
+    <div class="ghost"><svg viewBox="0 0 100 44"><use href="#car"/></svg></div>
+   </div>
+   <div class="pholo">
+    <span id="f_holo">CA · DCC · A0000000</span>
+    <span class="mid">Issued under penalty of comfort</span>
+    <span>REV·04</span>
+   </div>
+  </div>
+  <div class="tap-hint">Tap the permit to re-issue &nbsp;&#8635;</div>
+ </div>
+
+ <div class="cta-row">
+  <a class="gplay" href="https://play.google.com/store/apps/details?id=app.climatepermit.android">
+   <svg viewBox="0 0 24 24"><path d="M3 2.5v19l11-9.5z" fill="#34a853"/><path d="M3 2.5l8.5 7.3L14 12 3 2.5z" fill="#ea4335"/><path d="M3 21.5l8.5-7.3L14 12 3 21.5z" fill="#fbbc04"/><path d="M14 12l4.5-3.9 3 1.7c1.3.8 1.3 2 0 2.8l-3 1.7L14 12z" fill="#4285f4"/></svg>
+   <span><span class="g1">Get it on</span><br><span class="g2">Google Play</span></span>
+  </a>
+  <div class="fine">Processing time: ~3 minutes &middot; No account &middot; No record kept</div>
+ </div>
+</section>
+
+<!-- SECTION 1 — MATRIX -->
+<section class="section" id="how">
+ <div class="sechead"><span class="sn">§ 1</span><h2 class="cal">Two axes decide everything</h2><span class="ln"></span></div>
+ <p class="matrix-intro">Classification is not a vibe. Your ten settings resolve to a position on a grid: who the cabin is run for, and how hard it is run. The four quadrants hold the sixteen operators.</p>
+ <div class="matrix">
+  <div class="maxis">&#9650; Controller</div>
+  <div class="mrow">
+   <div class="mside"><span>Self</span><span>Other</span></div>
+   <div class="quadgrid">
+    <div class="quad tyrant"><div class="qt">TYRANT</div><div class="qd">Runs the cabin for one. Negotiations are closed.</div></div>
+    <div class="quad concierge"><div class="qt">CONCIERGE</div><div class="qd">Manages everyone's comfort — whether or not it was requested.</div></div>
+    <div class="quad oblivious"><div class="qt">OBLIVIOUS</div><div class="qd">Set it once. Has noticed nothing since.</div></div>
+    <div class="quad diplomat"><div class="qt">DIPLOMAT</div><div class="qd">Yields the controls. At peace with the outcome.</div></div>
+   </div>
+  </div>
+  <div class="maxis">&#9660; Chill</div>
+ </div>
+</section>
+
+<!-- SECTION 2 — THE 16 -->
+<section class="section">
+ <div class="sechead"><span class="sn">§ 2</span><h2 class="cal">The sixteen classifications</h2><span class="ln"></span></div>
+ <div id="families"></div>
+</section>
+
+<!-- SECTION 3 — PROCESS -->
+<section class="section">
+ <div class="sechead"><span class="sn">§ 3</span><h2 class="cal">How the permit is issued</h2><span class="ln"></span></div>
+ <div class="steps">
+  <div class="step"><div class="sno">1.A</div><div><div class="sh">Operate the controls</div><div class="sp">Set driver temp, fan, vents, recirc, A/C, mode, rear vents, heated seats, pre-cool — exactly as you would in your own car.</div></div></div>
+  <div class="step"><div class="sno">1.B</div><div><div class="sh">Behavior is scored</div><div class="sp">Your choices resolve to a quadrant on the self/other × controller/chill grid. No opinions are asked. Your hands already told us.</div></div></div>
+  <div class="step"><div class="sno">1.C</div><div><div class="sh">The permit is issued</div><div class="sp">You receive a California Operator Permit naming your archetype — share it, or test a partner for cabin compatibility.</div></div></div>
+ </div>
+
+ <div class="band">
+  <h2 class="cal">Apply for your <em>Operator Permit</em></h2>
+  <p>Ten settings. Three minutes. One verdict you cannot appeal.</p>
+  <a class="gplay" href="https://play.google.com/store/apps/details?id=app.climatepermit.android">
+   <svg viewBox="0 0 24 24"><path d="M3 2.5v19l11-9.5z" fill="#34a853"/><path d="M3 2.5l8.5 7.3L14 12 3 2.5z" fill="#ea4335"/><path d="M3 21.5l8.5-7.3L14 12 3 21.5z" fill="#fbbc04"/><path d="M14 12l4.5-3.9 3 1.7c1.3.8 1.3 2 0 2.8l-3 1.7L14 12z" fill="#4285f4"/></svg>
+   <span><span class="g1">Get it on</span><br><span class="g2">Google Play</span></span>
+  </a>
+ </div>
+</section>
+
+<footer>
+ <div class="frow">
+  <svg class="fseal" viewBox="0 0 100 55" fill="#c78c19" style="opacity:.6"><use href="#bear"/></svg>
+  <div class="ftxt">
+   <b>California Department of Climate Control</b> &middot; Form 21-B, Rev 04<br>
+   Application processed on-device. No personal data is collected, transmitted, or retained.<br>
+   <a href="./">Privacy policy</a> &middot; gugosf@gmail.com
+   <div class="disc">Parody. Climate Permit is a satirical entertainment app and is not affiliated with, endorsed by, or connected to the California DMV or any government agency. No real permit is issued.</div>
+  </div>
+ </div>
+</footer>
+
+</div>
+
+<script>
+var A=[
+ ["Subarctic Tyrant","tyrant","Sets it to 62°F, recirc on, fan max. Passenger requests denied.","This operator maintains cabin temperature at or below 64°F regardless of passenger consensus, seasonal conditions, or basic human decency."],
+ ["Tropical Tyrant","tyrant","Keeps it at 78°F with the heater on. Others sweat in silence.","This operator considers 78°F the bare minimum for civilized travel and the heater a constitutional right."],
+ ["Recirc Loyalist","tyrant","Has not used fresh air mode since the Obama administration.","This operator sealed the cabin atmosphere in 2013 and has not permitted external air to enter the vehicle since."],
+ ["Fresh Air Fascist","tyrant","Window cracked at 75 mph in December. Everyone's hair is whipping. You don't care.","This operator believes fresh air is a moral imperative and highway wind resistance is merely character building."],
+ ["Set-and-Forget","oblivious","70°F AUTO since 2019. Genuinely confused why anyone is uncomfortable.","This operator established a climate protocol in 2019 and has not revisited it since. The system is working."],
+ ["Defrost Forever","oblivious","That button has been on since you bought the car. You don't know why.","This operator has run the vehicle in permanent defrost mode since purchase. The reason has been lost to time."],
+ ["Windows-Down Purist","oblivious","AC has never been used. \"It's a beautiful day.\" It is 97°F.","This operator has never activated the air conditioning system. It is always a beautiful day to this operator."],
+ ["Fan-On-3 Lifer","oblivious","Speed 3, vents at face, untouched. The dial has fused.","This operator has identified Fan Speed 3 as the optimal and only setting. It is three."],
+ ["The Anticipator","concierge","Pre-cools the car 10 minutes before departure. Checks the forecast.","This operator initiates pre-conditioning a minimum of 10 minutes prior to boarding. This is the bare minimum."],
+ ["The Adjuster","concierge","Tilts rear vents toward back-seat passengers before they sit down.","This operator pre-positions rear vents by anticipated seating before occupancy is established."],
+ ["The Negotiator","concierge","Asks \"too cold?\" within 30 seconds of every passenger entering.","This operator requires verbal temperature confirmation within 30 seconds of entry. This is concern, not surveillance."],
+ ["The Optimizer","concierge","Balances comfort and fuel efficiency. Has opinions about recirc.","This operator manages cabin climate as a multi-variable optimization problem. The car is 12% more efficient."],
+ ["Trust-Fall Diplomat","diplomat","\"Set your side to whatever you want.\" Has never touched another's zone.","This operator views dual-zone control as an expression of autonomy and has never touched the passenger zone."],
+ ["Default Citizen","diplomat","72°F AUTO. Same setting every drive. Causes no problems. Solves none.","This operator has resided at 72°F AUTO without incident since licensure. This is a compliment."],
+ ["Window Buddy","diplomat","Cracks one window. Lets the weather decide. At peace.","This operator cracks a single window and releases the outcome to the universe. This is philosophy."],
+ ["Weather Vane","diplomat","Adjusts based purely on outside temp. No personal preference. A leaf in the wind.","This operator has dissolved their preferences into data. They are at peace. They are also slightly alarming."]
+];
+var FAM={tyrant:["TYRANT","self · controller"],oblivious:["OBLIVIOUS","self · chill"],concierge:["CONCIERGE","other · controller"],diplomat:["DIPLOMAT","other · chill"]};
+var ORDER=["tyrant","oblivious","concierge","diplomat"];
+
+function hash(s){var h=0;for(var i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return h;}
+function dln(seed){var h=hash(seed);var num=(Math.abs(h)%9000000+1000000);var letter=String.fromCharCode(65+(Math.abs(h)%26));return letter+String(num).padStart(7,'0');}
+function dob(seed){var h=hash(seed);var mm=String((Math.abs(h)%12)+1).padStart(2,'0');var dd=String((Math.abs(h>>4)%28)+1).padStart(2,'0');var yy=1957+(Math.abs(h>>8)%38);return mm+'/'+dd+'/'+yy;}
+function initials(n){return n.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();}
+function names(n){var p=n.split(' ');if(p.length===1)return['OPERATOR',p[0].toUpperCase()];return[p.slice(0,-1).join(' ').toUpperCase(),p[p.length-1].toUpperCase()];}
+
+/* build 16 stubs grouped by family */
+(function(){
+ var box=document.getElementById('families');
+ ORDER.forEach(function(fam){
+  var members=A.filter(function(a){return a[1]===fam;});
+  var f=document.createElement('div');f.className='fam';
+  f.innerHTML='<div class="famhead"><span class="famchip '+fam+'">'+FAM[fam][0]+'</span><span class="fd">'+FAM[fam][1]+'</span></div>';
+  var g=document.createElement('div');g.className='stubs';
+  members.forEach(function(a){
+   var d=document.createElement('div');d.className='stub';
+   d.innerHTML='<div class="sdln">DLN '+dln(a[0])+'</div><div class="sname">'+a[0]+'</div><div class="sburn">'+a[2].replace(/</g,'&lt;')+'</div>';
+   g.appendChild(d);
+  });
+  f.appendChild(g);box.appendChild(f);
+ });
+})();
+
+/* permit card re-issue */
+var MAKES=[["SUBARU","OUTBACK"],["TOYOTA","CAMRY"],["JEEP","WRANGLER"],["TESLA","MODEL 3"],["HONDA","CIVIC"],["BMW","M3"],["FORD","F-150"],["NISSAN","LEAF"]];
+var idx=0;
+function issue(i){
+ var a=A[((i%A.length)+A.length)%A.length];
+ var mk=MAKES[Math.abs(hash(a[0]))%MAKES.length];
+ var seed=a[0]+mk[0]+mk[1];var d=dln(seed);
+ var nm=names(a[0]);
+ document.getElementById('f_dln').textContent=d;
+ document.getElementById('f_dob').textContent=dob(a[0]);
+ document.getElementById('f_ln').textContent=nm[1];
+ document.getElementById('f_fn').textContent=nm[0];
+ document.getElementById('f_veh').textContent=mk[0]+' '+mk[1];
+ document.getElementById('f_cls').textContent=initials(a[0]);
+ document.getElementById('f_name').textContent=a[0].toUpperCase();
+ document.getElementById('f_text').textContent=a[3];
+ document.getElementById('f_sig').textContent=a[0];
+ document.getElementById('f_holo').textContent='CA · DCC · '+d;
+ document.getElementById('ssc').textContent=d.slice(-3)+'/'+d.slice(-3)+'/'+d.slice(-3);
+ var st=document.getElementById('stamp');st.textContent=FAM[a[1]][0];
+}
+var pc=document.getElementById('permit');
+function reissue(){idx++;var p=pc;p.style.transform='rotate(-1.4deg) scale(.97)';setTimeout(function(){issue(idx);p.style.transform='';},140);}
+pc.addEventListener('click',reissue);
+pc.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();reissue();}});
+issue(0);
+var iss=new Date();document.getElementById('f_iss').textContent=String(iss.getMonth()+1).padStart(2,'0')+'/'+String(iss.getDate()).padStart(2,'0')+'/'+iss.getFullYear();
+
+/* permit watermarks */
+(function(){
+ var w=document.getElementById('pwm');var h='';
+ for(var i=0;i<8;i++)h+='<div class="socca" style="top:'+(8+i*12)+'%">STATE OF CALIFORNIA · STATE OF CALIFORNIA · STATE OF CALIFORNIA</div>';
+ for(var g=0;g<11;g++)h+='<div class="grid" style="top:'+(7+g*8)+'%"></div>';
+ h+='<svg class="pbear" viewBox="0 0 100 55" fill="#081c44"><use href="#bear"/></svg>';
+ h+='<div class="golden">★ THE GOLDEN STATE OF CLIMATE ★</div>';
+ h+='<div class="bigca">STATE OF CALIFORNIA</div>';
+ w.innerHTML=h;
+})();
+
+/* scroll reveal for stubs */
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.stub').forEach(function(s,i){s.style.transitionDelay=(i%2*70)+'ms';io.observe(s);});
+</script>
+</body>
+</html>

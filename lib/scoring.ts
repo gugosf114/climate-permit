@@ -83,9 +83,12 @@ export function pickArchetype(answers: Answers): { archetype: Archetype; x: numb
     else id = 'fan_on_3_lifer';
   } else if (t.x > 0 && t.y <= 0) {
     // CONCIERGE
-    if (t.precoolYes) id = 'the_anticipator';
+    // Negotiator is the full-service concierge (pre-cools AND runs rear
+    // vents); checking x >= 5 after the trait branches was unreachable —
+    // both x-heavy traits were already consumed above.
+    if (t.precoolYes && t.rearVentsOpen) id = 'the_negotiator';
+    else if (t.precoolYes) id = 'the_anticipator';
     else if (t.rearVentsOpen) id = 'the_adjuster';
-    else if (t.x >= 5) id = 'the_negotiator';
     else id = 'the_optimizer';
   } else {
     // DIPLOMAT
@@ -95,6 +98,7 @@ export function pickArchetype(answers: Answers): { archetype: Archetype; x: numb
     else id = 'weather_vane';
   }
 
-  const archetype = ARCHETYPES.find((a) => a.id === id) ?? ARCHETYPES[13];
+  const archetype =
+    ARCHETYPES.find((a) => a.id === id) ?? ARCHETYPES.find((a) => a.id === 'default_citizen') ?? ARCHETYPES[0];
   return { archetype, x: t.x, y: t.y };
 }

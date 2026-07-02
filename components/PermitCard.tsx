@@ -153,7 +153,6 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
   const dd = ddCode(archetype.id + make);
   const [firstName, lastName] = archeFirstLast(archetype.name);
   const cls = archeShortClass(archetype.name);
-  const wmText = dln.slice(0, 6).repeat(20);
 
   return (
     <View

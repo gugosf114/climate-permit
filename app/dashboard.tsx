@@ -2,17 +2,17 @@ import { View, Text, ScrollView, TouchableOpacity, Pressable, PanResponder } fro
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, Fragment, useRef } from 'react';
-const VENT_FACE_PNG = require('../assets/images/hvac-icons/face.png');
-const VENT_MIX_PNG = require('../assets/images/hvac-icons/mix.png');
-const VENT_FEET_PNG = require('../assets/images/hvac-icons/feet.png');
-const VENT_DEFROST_PNG = require('../assets/images/hvac-icons/defrost.png');
-const RECIRC_PNG = require('../assets/images/hvac-icons/recirc.png');
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, withSpring, Easing, FadeIn } from 'react-native-reanimated';
 import { useClimateStore, Answers } from '../lib/store';
 import { pickArchetype } from '../lib/scoring';
 import { getDashboardImage } from '../lib/dashboardImages';
+const VENT_FACE_PNG = require('../assets/images/hvac-icons/face.png');
+const VENT_MIX_PNG = require('../assets/images/hvac-icons/mix.png');
+const VENT_FEET_PNG = require('../assets/images/hvac-icons/feet.png');
+const VENT_DEFROST_PNG = require('../assets/images/hvac-icons/defrost.png');
+const RECIRC_PNG = require('../assets/images/hvac-icons/recirc.png');
 
 const TEMP_STEPS = [60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80];
 

@@ -26,7 +26,12 @@
     "production": {
       "android": {
         "buildType": "app-bundle"
-      }
+      },
+      "env": {
+        "EXPO_PUBLIC_ADMOB_BANNER_ID": "REPLACE_WITH_REAL_BANNER_UNIT_ID",
+        "EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID": "REPLACE_WITH_REAL_INTERSTITIAL_UNIT_ID"
+      },
+      "autoIncrement": true
     }
   },
   "submit": {

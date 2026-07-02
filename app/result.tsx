@@ -14,7 +14,7 @@ import { PermitCard } from '../components/PermitCard';
 import { useClimateStore } from '../lib/store';
 import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
-import { BANNER_AD_UNIT_ID } from '../lib/ads';
+import { BANNER_AD_UNIT_ID, ADS_ENABLED } from '../lib/ads';
 import { compatShareUrl, PLAY_STORE_URL } from '../lib/config';
 import { useDMV } from '../constants/tokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -357,19 +357,21 @@ export default function ResultScreen() {
         </Animated.View>
       </ScrollView>
 
-      {/* Sticky banner ad */}
-      <View style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        alignItems: 'center',
-        backgroundColor: DMV.paperDeep,
-        borderTopWidth: 1, borderTopColor: DMV.divider,
-      }}>
-        <BannerAd
-          unitId={BANNER_AD_UNIT_ID}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          requestOptions={{ requestNonPersonalizedAdsOnly: true }}
-        />
-      </View>
+      {/* Sticky banner ad — hidden entirely when real ad units aren't configured */}
+      {ADS_ENABLED && (
+        <View style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          alignItems: 'center',
+          backgroundColor: DMV.paperDeep,
+          borderTopWidth: 1, borderTopColor: DMV.divider,
+        }}>
+          <BannerAd
+            unitId={BANNER_AD_UNIT_ID}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+            requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+          />
+        </View>
+      )}
     </View>
   );
 }

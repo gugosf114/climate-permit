@@ -8,6 +8,8 @@ import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, wit
 import { useClimateStore, Answers } from '../lib/store';
 import { pickArchetype } from '../lib/scoring';
 import { getDashboardImage } from '../lib/dashboardImages';
+import { useDMV } from '../constants/tokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const VENT_FACE_PNG = require('../assets/images/hvac-icons/face.png');
 const VENT_MIX_PNG = require('../assets/images/hvac-icons/mix.png');
 const VENT_FEET_PNG = require('../assets/images/hvac-icons/feet.png');
@@ -16,24 +18,30 @@ const RECIRC_PNG = require('../assets/images/hvac-icons/recirc.png');
 
 const TEMP_STEPS = [60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80];
 
-// Unified DMV paper palette — matches landing/car-select/result/PermitCard
-const C = {
-  chrome:         '#f5efde',                 // page bg = paper
-  chromeSoft:     'rgba(14, 45, 99, 0.15)',  // soft navy divider
-  chromeDeep:     '#ede4c2',                 // scrollview bg
-  cream:          '#0a0a0a',                 // ink black (for header text — was gold accent)
-  panel:          '#fbf6e6',                 // form panel bg
-  panelLight:     '#e7ddc0',                 // soft paper highlight
-  panelEdge:      'rgba(20,20,20,0.18)',     // hairline rule
-  panelHighlight: '#e7ddc0',                 // form border tile
-  panelShadow:    '#cdbe8a',                 // form border tile shadow
-  amber:          '#0e2d63',                 // PRIMARY accent = navy (was gold)
-  amberDim:       '#7a8aa8',                 // soft navy
-  amberBright:    '#1e4385',                 // brighter navy
-  silk:           '#0a0a0a',                 // primary text on paper = ink black
-  silkDim:        '#4a4a4a',                 // secondary text
-  red:            '#b41d23',                 // CA DL red — ID number / urgent
-};
+// Unified DMV palette — themed (light/dark) via useDMV(). Key names kept from
+// the instrument-panel era; values map onto the shared DMV tokens. The knob
+// hardware constants below stay fixed: the quiz is a physical paper device,
+// and cream-faced knobs read like backlit hardware on the dark counter.
+function useDashC() {
+  const DMV = useDMV();
+  return {
+    chrome: DMV.paper,
+    chromeSoft: DMV.blueDivider,
+    chromeDeep: DMV.paperDeep,
+    cream: DMV.ink,
+    panel: DMV.paperLight,
+    panelLight: DMV.paperEdge,
+    panelEdge: DMV.divider,
+    panelHighlight: DMV.paperEdge,
+    panelShadow: DMV.panelShadow,
+    amber: DMV.caBlue,
+    amberDim: DMV.blueMuted,
+    amberBright: DMV.caBlueSoft,
+    silk: DMV.ink,
+    silkDim: DMV.inkSofter,
+    red: DMV.red,
+  };
+}
 
 function BrandBanner({
   make, model, answers, onCycleTemp,
@@ -43,6 +51,7 @@ function BrandBanner({
   answers: Answers;
   onCycleTemp: (direction: 'up' | 'down') => void;
 }) {
+  const C = useDashC();
   const temp = answers.driverTemp;
   const fan = answers.fanSpeed;
   const acOn = answers.acCompressor === 'on';
@@ -90,10 +99,10 @@ function BrandBanner({
           paddingVertical: 8, paddingHorizontal: 10, minWidth: 90,
         }}>
           <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.amber, fontWeight: 'bold', letterSpacing: 1 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, fontWeight: 'bold', letterSpacing: 1 }}>
               16
             </Text>
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.silkDim, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.silkDim, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
               HGT
             </Text>
           </View>
@@ -111,7 +120,7 @@ function BrandBanner({
               backgroundColor: acOn ? C.red : 'transparent',
               borderWidth: 1, borderColor: acOn ? C.red : C.amber,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: acOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: acOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
               A/C
             </Text>
             <View style={{
@@ -120,7 +129,7 @@ function BrandBanner({
               borderWidth: 1, borderColor: autoOn ? C.red : C.amber,
               marginLeft: 4,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: autoOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: autoOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
               AUTO
             </Text>
             <View style={{
@@ -129,13 +138,13 @@ function BrandBanner({
               borderWidth: 1, borderColor: recircOn ? C.red : C.amber,
               marginLeft: 4,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: recircOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: recircOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
               RCRC
             </Text>
           </View>
 
           <View style={{ marginTop: 6, flexDirection: 'row', gap: 2, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.silkDim, letterSpacing: 1.5, marginRight: 4, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.silkDim, letterSpacing: 1.5, marginRight: 4, fontWeight: 'bold' }}>
               FAN
             </Text>
             {[1, 2, 3, 4, 5, 6, 7].map((n) => {
@@ -171,6 +180,7 @@ function BrandBanner({
 }
 
 function PowerDot({ on }: { on: boolean }) {
+  const C = useDashC();
   const s = useSharedValue(0.6);
   useEffect(() => {
     if (on) {
@@ -195,6 +205,7 @@ function PowerDot({ on }: { on: boolean }) {
 }
 
 function LCDReadout({ value, label, big }: { value?: number | 'same'; label: string; big?: boolean }) {
+  const C = useDashC();
   let display: string;
   let degree = false;
   if (value === undefined) display = '—';
@@ -212,7 +223,7 @@ function LCDReadout({ value, label, big }: { value?: number | 'same'; label: str
       {/* Field-number prefix matching CA DL convention */}
       <View style={{ flexDirection: 'row', alignItems: 'baseline', marginBottom: 4, gap: 4 }}>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 7, color: C.amber,
+          fontFamily: 'monospace', fontSize: 8, color: C.amber,
           fontWeight: 'bold', letterSpacing: 1,
         }}>
           16
@@ -354,6 +365,7 @@ function Knob({
   dashColorFn?: (i: number, active: boolean) => string;
   activeIconColor?: string;
 }) {
+  const C = useDashC();
   const radius = size / 2;
   const dashR = radius - 12;
   const labelR = radius + labelOffset;
@@ -791,7 +803,7 @@ function CircleButton({
           borderWidth: 1, borderColor: POINTER_WHITE,
         }}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 6,
+            fontFamily: 'monospace', fontSize: 8,
             color: POINTER_WHITE,
             fontWeight: 'bold',
             letterSpacing: 1,
@@ -821,6 +833,7 @@ function DashButton({
   flex?: number;
   minWidth?: number;
 }) {
+  const C = useDashC();
   // DMV form-stamped checkbox aesthetic: cream paper bg, navy line outline,
   // red filled stamp + red text when checked
   return (
@@ -849,7 +862,7 @@ function DashButton({
       }}>
         {active && (
           <Text style={{
-            color: C.panel, fontSize: 7,
+            color: C.panel, fontSize: 8,
             fontWeight: 'bold', lineHeight: 7,
           }}>
             ✓
@@ -925,6 +938,7 @@ function AutoPill({
 }
 
 function SectionLabel({ children, icon }: { children: React.ReactNode; icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'] }) {
+  const C = useDashC();
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 14, marginBottom: 8 }}>
       <View style={{ flex: 0, height: 1, width: 12, backgroundColor: C.panelEdge }} />
@@ -951,6 +965,7 @@ function PanelButton({
   flex?: number;
   wide?: boolean;
 }) {
+  const C = useDashC();
   return (
     <Pressable
       onPress={async () => { await Haptics.selectionAsync(); onPress(); }}
@@ -994,7 +1009,7 @@ function PanelButton({
         {label}
       </Text>
       {sub && (
-        <Text style={{ fontFamily: 'monospace', fontSize: 7, color: active ? C.amber : C.silkDim, marginTop: 2, letterSpacing: 1 }}>
+        <Text style={{ fontFamily: 'monospace', fontSize: 8, color: active ? C.amber : C.silkDim, marginTop: 2, letterSpacing: 1 }}>
           {sub}
         </Text>
       )}
@@ -1017,6 +1032,8 @@ function VentArrows({ direction }: { direction: 'face' | 'feet' | 'defrost' | 'm
 }
 
 export default function DashboardScreen() {
+  const C = useDashC();
+  const insets = useSafeAreaInsets();
   const { make, model, hasDualZone, hasRearVents, answers, setAnswer, setResult } = useClimateStore();
 
   const required: (keyof Answers)[] = [
@@ -1061,7 +1078,7 @@ export default function DashboardScreen() {
     <View style={{ flex: 1, backgroundColor: C.chrome }}>
       {/* DMV official header band — matches landing/car-select/result */}
       <View style={{
-        paddingTop: 50, paddingBottom: 10, paddingHorizontal: 22,
+        paddingTop: insets.top + 12, paddingBottom: 10, paddingHorizontal: 22,
         borderBottomWidth: 1, borderBottomColor: C.panelEdge,
         backgroundColor: 'rgba(251,246,230,0.92)',
         flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
@@ -1173,7 +1190,7 @@ export default function DashboardScreen() {
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               <PowerDot on={autoOn} />
-              <Text style={{ fontFamily: 'monospace', fontSize: 7, color: autoOn ? C.amber : C.silkDim, letterSpacing: 2 }}>
+              <Text style={{ fontFamily: 'monospace', fontSize: 8, color: autoOn ? C.amber : C.silkDim, letterSpacing: 2 }}>
                 AUTO
               </Text>
             </View>
@@ -1337,10 +1354,10 @@ export default function DashboardScreen() {
 
           {/* Panel serial footer */}
           <View style={{ marginTop: 18, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.panelEdge, flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.silkDim, letterSpacing: 2 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.silkDim, letterSpacing: 2 }}>
               CCU-PNL · REV 04
             </Text>
-            <Text style={{ fontFamily: 'monospace', fontSize: 7, color: C.silkDim, letterSpacing: 2 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.silkDim, letterSpacing: 2 }}>
               OEM · NON-USER-SERVICEABLE
             </Text>
           </View>

@@ -3,25 +3,10 @@ import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Svg, { Path } from 'react-native-svg';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import { useDMV, useThemeName, useThemeStore } from '../constants/tokens';
+import { useColorScheme } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const DMV = {
-  paper:       '#f5efde',
-  paperLight:  '#fbf6e6',
-  paperDeep:   '#ede4c2',
-  border:      '#8a7a3a',
-  caBlue:      '#0e2d63',
-  caBlueSoft:  '#1e4385',
-  caBlueDeep:  '#081c44',
-  ink:         '#0a0a0a',
-  inkSoft:     '#2c2c2c',
-  inkDim:      '#7a7a7a',
-  red:         '#b41d23',
-  redDeep:     '#7a1218',
-  gold:        '#c78c19',
-  goldDeep:    '#8b6310',
-  hologram:    '#dba519',
-  divider:     'rgba(20,20,20,0.18)',
-};
 
 function BearSilhouette({ size, color }: { size: number; color: string }) {
   return (
@@ -39,6 +24,7 @@ function BearSilhouette({ size, color }: { size: number; color: string }) {
 }
 
 function DocumentBackground() {
+  const DMV = useDMV();
   return (
     <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
       <Text style={{
@@ -59,7 +45,7 @@ function DocumentBackground() {
         <Text key={`r${i}`} style={{
           position: 'absolute', left: 0, right: 0,
           top: 70 + i * 60,
-          fontSize: 7, fontWeight: 'bold',
+          fontSize: 8, fontWeight: 'bold',
           color: DMV.caBlue, opacity: 0.055,
           letterSpacing: 2.5,
           textAlign: 'center',
@@ -94,9 +80,11 @@ function DocumentBackground() {
 }
 
 function OfficialHeader() {
+  const insets = useSafeAreaInsets();
+  const DMV = useDMV();
   return (
     <View style={{
-      paddingTop: 50, paddingBottom: 10, paddingHorizontal: 22,
+      paddingTop: insets.top + 12, paddingBottom: 10, paddingHorizontal: 22,
       borderBottomWidth: 1, borderBottomColor: DMV.divider,
       backgroundColor: 'rgba(251,246,230,0.92)',
       flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
@@ -131,6 +119,10 @@ function OfficialHeader() {
 }
 
 export default function LandingScreen() {
+  const DMV = useDMV();
+  const themeName = useThemeName();
+  const toggleTheme = useThemeStore((s) => s.toggle);
+  const systemScheme = useColorScheme() ?? 'light';
   async function handleStart() {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.push('/car-select');
@@ -140,6 +132,24 @@ export default function LandingScreen() {
     <View style={{ flex: 1, backgroundColor: DMV.paper }}>
       <DocumentBackground />
       <OfficialHeader />
+
+      <TouchableOpacity
+        onPress={() => toggleTheme(systemScheme)}
+        accessibilityRole="switch"
+        accessibilityState={{ checked: themeName === 'dark' }}
+        accessibilityLabel="Night service mode"
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        style={{
+          alignSelf: 'flex-end', marginRight: 22, marginTop: 8,
+          borderWidth: 1, borderColor: DMV.border,
+          paddingVertical: 5, paddingHorizontal: 10,
+          backgroundColor: DMV.paperLight,
+        }}
+      >
+        <Text style={{ fontFamily: 'monospace', fontSize: 9, color: DMV.caBlue, letterSpacing: 1.5 }}>
+          {themeName === 'dark' ? '\u2600 DAY WINDOW' : '\u263e NIGHT SERVICE'}
+        </Text>
+      </TouchableOpacity>
 
       <ScrollView
         style={{ flex: 1 }}
@@ -171,7 +181,7 @@ export default function LandingScreen() {
             <View style={{ height: 4, width: 70, backgroundColor: DMV.red }} />
             <View style={{ height: 1, flex: 1, backgroundColor: DMV.caBlue, opacity: 0.5 }} />
             <Text style={{
-              fontFamily: 'monospace', fontSize: 7,
+              fontFamily: 'monospace', fontSize: 8,
               color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1.5,
             }}>
               DEPT · OF · CLIMATE · CONTROL
@@ -254,6 +264,8 @@ export default function LandingScreen() {
           <TouchableOpacity
             onPress={handleStart}
             activeOpacity={0.82}
+            accessibilityRole="button"
+            accessibilityLabel="Begin application"
             style={{
               backgroundColor: DMV.caBlue,
               paddingVertical: 19,
@@ -282,7 +294,7 @@ export default function LandingScreen() {
           }}>
             <View style={{ height: 1, flex: 1, backgroundColor: DMV.divider }} />
             <Text style={{
-              fontFamily: 'monospace', fontSize: 7,
+              fontFamily: 'monospace', fontSize: 8,
               color: DMV.inkDim, letterSpacing: 1.5, fontWeight: 'bold',
             }}>
               AUTHORIZED

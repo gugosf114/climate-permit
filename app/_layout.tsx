@@ -5,8 +5,11 @@ import { StatusBar } from 'expo-status-bar';
 import { initAds } from '../lib/ads';
 import { readInstallReferrer, parseCompatPayload } from '../lib/installReferrer';
 import { useClimateStore } from '../lib/store';
+import { useDMV, useThemeName } from '../constants/tokens';
 
 export default function RootLayout() {
+  const DMV = useDMV();
+  const themeName = useThemeName();
   useEffect(() => {
     initAds();
   }, []);
@@ -28,11 +31,11 @@ export default function RootLayout() {
 
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style={themeName === 'dark' ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#0a0e14' },
+          contentStyle: { backgroundColor: DMV.paper },
           animation: 'slide_from_right',
         }}
       />

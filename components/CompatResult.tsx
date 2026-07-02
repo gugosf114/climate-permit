@@ -8,20 +8,9 @@ import { PermitCard } from './PermitCard';
 import { Archetype } from '../data/archetypes';
 import { Answers } from '../lib/store';
 import { compatScore, compatVerdict } from '../lib/encode';
+import { useDMV } from '../constants/tokens';
 
 // DMV paper palette — matches landing/car-select/dashboard/result/PermitCard
-const DMV = {
-  paper:       '#f5efde',
-  paperLight:  '#fbf6e6',
-  border:      '#8a7a3a',
-  caBlue:      '#0e2d63',
-  caBlueSoft:  '#1e4385',
-  caBlueDeep:  '#081c44',
-  inkDim:      '#7a7a7a',
-  red:         '#b41d23',
-  gold:        '#c78c19',
-  divider:     'rgba(20,20,20,0.18)',
-};
 
 interface Props {
   myArchetype: Archetype;
@@ -33,6 +22,7 @@ interface Props {
 }
 
 export function CompatResult(p: Props) {
+  const DMV = useDMV();
   const ref = useRef<ViewShot>(null);
   const score = compatScore(p.myX, p.myY, p.partnerX, p.partnerY);
   const verdict = compatVerdict(score);
@@ -155,6 +145,7 @@ export function CompatResult(p: Props) {
         {/* Share */}
         <Animated.View entering={FadeIn.duration(500).delay(700)} style={{ paddingHorizontal: 24, paddingTop: 18 }}>
           <TouchableOpacity
+            accessibilityRole="button"
             activeOpacity={0.88}
             onPress={handleShare}
             style={{

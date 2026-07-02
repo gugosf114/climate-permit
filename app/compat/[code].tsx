@@ -7,21 +7,11 @@ import { useClimateStore } from '../../lib/store';
 import { loadAndShowInterstitial } from '../../lib/ads';
 import { CompatResult } from '../../components/CompatResult';
 import { ARCHETYPES } from '../../data/archetypes';
+import { useDMV } from '../../constants/tokens';
 // DMV paper palette — matches landing/car-select/dashboard/result/PermitCard
-const DMV = {
-  paper:       '#f5efde',
-  paperLight:  '#fbf6e6',
-  border:      '#8a7a3a',
-  caBlue:      '#0e2d63',
-  caBlueSoft:  '#1e4385',
-  caBlueDeep:  '#081c44',
-  ink:         '#0a0a0a',
-  inkSoft:     '#2c2c2c',
-  inkDim:      '#7a7a7a',
-  red:         '#b41d23',
-};
 
 export default function CompatScreen() {
+  const DMV = useDMV();
   const { code } = useLocalSearchParams<{ code: string }>();
   const store = useClimateStore();
   const [partnerPayload, setPartnerPayload] = useState<CompatPayload | null>(null);
@@ -55,6 +45,7 @@ export default function CompatScreen() {
             Invalid Permit Link
           </Text>
           <TouchableOpacity
+            accessibilityRole="button"
             style={{ backgroundColor: DMV.caBlue, borderWidth: 1.5, borderColor: DMV.caBlueDeep, paddingVertical: 16, paddingHorizontal: 32 }}
             onPress={() => router.replace('/')}
             activeOpacity={0.88}
@@ -106,6 +97,7 @@ export default function CompatScreen() {
           </View>
 
           <TouchableOpacity
+            accessibilityRole="button"
             style={{
               backgroundColor: DMV.caBlue, borderWidth: 1.5, borderColor: DMV.caBlueDeep, paddingVertical: 18, width: '100%', alignItems: 'center',
             }}

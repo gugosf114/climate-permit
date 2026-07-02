@@ -28,8 +28,8 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_ADMOB_BANNER_ID": "REPLACE_WITH_REAL_BANNER_UNIT_ID",
-        "EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID": "REPLACE_WITH_REAL_INTERSTITIAL_UNIT_ID"
+        "EXPO_PUBLIC_ADMOB_BANNER_ID": "ca-app-pub-8333116290939960/2991530387",
+        "EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID": "ca-app-pub-8333116290939960/4025410452"
       },
       "autoIncrement": true
     }

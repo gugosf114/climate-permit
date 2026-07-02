@@ -8,7 +8,20 @@ import { PermitCard } from './PermitCard';
 import { Archetype } from '../data/archetypes';
 import { Answers } from '../lib/store';
 import { compatScore, compatVerdict } from '../lib/encode';
-import { palette as C, glow, goldBevel } from '../constants/tokens';
+
+// DMV paper palette — matches landing/car-select/dashboard/result/PermitCard
+const DMV = {
+  paper:       '#f5efde',
+  paperLight:  '#fbf6e6',
+  border:      '#8a7a3a',
+  caBlue:      '#0e2d63',
+  caBlueSoft:  '#1e4385',
+  caBlueDeep:  '#081c44',
+  inkDim:      '#7a7a7a',
+  red:         '#b41d23',
+  gold:        '#c78c19',
+  divider:     'rgba(20,20,20,0.18)',
+};
 
 interface Props {
   myArchetype: Archetype;
@@ -24,7 +37,7 @@ export function CompatResult(p: Props) {
   const score = compatScore(p.myX, p.myY, p.partnerX, p.partnerY);
   const verdict = compatVerdict(score);
 
-  const scoreColor = score >= 60 ? C.goldBright : score >= 40 ? C.gold : C.red;
+  const scoreColor = score >= 60 ? DMV.caBlue : score >= 40 ? DMV.gold : DMV.red;
 
   // Signature moment: the index counts up from 0 (easeOutCubic) on reveal.
   // Plain rAF + state so it renders reliably on any device / New Architecture.
@@ -60,22 +73,22 @@ export function CompatResult(p: Props) {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: C.bg }}>
+    <View style={{ flex: 1, backgroundColor: DMV.paper }}>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 48 }}>
         {/* Header */}
         <Animated.View
           entering={FadeIn.duration(500)}
           style={{
             paddingTop: 60, paddingBottom: 16, paddingHorizontal: 24,
-            borderBottomWidth: 1, borderBottomColor: C.divider,
+            borderBottomWidth: 1, borderBottomColor: DMV.divider,
           }}
         >
-          <Text style={{ fontFamily: 'monospace', fontSize: 9, color: C.gold, opacity: 0.8, textTransform: 'uppercase', letterSpacing: 4 }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 9, color: DMV.caBlueSoft, textTransform: 'uppercase', letterSpacing: 4 }}>
             Climate Compatibility
           </Text>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 22, color: C.goldBright, fontWeight: 'bold',
-            textTransform: 'uppercase', letterSpacing: 3, marginTop: 6, ...glow(C.gold, 14),
+            fontFamily: 'monospace', fontSize: 22, color: DMV.caBlue, fontWeight: 'bold',
+            textTransform: 'uppercase', letterSpacing: 3, marginTop: 6,
           }}>
             Assessment
           </Text>
@@ -83,49 +96,48 @@ export function CompatResult(p: Props) {
 
         {/* Shareable card */}
         <ViewShot ref={ref} options={{ format: 'jpg', quality: 0.95 }}>
-          <View style={{ backgroundColor: C.bg }}>
+          <View style={{ backgroundColor: DMV.paper }}>
             {/* Score block */}
             <Animated.View
               entering={FadeInDown.duration(600).delay(150)}
               style={{
                 alignItems: 'center', paddingVertical: 30, paddingHorizontal: 24,
-                borderBottomWidth: 1, borderBottomColor: C.divider,
+                borderBottomWidth: 1, borderBottomColor: DMV.divider,
               }}
             >
-              <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.textMuted, textTransform: 'uppercase', letterSpacing: 3, marginBottom: 4 }}>
+              <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim, textTransform: 'uppercase', letterSpacing: 3, marginBottom: 4 }}>
                 Compatibility Index
               </Text>
               <Text
                 style={{
                   fontFamily: 'monospace', fontSize: 76, fontWeight: 'bold',
                   color: scoreColor, lineHeight: 84, textAlign: 'center',
-                  textShadowColor: scoreColor, textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 22,
                 }}
               >
                 {shown}%
               </Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-                <View style={{ width: 24, height: 1, backgroundColor: C.gold, opacity: 0.5 }} />
+                <View style={{ width: 24, height: 1, backgroundColor: DMV.border, opacity: 0.7 }} />
                 <Text style={{
-                  fontFamily: 'monospace', fontSize: 12, color: C.red, letterSpacing: 2,
+                  fontFamily: 'monospace', fontSize: 12, color: DMV.red, letterSpacing: 2,
                   textTransform: 'uppercase', textAlign: 'center', marginHorizontal: 10, maxWidth: 240,
                 }}>
                   {verdict}
                 </Text>
-                <View style={{ width: 24, height: 1, backgroundColor: C.gold, opacity: 0.5 }} />
+                <View style={{ width: 24, height: 1, backgroundColor: DMV.border, opacity: 0.7 }} />
               </View>
             </Animated.View>
 
             {/* Two permit cards */}
             <View style={{ flexDirection: 'row', paddingHorizontal: 12, paddingTop: 16, gap: 8 }}>
               <Animated.View entering={FadeInDown.duration(500).delay(350)} style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.gold, opacity: 0.65, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 2, marginBottom: 6 }}>
+                <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue, opacity: 0.85, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 2, marginBottom: 6 }}>
                   You
                 </Text>
                 <PermitCard compact archetype={p.myArchetype} make={p.myMake} model={p.myModel} answers={p.myAnswers} />
               </Animated.View>
               <Animated.View entering={FadeInDown.duration(500).delay(500)} style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.gold, opacity: 0.65, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 2, marginBottom: 6 }}>
+                <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue, opacity: 0.85, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 2, marginBottom: 6 }}>
                   Partner
                 </Text>
                 <PermitCard compact archetype={p.partnerArchetype} make={p.partnerMake} model={p.partnerModel} answers={p.partnerAnswers} />
@@ -133,7 +145,7 @@ export function CompatResult(p: Props) {
             </View>
 
             <View style={{ alignItems: 'center', paddingVertical: 18 }}>
-              <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.gold, opacity: 0.5, letterSpacing: 3, textTransform: 'uppercase' }}>
+              <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim, letterSpacing: 3, textTransform: 'uppercase' }}>
                 climatepermit.app
               </Text>
             </View>
@@ -146,12 +158,12 @@ export function CompatResult(p: Props) {
             activeOpacity={0.88}
             onPress={handleShare}
             style={{
-              backgroundColor: C.gold, ...goldBevel,
+              backgroundColor: DMV.caBlue,
               paddingVertical: 18, alignItems: 'center',
-              shadowColor: C.gold, shadowOpacity: 0.45, shadowRadius: 16, shadowOffset: { width: 0, height: 5 },
+              borderWidth: 1.5, borderColor: DMV.caBlueDeep,
             }}
           >
-            <Text style={{ fontFamily: 'monospace', fontSize: 12, color: C.bg, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 12, color: DMV.paperLight, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3 }}>
               Share Results
             </Text>
           </TouchableOpacity>

@@ -179,7 +179,7 @@ export default function ResultScreen() {
       } else {
         Share.share({ message: `I got "${archetype.name}" on Climate Permit. Get it: ${PLAY_STORE_URL}` });
       }
-    } catch (e) {
+    } catch {
       Share.share({ message: `I got "${archetype.name}" on Climate Permit. Get it: ${PLAY_STORE_URL}` });
     }
   }

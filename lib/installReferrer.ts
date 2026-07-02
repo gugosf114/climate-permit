@@ -4,7 +4,7 @@
 export function readInstallReferrer(): Promise<string | null> {
   return new Promise((resolve) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+       
       const { PlayInstallReferrer } = require('react-native-play-install-referrer');
       if (!PlayInstallReferrer || typeof PlayInstallReferrer.getInstallReferrerInfo !== 'function') {
         resolve(null);

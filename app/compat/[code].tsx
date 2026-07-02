@@ -121,8 +121,21 @@ export default function CompatScreen() {
     );
   }
 
-  const myArchetype = ARCHETYPES.find((a) => a.id === store.archetypeId)!;
-  const partnerArchetype = ARCHETYPES.find((a) => a.id === partnerPayload.archetypeId)!;
+  const myArchetype = ARCHETYPES.find((a) => a.id === store.archetypeId);
+  const partnerArchetype = ARCHETYPES.find((a) => a.id === partnerPayload.archetypeId);
+  if (!myArchetype || !partnerArchetype) {
+    // Tampered/garbled payload that survived decode — treat like a bad link.
+    return (
+      <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
+        <Text style={{
+          fontFamily: 'monospace', fontSize: 14, color: C.red, textTransform: 'uppercase',
+          letterSpacing: 2, textAlign: 'center', ...glow(C.red, 10),
+        }}>
+          Invalid Permit Link
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <CompatResult

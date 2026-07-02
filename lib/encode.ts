@@ -1,4 +1,3 @@
-import { Answers } from './store';
 
 export interface CompatPayload {
   answers: Record<string, string | number>;

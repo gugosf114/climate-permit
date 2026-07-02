@@ -8,6 +8,7 @@ import { PermitCard } from './PermitCard';
 import { Archetype } from '../data/archetypes';
 import { Answers } from '../lib/store';
 import { compatScore, compatVerdict } from '../lib/encode';
+import { PLAY_STORE_URL } from '../lib/config';
 import { useDMV } from '../constants/tokens';
 
 // DMV paper palette — matches landing/car-select/dashboard/result/PermitCard
@@ -58,7 +59,7 @@ export function CompatResult(p: Props) {
         throw new Error('sharing unavailable');
       }
     } catch {
-      Share.share({ message: `Our climate compatibility: ${score}% — "${verdict}" climatepermit.app` });
+      Share.share({ message: `Our climate compatibility: ${score}% — "${verdict}" Get your permit: ${PLAY_STORE_URL}` });
     }
   }
 
@@ -136,7 +137,7 @@ export function CompatResult(p: Props) {
 
             <View style={{ alignItems: 'center', paddingVertical: 18 }}>
               <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim, letterSpacing: 3, textTransform: 'uppercase' }}>
-                climatepermit.app
+                CLIMATE PERMIT · GET YOURS ON GOOGLE PLAY
               </Text>
             </View>
           </View>

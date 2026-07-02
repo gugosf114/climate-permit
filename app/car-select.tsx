@@ -9,25 +9,9 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { CARS, CarEntry, MAKES, DashboardStyle } from '../data/cars';
 import { useClimateStore } from '../lib/store';
 import { getBrandLogo } from '../lib/brandLogos';
+import { useDMV } from '../constants/tokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const DMV = {
-  paper:       '#f5efde',
-  paperLight:  '#fbf6e6',
-  paperDeep:   '#ede4c2',
-  border:      '#8a7a3a',
-  caBlue:      '#0e2d63',
-  caBlueSoft:  '#1e4385',
-  caBlueDeep:  '#081c44',
-  ink:         '#0a0a0a',
-  inkSoft:     '#2c2c2c',
-  inkDim:      '#7a7a7a',
-  red:         '#b41d23',
-  gold:        '#c78c19',
-  goldDeep:    '#8b6310',
-  hologram:    '#dba519',
-  divider:     'rgba(20,20,20,0.18)',
-  rowBorder:   'rgba(20,20,20,0.12)',
-};
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -55,6 +39,7 @@ function BearSilhouette({ size, color }: { size: number; color: string }) {
 }
 
 function DocumentBackground() {
+  const DMV = useDMV();
   return (
     <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
       <Text style={{
@@ -69,7 +54,7 @@ function DocumentBackground() {
         <Text key={`r${i}`} style={{
           position: 'absolute', left: 0, right: 0,
           top: 70 + i * 56,
-          fontSize: 7, fontWeight: 'bold',
+          fontSize: 8, fontWeight: 'bold',
           color: DMV.caBlue, opacity: 0.05,
           letterSpacing: 2.5, textAlign: 'center',
         }}>
@@ -94,9 +79,11 @@ function DocumentBackground() {
 }
 
 function OfficialHeader() {
+  const insets = useSafeAreaInsets();
+  const DMV = useDMV();
   return (
     <View style={{
-      paddingTop: 50, paddingBottom: 10, paddingHorizontal: 22,
+      paddingTop: insets.top + 12, paddingBottom: 10, paddingHorizontal: 22,
       borderBottomWidth: 1, borderBottomColor: DMV.divider,
       backgroundColor: 'rgba(251,246,230,0.92)',
       flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
@@ -138,9 +125,12 @@ function PaperRow({
   onPress: () => void;
   idx: number;
 }) {
+  const DMV = useDMV();
   return (
     <Animated.View entering={FadeInDown.duration(320).delay(20 + idx * 22)}>
       <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={label}
         onPress={onPress}
         activeOpacity={0.7}
         style={{
@@ -179,6 +169,7 @@ function PaperRow({
 }
 
 export default function CarSelectScreen() {
+  const DMV = useDMV();
   const [selectedMake, setSelectedMake] = useState<string | null>(null);
   const setVehicle = useClimateStore((s) => s.setVehicle);
 

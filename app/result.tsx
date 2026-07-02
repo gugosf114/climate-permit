@@ -16,25 +16,9 @@ import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
 import { BANNER_AD_UNIT_ID } from '../lib/ads';
 import { compatShareUrl, PLAY_STORE_URL } from '../lib/config';
+import { useDMV } from '../constants/tokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const DMV = {
-  paper:       '#f5efde',
-  paperLight:  '#fbf6e6',
-  paperDeep:   '#ede4c2',
-  border:      '#8a7a3a',
-  caBlue:      '#0e2d63',
-  caBlueSoft:  '#1e4385',
-  caBlueDeep:  '#081c44',
-  ink:         '#0a0a0a',
-  inkSoft:     '#2c2c2c',
-  inkDim:      '#7a7a7a',
-  red:         '#b41d23',
-  redDeep:     '#7a1218',
-  gold:        '#c78c19',
-  goldDeep:    '#8b6310',
-  hologram:    '#dba519',
-  divider:     'rgba(20,20,20,0.18)',
-};
 
 function BearSilhouette({ size, color }: { size: number; color: string }) {
   return (
@@ -52,9 +36,11 @@ function BearSilhouette({ size, color }: { size: number; color: string }) {
 }
 
 function OfficialHeader() {
+  const insets = useSafeAreaInsets();
+  const DMV = useDMV();
   return (
     <View style={{
-      paddingTop: 50, paddingBottom: 10, paddingHorizontal: 22,
+      paddingTop: insets.top + 12, paddingBottom: 10, paddingHorizontal: 22,
       borderBottomWidth: 1, borderBottomColor: DMV.divider,
       backgroundColor: 'rgba(251,246,230,0.92)',
       flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
@@ -89,6 +75,7 @@ function OfficialHeader() {
 
 /** "ISSUED" official stamp that slams onto the permit just after it appears. */
 function PermitStamp() {
+  const DMV = useDMV();
   const scale = useSharedValue(2.6);
   const opacity = useSharedValue(0);
   useEffect(() => {
@@ -117,7 +104,7 @@ function PermitStamp() {
           ISSUED
         </Text>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 7, color: DMV.red,
+          fontFamily: 'monospace', fontSize: 8, color: DMV.red,
           letterSpacing: 2, opacity: 0.85, marginTop: 1,
         }}>
           DEPT · OF · CLIMATE · CONTROL
@@ -128,6 +115,7 @@ function PermitStamp() {
 }
 
 export default function ResultScreen() {
+  const DMV = useDMV();
   const viewShotRef = useRef<ViewShot>(null);
   const store = useClimateStore();
   const _archetype = ARCHETYPES.find((a) => a.id === store.archetypeId);
@@ -148,6 +136,7 @@ export default function ResultScreen() {
           The application must be completed in full before a permit is issued.
         </Text>
         <TouchableOpacity
+            accessibilityRole="button"
           style={{
             backgroundColor: DMV.caBlue,
             paddingVertical: 16, paddingHorizontal: 36,
@@ -295,6 +284,7 @@ export default function ResultScreen() {
         {/* Actions */}
         <Animated.View entering={FadeIn.duration(500).delay(720)} style={{ paddingHorizontal: 22, gap: 10 }}>
           <TouchableOpacity
+            accessibilityRole="button"
             activeOpacity={0.82}
             onPress={handleShare}
             style={{
@@ -314,6 +304,7 @@ export default function ResultScreen() {
 
           {hasCompat ? (
             <TouchableOpacity
+            accessibilityRole="button"
               activeOpacity={0.82}
               onPress={() => router.push(`/compat/${store.compatPayload}`)}
               style={{
@@ -332,6 +323,7 @@ export default function ResultScreen() {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
+            accessibilityRole="button"
               activeOpacity={0.78}
               onPress={handleCompatLink}
               style={{
@@ -350,6 +342,7 @@ export default function ResultScreen() {
           )}
 
           <TouchableOpacity
+            accessibilityRole="button"
             activeOpacity={0.6}
             onPress={() => { store.reset(); router.replace('/'); }}
             style={{ paddingVertical: 14, alignItems: 'center' }}

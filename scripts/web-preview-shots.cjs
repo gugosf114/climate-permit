@@ -62,31 +62,40 @@ async function clickText(page, text, nth = 0) {
 
 async function answerDashboard(page, tag) {
   await page.waitForTimeout(1200);
+  // Driver temp: tap the dashboard photo once (BrandBanner Pressable, +1 step).
+  await page.locator('img').first().click({ force: true });
+  await page.waitForTimeout(250);
   // knobs in DOM order: driver temp, [passenger temp], fan, vent
-  let k = await knobRects(page);
-  const dual = k.knobs.length === 4;
-  const kn = async (idx, dx, dy) => {
-    let r = (await knobRects(page)).knobs[idx];
-    await scrollCenter(page, r);
-    r = (await knobRects(page)).knobs[idx];
-    await page.mouse.click(r.x + r.w / 2 + dx, r.y + r.h / 2 + dy);
-    await page.waitForTimeout(250);
-  };
-  await kn(0, 0, -30);                    // driver temp -> 70
+  const dual = (await knobRects(page)).knobs.length === 4;
   if (dual) {
-    try { await clickText(page, 'SAME AS DRIVER'); } catch (e) { await kn(1, 0, -30); }
+    try { await clickText(page, 'SAME AS DRIVER'); } catch (e) { /* non-dual fallback */ }
   }
-  await kn(dual ? 2 : 1, 30, 0);          // fan -> auto (rightmost)
-  await kn(dual ? 3 : 2, -30, 0);         // vent -> face (leftmost)
-  // A/C + recirc circle buttons -> tap once each (= on)
-  let c = (await knobRects(page)).circles;
-  for (let i = 0; i < c.length; i++) {
-    let cc = (await knobRects(page)).circles[i];
-    await scrollCenter(page, cc);
-    cc = (await knobRects(page)).circles[i];
-    await page.mouse.click(cc.x + cc.w / 2, cc.y + cc.h / 2);
-    await page.waitForTimeout(250);
-  }
+  // Fan + vent knobs need coordinate clicks; try three arc points each and
+  // log what elementFromPoint sees so failures are diagnosable.
+  const kn = async (idx, points) => {
+    for (const [dx, dy] of points) {
+      let r = (await knobRects(page)).knobs[idx];
+      await scrollCenter(page, r);
+      r = (await knobRects(page)).knobs[idx];
+      const cx = r.x + r.w / 2 + dx, cy = r.y + r.h / 2 + dy;
+      const hit = await page.evaluate(([x, y]) => {
+        const el = document.elementFromPoint(x, y);
+        return el ? el.tagName + ':' + (el.className || '').toString().slice(0, 40) : 'none';
+      }, [cx, cy]);
+      console.log(`knob${idx} click @${dx},${dy} hits ${hit}`);
+      await page.mouse.click(cx, cy);
+      await page.waitForTimeout(250);
+    }
+  };
+  const fanIdx = dual ? 2 : 1, ventIdx = dual ? 3 : 2;
+  await kn(fanIdx, [[30, 0], [22, -22], [0, -30]]);
+  await kn(ventIdx, [[-30, 0], [-22, -22], [0, -30]]);
+  // A/C: its label text sits inside the Pressable. Recirc: its icon is the
+  // last <img> on the page.
+  await clickText(page, 'A/S');
+  await page.waitForTimeout(250);
+  await page.locator('img').last().click({ force: true });
+  await page.waitForTimeout(250);
   await clickText(page, 'Auto');          // climate mode
   await clickText(page, 'Open');          // rear vents
   await clickText(page, 'Always', 0);     // heated seats

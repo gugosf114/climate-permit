@@ -9,7 +9,7 @@ import { useClimateStore, Answers } from '../lib/store';
 import { pickArchetype } from '../lib/scoring';
 import { getDashboardImage } from '../lib/dashboardImages';
 import { useDMV } from '../constants/tokens';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { OfficialHeader, SectionHeader } from '../components/Chrome';
 const VENT_FACE_PNG = require('../assets/images/hvac-icons/face.png');
 const VENT_MIX_PNG = require('../assets/images/hvac-icons/mix.png');
 const VENT_FEET_PNG = require('../assets/images/hvac-icons/feet.png');
@@ -40,8 +40,19 @@ function useDashC() {
     silk: DMV.ink,
     silkDim: DMV.inkSofter,
     red: DMV.red,
+    washRed: DMV.redWash,
+    washBlue: DMV.blueWash,
   };
 }
+
+// The photo-overlay chips are printed on fixed cream labels (they sit on the
+// dashboard photograph, not on themed paper) — their ink never changes theme,
+// exactly like the PermitCard.
+const CHIP_BG = 'rgba(245, 239, 222, 0.94)';
+const CHIP_BG_SOFT = 'rgba(245, 239, 222, 0.88)';
+const CHIP_NAVY = '#0e2d63';
+const CHIP_RED = '#b41d23';
+const CHIP_DIM = '#4a4a4a';
 
 function BrandBanner({
   make, model, answers, onCycleTemp,
@@ -67,6 +78,7 @@ function BrandBanner({
       borderBottomColor: C.panelShadow, borderRightColor: C.panelShadow,
       borderWidth: 1.5,
       shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 4 },
+      elevation: 6,
     }}>
       <Pressable
         onPress={async () => { await Haptics.selectionAsync(); onCycleTemp('up'); }}
@@ -82,11 +94,11 @@ function BrandBanner({
         {/* Brand marker — top left */}
         <View style={{
           position: 'absolute', top: 8, left: 8,
-          backgroundColor: 'rgba(245, 239, 222, 0.94)',
-          borderWidth: 1, borderColor: C.amber,
+          backgroundColor: CHIP_BG,
+          borderWidth: 1, borderColor: CHIP_NAVY,
           paddingHorizontal: 8, paddingVertical: 3,
         }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_NAVY, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
             {make} · {model}
           </Text>
         </View>
@@ -94,21 +106,21 @@ function BrandBanner({
         {/* HUD — top right */}
         <View style={{
           position: 'absolute', top: 8, right: 8,
-          backgroundColor: 'rgba(245, 239, 222, 0.94)',
-          borderWidth: 1.5, borderColor: C.amber,
+          backgroundColor: CHIP_BG,
+          borderWidth: 1.5, borderColor: CHIP_NAVY,
           paddingVertical: 8, paddingHorizontal: 10, minWidth: 90,
         }}>
           <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, fontWeight: 'bold', letterSpacing: 1 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_NAVY, fontWeight: 'bold', letterSpacing: 1 }}>
               16
             </Text>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.silkDim, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_DIM, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
               HGT
             </Text>
           </View>
           <Text style={{
             fontFamily: undefined, fontSize: 28, fontWeight: 'bold',
-            color: C.red,
+            color: CHIP_RED,
             letterSpacing: 0.5, lineHeight: 30,
           }}>
             {temp !== undefined ? `${temp}°` : '--°'}
@@ -117,34 +129,34 @@ function BrandBanner({
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 6 }}>
             <View style={{
               width: 6, height: 6, borderRadius: 3,
-              backgroundColor: acOn ? C.red : 'transparent',
-              borderWidth: 1, borderColor: acOn ? C.red : C.amber,
+              backgroundColor: acOn ? CHIP_RED : 'transparent',
+              borderWidth: 1, borderColor: acOn ? CHIP_RED : CHIP_NAVY,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: acOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: acOn ? CHIP_RED : CHIP_DIM, letterSpacing: 1.5, fontWeight: 'bold' }}>
               A/C
             </Text>
             <View style={{
               width: 6, height: 6, borderRadius: 3,
-              backgroundColor: autoOn ? C.red : 'transparent',
-              borderWidth: 1, borderColor: autoOn ? C.red : C.amber,
+              backgroundColor: autoOn ? CHIP_RED : 'transparent',
+              borderWidth: 1, borderColor: autoOn ? CHIP_RED : CHIP_NAVY,
               marginLeft: 4,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: autoOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: autoOn ? CHIP_RED : CHIP_DIM, letterSpacing: 1.5, fontWeight: 'bold' }}>
               AUTO
             </Text>
             <View style={{
               width: 6, height: 6, borderRadius: 3,
-              backgroundColor: recircOn ? C.red : 'transparent',
-              borderWidth: 1, borderColor: recircOn ? C.red : C.amber,
+              backgroundColor: recircOn ? CHIP_RED : 'transparent',
+              borderWidth: 1, borderColor: recircOn ? CHIP_RED : CHIP_NAVY,
               marginLeft: 4,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: recircOn ? C.red : C.silkDim, letterSpacing: 1.5, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: recircOn ? CHIP_RED : CHIP_DIM, letterSpacing: 1.5, fontWeight: 'bold' }}>
               RCRC
             </Text>
           </View>
 
           <View style={{ marginTop: 6, flexDirection: 'row', gap: 2, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.silkDim, letterSpacing: 1.5, marginRight: 4, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_DIM, letterSpacing: 1.5, marginRight: 4, fontWeight: 'bold' }}>
               FAN
             </Text>
             {[1, 2, 3, 4, 5, 6, 7].map((n) => {
@@ -154,8 +166,8 @@ function BrandBanner({
                   key={n}
                   style={{
                     width: 5, height: 8,
-                    backgroundColor: lit ? C.red : 'transparent',
-                    borderWidth: 1, borderColor: lit ? C.red : C.amber,
+                    backgroundColor: lit ? CHIP_RED : 'transparent',
+                    borderWidth: 1, borderColor: lit ? CHIP_RED : CHIP_NAVY,
                   }}
                 />
               );
@@ -166,11 +178,11 @@ function BrandBanner({
         {/* Tap hint — bottom */}
         <View style={{
           position: 'absolute', bottom: 6, alignSelf: 'center',
-          backgroundColor: 'rgba(245, 239, 222, 0.88)',
-          borderWidth: 1, borderColor: C.amber,
+          backgroundColor: CHIP_BG_SOFT,
+          borderWidth: 1, borderColor: CHIP_NAVY,
           paddingHorizontal: 10, paddingVertical: 3,
         }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.amber, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_NAVY, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
             Tap · +1   Hold · −1
           </Text>
         </View>
@@ -846,7 +858,7 @@ function DashButton({
         borderRadius: 3,
         borderWidth: active ? 2.5 : 2,
         borderColor: active ? C.red : C.amber,
-        backgroundColor: active ? 'rgba(180,29,35,0.08)' : 'rgba(14,45,99,0.045)',
+        backgroundColor: active ? C.washRed : C.washBlue,
         alignItems: 'center',
         justifyContent: 'center',
         opacity: pressed ? 0.78 : 1,
@@ -1017,23 +1029,9 @@ function PanelButton({
   );
 }
 
-function VentArrows({ direction }: { direction: 'face' | 'feet' | 'defrost' | 'mix' }) {
-  const arrow = {
-    face: '↑↑',
-    feet: '↓',
-    defrost: '⌃',
-    mix: '↕',
-  }[direction];
-  return (
-    <Text style={{ fontFamily: 'monospace', fontSize: 18, lineHeight: 22, color: 'inherit' as any }}>
-      {arrow}
-    </Text>
-  );
-}
-
 export default function DashboardScreen() {
   const C = useDashC();
-  const insets = useSafeAreaInsets();
+  const DMV = useDMV();
   const { make, model, hasDualZone, hasRearVents, answers, setAnswer, setResult } = useClimateStore();
 
   const required: (keyof Answers)[] = [
@@ -1076,73 +1074,16 @@ export default function DashboardScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.chrome }}>
-      {/* DMV official header band — matches landing/car-select/result */}
-      <View style={{
-        paddingTop: insets.top + 12, paddingBottom: 10, paddingHorizontal: 22,
-        borderBottomWidth: 1, borderBottomColor: C.panelEdge,
-        backgroundColor: 'rgba(251,246,230,0.92)',
-        flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
-      }}>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-          <Text style={{
-            fontFamily: 'serif', fontStyle: 'italic',
-            fontSize: 28, color: C.amber, fontWeight: 'bold',
-            lineHeight: 30, letterSpacing: -0.5,
-          }}>
-            California
-          </Text>
-          <Text style={{
-            fontFamily: 'monospace', fontSize: 8, color: C.silk,
-            fontWeight: 'bold', letterSpacing: 1, marginLeft: 3, marginBottom: 5,
-          }}>
-            USA
-          </Text>
-        </View>
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text style={{
-            fontFamily: undefined, fontSize: 10,
-            color: C.amber, fontWeight: 'bold', letterSpacing: 1, marginTop: 2,
-          }}>
-            CLIMATE PERMIT
-          </Text>
-        </View>
-      </View>
+      <OfficialHeader />
 
       {/* Section 2 header */}
       <View style={{ paddingTop: 16, paddingBottom: 10, paddingHorizontal: 22 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <View style={{ flex: 1 }}>
-            <Text style={{
-              fontFamily: 'monospace', fontSize: 9, color: C.amber,
-              fontWeight: 'bold', letterSpacing: 2.2, marginBottom: 4,
-            }}>
-              SECTION 2 · OPERATING SAMPLE
-            </Text>
-            <Text style={{
-              fontFamily: undefined, fontSize: 22, color: C.silk,
-              fontWeight: 'bold', letterSpacing: -0.3, textTransform: 'uppercase',
-            }}>
-              {make} {model}
-            </Text>
-            <Text style={{
-              fontFamily: undefined, fontSize: 13, color: C.silkDim,
-              marginTop: 4, fontWeight: '500',
-            }}>
-              Operate the climate panel exactly as you would in real life.
-            </Text>
-          </View>
-          <View style={{
-            width: 32, height: 32,
-            borderWidth: 1.5, borderColor: C.red,
-            alignItems: 'center', justifyContent: 'center',
-            backgroundColor: C.panel,
-          }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 14, color: C.red, fontWeight: 'bold' }}>
-              2
-            </Text>
-          </View>
-        </View>
-        <View style={{ height: 3, width: 56, backgroundColor: C.red, marginTop: 10 }} />
+        <SectionHeader
+          kicker="SECTION 2 · OPERATING SAMPLE"
+          title={`${make.toUpperCase()} ${model.toUpperCase()}`}
+          subtitle="Operate the climate panel exactly as you would in real life."
+          boxChar="2"
+        />
 
         <TouchableOpacity
           onPress={() => router.back()}
@@ -1369,10 +1310,12 @@ export default function DashboardScreen() {
         <TouchableOpacity
           style={{
             paddingVertical: 18, alignItems: 'center',
-            backgroundColor: allAnswered ? C.cream : 'transparent',
-            borderWidth: allAnswered ? 0 : 1,
-            borderColor: C.chromeSoft,
+            backgroundColor: allAnswered ? DMV.caBlue : 'transparent',
+            borderWidth: 1.5,
+            borderColor: allAnswered ? DMV.caBlueDeep : C.chromeSoft,
             opacity: allAnswered ? 1 : 0.55,
+            shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 3 },
+            elevation: allAnswered ? 3 : 0,
           }}
           onPress={handleSubmit}
           disabled={!allAnswered}
@@ -1381,7 +1324,7 @@ export default function DashboardScreen() {
           <Text style={{
             fontFamily: 'monospace', fontSize: 12, fontWeight: 'bold',
             textTransform: 'uppercase', letterSpacing: 3,
-            color: allAnswered ? '#0a0e14' : C.silk,
+            color: allAnswered ? DMV.paperLight : C.silk,
           }}>
             {allAnswered ? 'Submit Configuration' : `${remainingCount} setting${remainingCount === 1 ? '' : 's'} remaining`}
           </Text>

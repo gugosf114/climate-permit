@@ -3,7 +3,7 @@
  *
  * DMV paper language: cream "official form" paper, CA-DL navy, stamp red,
  * seal gold, monospace voice. Two themes:
- *   - light  ("day window")   — the original paper look
+ *   - light  ("day window")   — the original paper look; THE DEFAULT
  *   - dark   ("night service") — dark asphalt counter, same document voice
  *
  * Every screen reads the active palette via useDMV(); nothing re-declares
@@ -49,6 +49,11 @@ export const DMV_LIGHT = {
   // dashboard hardware
   knobFace: '#fbf6e6',
   knobPointer: '#0e2d63',
+  // translucent washes (header band, notice boxes, stamped-button fills)
+  headerBand: 'rgba(251,246,230,0.92)',
+  noticeWash: 'rgba(255,250,225,0.6)',
+  redWash: 'rgba(180,29,35,0.08)',
+  blueWash: 'rgba(14,45,99,0.045)',
 } as const;
 
 export type DMVPalette = { [K in keyof typeof DMV_LIGHT]: string };
@@ -85,6 +90,11 @@ export const DMV_DARK: DMVPalette = {
   // dashboard hardware
   knobFace: '#232834',
   knobPointer: '#cfe0ff',
+  // translucent washes, tuned for the dark counter
+  headerBand: 'rgba(27,31,40,0.92)',
+  noticeWash: 'rgba(237,230,212,0.06)',
+  redWash: 'rgba(224,96,90,0.14)',
+  blueWash: 'rgba(143,179,240,0.08)',
 };
 
 export type ThemeMode = 'system' | 'light' | 'dark';
@@ -96,7 +106,8 @@ interface ThemeStore {
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({
-  mode: 'system',
+  // Day Window (light) is the default; Night Service is the opt-in.
+  mode: 'light',
   setMode: (mode) => set({ mode }),
   // Toggle flips relative to what's currently SHOWING (system-aware).
   toggle: (systemScheme) =>

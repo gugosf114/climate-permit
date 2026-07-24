@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
@@ -46,7 +46,12 @@ export default function CompatScreen() {
           </Text>
           <TouchableOpacity
             accessibilityRole="button"
-            style={{ backgroundColor: DMV.caBlue, borderWidth: 1.5, borderColor: DMV.caBlueDeep, paddingVertical: 16, paddingHorizontal: 32 }}
+            style={{
+              backgroundColor: DMV.caBlue, borderWidth: 1.5, borderColor: DMV.caBlueDeep,
+              paddingVertical: 16, paddingHorizontal: 32,
+              shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 3 },
+              elevation: 3,
+            }}
             onPress={() => router.replace('/')}
             activeOpacity={0.88}
           >
@@ -100,6 +105,8 @@ export default function CompatScreen() {
             accessibilityRole="button"
             style={{
               backgroundColor: DMV.caBlue, borderWidth: 1.5, borderColor: DMV.caBlueDeep, paddingVertical: 18, width: '100%', alignItems: 'center',
+              shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 3 },
+              elevation: 3,
             }}
             onPress={() => router.push('/car-select')}
             activeOpacity={0.88}
@@ -117,8 +124,12 @@ export default function CompatScreen() {
   if (!showResult || !partnerPayload) {
     return (
       <View style={{ flex: 1, backgroundColor: DMV.paper, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="small" color={DMV.caBlue} style={{ marginBottom: 14 }} />
         <Text style={{ fontFamily: 'monospace', fontSize: 11, color: DMV.caBlue, textTransform: 'uppercase', letterSpacing: 4, opacity: 0.7 }}>
-          Calculating…
+          Comparing Permits…
+        </Text>
+        <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim, letterSpacing: 2, marginTop: 6 }}>
+          FORM 21-B · SECTION 9
         </Text>
       </View>
     );

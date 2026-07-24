@@ -1,122 +1,10 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import Svg, { Path } from 'react-native-svg';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useDMV, useThemeName, useThemeStore } from '../constants/tokens';
 import { useColorScheme } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-
-function BearSilhouette({ size, color }: { size: number; color: string }) {
-  return (
-    <Svg width={size} height={size * 0.55} viewBox="0 0 100 55">
-      <Path
-        d="M 4 32 C 3 30, 4 27, 8 25 L 11 22 C 13 19, 16 17, 19 19 L 20 14 L 23 19 L 25 14 L 28 19 C 33 14, 41 11, 48 11 C 58 11, 68 13, 77 17 C 84 20, 89 24, 91 27 L 94 24 L 96 28 L 91 30 C 89 36, 86 41, 83 43 L 83 49 C 81 50, 78 50, 76 49 L 76 44 C 70 45, 64 45, 58 44 L 50 49 C 48 50, 45 50, 43 49 L 43 44 L 26 44 L 18 49 C 16 50, 13 50, 11 49 L 11 44 C 8 43, 5 38, 4 34 Z"
-        fill={color}
-      />
-      <Path
-        d="M 55 20 L 56.8 24 L 61 24 L 57.6 26.6 L 58.8 31 L 55 28.4 L 51.2 31 L 52.4 26.6 L 49 24 L 53.2 24 Z"
-        fill={color}
-      />
-    </Svg>
-  );
-}
-
-function DocumentBackground() {
-  const DMV = useDMV();
-  return (
-    <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-      <Text style={{
-        position: 'absolute',
-        top: '40%', left: -40, right: -40,
-        fontWeight: 'bold',
-        fontSize: 42,
-        color: DMV.caBlue,
-        opacity: 0.06,
-        letterSpacing: 10,
-        textAlign: 'center',
-        transform: [{ rotate: '-8deg' }],
-      }}>
-        STATE OF CALIFORNIA
-      </Text>
-
-      {Array.from({ length: 14 }).map((_, i) => (
-        <Text key={`r${i}`} style={{
-          position: 'absolute', left: 0, right: 0,
-          top: 70 + i * 60,
-          fontSize: 8, fontWeight: 'bold',
-          color: DMV.caBlue, opacity: 0.055,
-          letterSpacing: 2.5,
-          textAlign: 'center',
-        }}>
-          STATE OF CALIFORNIA · STATE OF CALIFORNIA · STATE OF CALIFORNIA · STATE OF CALIFORNIA
-        </Text>
-      ))}
-
-      <View style={{
-        position: 'absolute', top: '40%', left: 0, right: 0,
-        alignItems: 'center', opacity: 0.05,
-      }}>
-        <BearSilhouette size={260} color={DMV.caBlueDeep} />
-      </View>
-
-      <View style={{ position: 'absolute', top: 220, right: 30, opacity: 0.08 }}>
-        <BearSilhouette size={50} color={DMV.gold} />
-      </View>
-      <View style={{ position: 'absolute', bottom: 200, left: 24, opacity: 0.08 }}>
-        <BearSilhouette size={50} color={DMV.gold} />
-      </View>
-
-      {Array.from({ length: 32 }).map((_, i) => (
-        <View key={`g${i}`} style={{
-          position: 'absolute', left: 0, right: 0,
-          top: i * 24, height: 1,
-          backgroundColor: DMV.gold, opacity: 0.04,
-        }} />
-      ))}
-    </View>
-  );
-}
-
-function OfficialHeader() {
-  const insets = useSafeAreaInsets();
-  const DMV = useDMV();
-  return (
-    <View style={{
-      paddingTop: insets.top + 12, paddingBottom: 10, paddingHorizontal: 22,
-      borderBottomWidth: 1, borderBottomColor: DMV.divider,
-      backgroundColor: 'rgba(251,246,230,0.92)',
-      flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
-    }}>
-      <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-        <Text style={{
-          fontFamily: 'serif', fontStyle: 'italic',
-          fontSize: 30, color: DMV.caBlue, fontWeight: 'bold',
-          lineHeight: 32, letterSpacing: -0.5,
-        }}>
-          California
-        </Text>
-        <Text style={{
-          fontFamily: 'monospace', fontSize: 8, color: DMV.ink,
-          fontWeight: 'bold', letterSpacing: 1, marginLeft: 3, marginBottom: 5,
-        }}>
-          USA
-        </Text>
-      </View>
-      <View style={{ alignItems: 'flex-end' }}>
-        <BearSilhouette size={36} color={DMV.gold} />
-        <Text style={{
-          fontFamily: undefined, fontSize: 11,
-          color: DMV.caBlue, fontWeight: 'bold',
-          letterSpacing: 1, marginTop: 2,
-        }}>
-          CLIMATE PERMIT
-        </Text>
-      </View>
-    </View>
-  );
-}
+import { OfficialHeader, DocumentBackground } from '../components/Chrome';
 
 export default function LandingScreen() {
   const DMV = useDMV();
@@ -200,7 +88,7 @@ export default function LandingScreen() {
           <View style={{
             borderLeftWidth: 3, borderLeftColor: DMV.red,
             paddingLeft: 14, paddingVertical: 10, marginBottom: 14,
-            backgroundColor: 'rgba(255,250,225,0.6)',
+            backgroundColor: DMV.noticeWash,
           }}>
             <Text style={{
               fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue,
@@ -276,6 +164,7 @@ export default function LandingScreen() {
               shadowOpacity: 0.18,
               shadowRadius: 6,
               shadowOffset: { width: 0, height: 3 },
+              elevation: 3,
             }}
           >
             <Text style={{

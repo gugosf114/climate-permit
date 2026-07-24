@@ -10,6 +10,7 @@ import { Answers } from '../lib/store';
 import { compatScore, compatVerdict } from '../lib/encode';
 import { PLAY_STORE_URL } from '../lib/config';
 import { useDMV } from '../constants/tokens';
+import { OfficialHeader } from './Chrome';
 
 // DMV paper palette — matches landing/car-select/dashboard/result/PermitCard
 
@@ -65,12 +66,13 @@ export function CompatResult(p: Props) {
 
   return (
     <View style={{ flex: 1, backgroundColor: DMV.paper }}>
+      <OfficialHeader />
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 48 }}>
         {/* Header */}
         <Animated.View
           entering={FadeIn.duration(500)}
           style={{
-            paddingTop: 60, paddingBottom: 16, paddingHorizontal: 24,
+            paddingTop: 20, paddingBottom: 16, paddingHorizontal: 24,
             borderBottomWidth: 1, borderBottomColor: DMV.divider,
           }}
         >
@@ -153,6 +155,8 @@ export function CompatResult(p: Props) {
               backgroundColor: DMV.caBlue,
               paddingVertical: 18, alignItems: 'center',
               borderWidth: 1.5, borderColor: DMV.caBlueDeep,
+              shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 3 },
+              elevation: 3,
             }}
           >
             <Text style={{ fontFamily: 'monospace', fontSize: 12, color: DMV.paperLight, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3 }}>

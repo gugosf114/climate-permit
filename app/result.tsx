@@ -4,8 +4,6 @@ import { router } from 'expo-router';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system/legacy';
-import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
-import Svg, { Path } from 'react-native-svg';
 import Animated, {
   FadeIn, FadeInDown,
   useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay,
@@ -14,64 +12,10 @@ import { PermitCard } from '../components/PermitCard';
 import { useClimateStore } from '../lib/store';
 import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
-import { BANNER_AD_UNIT_ID, ADS_ENABLED } from '../lib/ads';
+import { StickyBanner } from '../components/StickyBanner';
 import { compatShareUrl, PLAY_STORE_URL } from '../lib/config';
 import { useDMV } from '../constants/tokens';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-
-function BearSilhouette({ size, color }: { size: number; color: string }) {
-  return (
-    <Svg width={size} height={size * 0.55} viewBox="0 0 100 55">
-      <Path
-        d="M 4 32 C 3 30, 4 27, 8 25 L 11 22 C 13 19, 16 17, 19 19 L 20 14 L 23 19 L 25 14 L 28 19 C 33 14, 41 11, 48 11 C 58 11, 68 13, 77 17 C 84 20, 89 24, 91 27 L 94 24 L 96 28 L 91 30 C 89 36, 86 41, 83 43 L 83 49 C 81 50, 78 50, 76 49 L 76 44 C 70 45, 64 45, 58 44 L 50 49 C 48 50, 45 50, 43 49 L 43 44 L 26 44 L 18 49 C 16 50, 13 50, 11 49 L 11 44 C 8 43, 5 38, 4 34 Z"
-        fill={color}
-      />
-      <Path
-        d="M 55 20 L 56.8 24 L 61 24 L 57.6 26.6 L 58.8 31 L 55 28.4 L 51.2 31 L 52.4 26.6 L 49 24 L 53.2 24 Z"
-        fill={color}
-      />
-    </Svg>
-  );
-}
-
-function OfficialHeader() {
-  const insets = useSafeAreaInsets();
-  const DMV = useDMV();
-  return (
-    <View style={{
-      paddingTop: insets.top + 12, paddingBottom: 10, paddingHorizontal: 22,
-      borderBottomWidth: 1, borderBottomColor: DMV.divider,
-      backgroundColor: 'rgba(251,246,230,0.92)',
-      flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between',
-    }}>
-      <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-        <Text style={{
-          fontFamily: 'serif', fontStyle: 'italic',
-          fontSize: 28, color: DMV.caBlue, fontWeight: 'bold',
-          lineHeight: 30, letterSpacing: -0.5,
-        }}>
-          California
-        </Text>
-        <Text style={{
-          fontFamily: 'monospace', fontSize: 8, color: DMV.ink,
-          fontWeight: 'bold', letterSpacing: 1, marginLeft: 3, marginBottom: 5,
-        }}>
-          USA
-        </Text>
-      </View>
-      <View style={{ alignItems: 'flex-end' }}>
-        <BearSilhouette size={32} color={DMV.gold} />
-        <Text style={{
-          fontFamily: undefined, fontSize: 10,
-          color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1, marginTop: 2,
-        }}>
-          CLIMATE PERMIT
-        </Text>
-      </View>
-    </View>
-  );
-}
+import { OfficialHeader, SectionHeader } from '../components/Chrome';
 
 /** "ISSUED" official stamp that slams onto the permit just after it appears. */
 function PermitStamp() {
@@ -199,39 +143,13 @@ export default function ResultScreen() {
         <Animated.View entering={FadeIn.duration(500)} style={{
           paddingTop: 18, paddingBottom: 14, paddingHorizontal: 22,
         }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{
-                fontFamily: 'monospace', fontSize: 9, color: DMV.red,
-                fontWeight: 'bold', letterSpacing: 2.4, marginBottom: 4,
-              }}>
-                PERMIT ISSUED · SEE BELOW
-              </Text>
-              <Text style={{
-                fontFamily: undefined, fontSize: 22, color: DMV.ink,
-                fontWeight: 'bold', letterSpacing: -0.3,
-              }}>
-                {archetype.name}
-              </Text>
-              <Text style={{
-                fontFamily: undefined, fontSize: 13, color: DMV.inkSoft,
-                marginTop: 4, lineHeight: 18, fontStyle: 'italic',
-              }}>
-                {archetype.oneLineBurn}
-              </Text>
-            </View>
-            <View style={{
-              width: 32, height: 32,
-              borderWidth: 1.5, borderColor: DMV.red,
-              alignItems: 'center', justifyContent: 'center',
-              backgroundColor: DMV.paperLight,
-            }}>
-              <Text style={{ fontFamily: 'monospace', fontSize: 14, color: DMV.red, fontWeight: 'bold' }}>
-                ✓
-              </Text>
-            </View>
-          </View>
-          <View style={{ height: 3, width: 56, backgroundColor: DMV.red, marginTop: 10 }} />
+          <SectionHeader
+            kicker="PERMIT ISSUED · SEE BELOW"
+            kickerColor={DMV.red}
+            title={archetype.name}
+            subtitle={archetype.oneLineBurn}
+            boxChar="✓"
+          />
         </Animated.View>
 
         {/* Permit Card + stamp */}
@@ -251,7 +169,7 @@ export default function ResultScreen() {
           <View style={{
             borderLeftWidth: 3, borderLeftColor: DMV.caBlue,
             paddingLeft: 14, paddingVertical: 10, marginBottom: 14,
-            backgroundColor: 'rgba(255,250,225,0.6)',
+            backgroundColor: DMV.noticeWash,
           }}>
             <Text style={{
               fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue,
@@ -292,6 +210,7 @@ export default function ResultScreen() {
               borderWidth: 1.5, borderColor: DMV.caBlueDeep,
               paddingVertical: 18, alignItems: 'center',
               shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 6, shadowOffset: { width: 0, height: 3 },
+              elevation: 3,
             }}
           >
             <Text style={{
@@ -312,6 +231,7 @@ export default function ResultScreen() {
                 borderWidth: 1.5, borderColor: DMV.redDeep,
                 paddingVertical: 18, alignItems: 'center',
                 shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 5, shadowOffset: { width: 0, height: 3 },
+                elevation: 3,
               }}
             >
               <Text style={{
@@ -357,21 +277,7 @@ export default function ResultScreen() {
         </Animated.View>
       </ScrollView>
 
-      {/* Sticky banner ad — hidden entirely when real ad units aren't configured */}
-      {ADS_ENABLED && (
-        <View style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          alignItems: 'center',
-          backgroundColor: DMV.paperDeep,
-          borderTopWidth: 1, borderTopColor: DMV.divider,
-        }}>
-          <BannerAd
-            unitId={BANNER_AD_UNIT_ID}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-            requestOptions={{ requestNonPersonalizedAdsOnly: true }}
-          />
-        </View>
-      )}
+      <StickyBanner />
     </View>
   );
 }

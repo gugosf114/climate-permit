@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, Pressable, PanResponder } from 'react-native';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useEffect, Fragment, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, withSpring, Easing, FadeIn } from 'react-native-reanimated';
@@ -279,11 +279,6 @@ function LCDReadout({ value, label, big }: { value?: number | 'same'; label: str
 }
 
 const KNOB_SIZE = 122;
-const KNOB_RADIUS = KNOB_SIZE / 2;
-const DASH_R = KNOB_RADIUS - 12;
-const LABEL_R = KNOB_RADIUS + 11;
-const KNOB_CONTAINER_W = KNOB_SIZE + 38;
-const KNOB_CONTAINER_H = KNOB_SIZE + 26;
 
 // Schematic knob colors — navy line art on paper
 const KNOB_DISC = '#fbf6e6';        // paper light (knob face = cream paper)
@@ -915,40 +910,6 @@ function DashButton({
   );
 }
 
-function AutoPill({
-  active, onPress,
-}: {
-  active: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={async () => { await Haptics.selectionAsync(); onPress(); }}
-      style={{
-        marginTop: 10,
-        paddingHorizontal: 18,
-        paddingVertical: 7,
-        borderRadius: 16,
-        borderWidth: 1.5,
-        borderColor: POINTER_WHITE,
-        backgroundColor: active ? POINTER_WHITE : KNOB_DISC,
-      }}
-    >
-      <Text
-        style={{
-          fontFamily: 'monospace',
-          fontSize: 11,
-          fontWeight: 'bold',
-          color: active ? KNOB_DISC : POINTER_WHITE,
-          letterSpacing: 2.5,
-        }}
-      >
-        AUTO
-      </Text>
-    </Pressable>
-  );
-}
-
 function SectionLabel({ children, icon }: { children: React.ReactNode; icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'] }) {
   const C = useDashC();
   return (
@@ -966,73 +927,10 @@ function SectionLabel({ children, icon }: { children: React.ReactNode; icon?: Re
   );
 }
 
-function PanelButton({
-  active, onPress, icon, label, sub, flex = 1, wide,
-}: {
-  active: boolean;
-  onPress: () => void;
-  icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
-  label: string;
-  sub?: string;
-  flex?: number;
-  wide?: boolean;
-}) {
-  const C = useDashC();
-  return (
-    <Pressable
-      onPress={async () => { await Haptics.selectionAsync(); onPress(); }}
-      style={({ pressed }) => ({
-        flex,
-        paddingVertical: 12,
-        paddingHorizontal: wide ? 6 : 10,
-        borderWidth: 1.5,
-        borderTopColor: active ? C.amberBright : C.panelHighlight,
-        borderLeftColor: active ? C.amberBright : C.panelHighlight,
-        borderBottomColor: active ? C.amber : C.panelShadow,
-        borderRightColor: active ? C.amber : C.panelShadow,
-        backgroundColor: active ? C.amberDim : C.panel,
-        alignItems: 'center',
-        justifyContent: 'center',
-        opacity: pressed ? 0.7 : 1,
-        minHeight: 56,
-      })}
-    >
-      {icon && (
-        <MaterialCommunityIcons
-          name={icon}
-          size={22}
-          color={active ? C.amberBright : C.silk}
-          style={{
-            textShadowColor: active ? C.amber : 'transparent',
-            textShadowOffset: { width: 0, height: 0 },
-            textShadowRadius: 8,
-          }}
-        />
-      )}
-      <Text style={{
-        fontFamily: 'monospace',
-        fontSize: 9,
-        marginTop: icon ? 4 : 0,
-        color: active ? C.amberBright : C.silk,
-        letterSpacing: 1.5, textTransform: 'uppercase',
-        fontWeight: active ? 'bold' : 'normal',
-        textAlign: 'center',
-      }}>
-        {label}
-      </Text>
-      {sub && (
-        <Text style={{ fontFamily: 'monospace', fontSize: 8, color: active ? C.amber : C.silkDim, marginTop: 2, letterSpacing: 1 }}>
-          {sub}
-        </Text>
-      )}
-    </Pressable>
-  );
-}
-
 export default function DashboardScreen() {
   const C = useDashC();
   const DMV = useDMV();
-  const { make, model, hasDualZone, hasRearVents, answers, setAnswer, setResult } = useClimateStore();
+  const { make, model, hasDualZone, answers, setAnswer, setResult } = useClimateStore();
 
   const required: (keyof Answers)[] = [
     'driverTemp', 'fanSpeed', 'ventDirection', 'recirc',

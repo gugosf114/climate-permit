@@ -1,9 +1,8 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, useColorScheme } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useDMV, useThemeName, useThemeStore } from '../constants/tokens';
-import { useColorScheme } from 'react-native';
 import { OfficialHeader, DocumentBackground } from '../components/Chrome';
 
 export default function LandingScreen() {

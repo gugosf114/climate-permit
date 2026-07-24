@@ -4,7 +4,6 @@ import { router } from 'expo-router';
 import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system/legacy';
-import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import Animated, {
   FadeIn, FadeInDown,
   useSharedValue, useAnimatedStyle, withSpring, withTiming, withDelay,
@@ -13,7 +12,7 @@ import { PermitCard } from '../components/PermitCard';
 import { useClimateStore } from '../lib/store';
 import { ARCHETYPES } from '../data/archetypes';
 import { encodePayload } from '../lib/encode';
-import { BANNER_AD_UNIT_ID, ADS_ENABLED } from '../lib/ads';
+import { StickyBanner } from '../components/StickyBanner';
 import { compatShareUrl, PLAY_STORE_URL } from '../lib/config';
 import { useDMV } from '../constants/tokens';
 import { OfficialHeader, SectionHeader } from '../components/Chrome';
@@ -278,21 +277,7 @@ export default function ResultScreen() {
         </Animated.View>
       </ScrollView>
 
-      {/* Sticky banner ad — hidden entirely when real ad units aren't configured */}
-      {ADS_ENABLED && (
-        <View style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          alignItems: 'center',
-          backgroundColor: DMV.paperDeep,
-          borderTopWidth: 1, borderTopColor: DMV.divider,
-        }}>
-          <BannerAd
-            unitId={BANNER_AD_UNIT_ID}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-            requestOptions={{ requestNonPersonalizedAdsOnly: true }}
-          />
-        </View>
-      )}
+      <StickyBanner />
     </View>
   );
 }

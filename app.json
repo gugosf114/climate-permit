@@ -4,7 +4,7 @@
     "slug": "climate-permit",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icon-permit-v2.png",
     "scheme": "climatepermit",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -13,15 +13,13 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0a0e14",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#f5efde",
+        "foregroundImage": "./assets/images/icon-permit-adaptive-v2.png"
       },
       "package": "app.climatepermit.android",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "output": "static",
@@ -32,7 +30,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/icon-permit-v2.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#f5efde",

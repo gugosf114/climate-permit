@@ -4,13 +4,16 @@ import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Svg, { Circle, Line, Path, Polyline } from 'react-native-svg';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, withSpring, Easing, FadeIn } from 'react-native-reanimated';
 import { useClimateStore, Answers } from '../lib/store';
 import { pickArchetype } from '../lib/scoring';
 import { getDashboardImage } from '../lib/dashboardImages';
 import { useDMV } from '../constants/tokens';
 import { OfficialHeader, SectionHeader } from '../components/Chrome';
+const VENT_FACE_PNG = require('../assets/images/hvac-icons/face.png');
+const VENT_MIX_PNG = require('../assets/images/hvac-icons/mix.png');
+const VENT_FEET_PNG = require('../assets/images/hvac-icons/feet.png');
+const VENT_DEFROST_PNG = require('../assets/images/hvac-icons/defrost.png');
 const RECIRC_PNG = require('../assets/images/hvac-icons/recirc.png');
 
 const TEMP_STEPS = [60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80];
@@ -323,82 +326,33 @@ type KnobOption = {
   render?: (props: { color: string; opacity: number; size: number }) => React.ReactNode;
 };
 
-type VentMode = 'face' | 'mix' | 'feet' | 'defrost';
+const VENT_ICON_SIZE = 32;
 
-function VentIcon({
-  mode, color, opacity = 1, size = 32,
-}: {
-  mode: VentMode;
-  color: string;
-  opacity?: number;
-  size?: number;
-}) {
-  if (mode === 'defrost') {
-    return (
-      <Svg width={size} height={size} viewBox="0 0 48 48" opacity={opacity}>
-        <Path
-          d="M7 36 L11 13 Q24 5 37 13 L41 36 Z"
-          fill="none"
-          stroke={color}
-          strokeWidth={3}
-          strokeLinejoin="round"
-        />
-        {[16, 24, 32].map((x) => (
-          <Path
-            key={x}
-            d={`M${x} 33 V19 M${x - 3.5} 23 L${x} 18 L${x + 3.5} 23`}
-            fill="none"
-            stroke={color}
-            strokeWidth={2.4}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        ))}
-      </Svg>
-    );
-  }
-
+function VentIcon({ source, color, opacity = 1 }: { source: any; color: string; opacity?: number }) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 48 48" opacity={opacity}>
-      <Circle cx={34} cy={9} r={4.5} fill={color} />
-      <Path
-        d="M31 15 C27 16 26 20 25 25 L20 31 H12 M25 25 L33 31 H42"
-        fill="none"
-        stroke={color}
-        strokeWidth={4}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {(mode === 'face' || mode === 'mix') && (
-        <>
-          <Line x1={3} y1={14} x2={24} y2={14} stroke={color} strokeWidth={2.8} strokeLinecap="round" />
-          <Polyline points="19,9 24,14 19,19" fill="none" stroke={color} strokeWidth={2.8} strokeLinecap="round" strokeLinejoin="round" />
-        </>
-      )}
-      {(mode === 'feet' || mode === 'mix') && (
-        <>
-          <Line x1={4} y1={24} x2={16} y2={36} stroke={color} strokeWidth={2.8} strokeLinecap="round" />
-          <Polyline points="15,29 16,36 9,35" fill="none" stroke={color} strokeWidth={2.8} strokeLinecap="round" strokeLinejoin="round" />
-        </>
-      )}
-    </Svg>
+    <Image
+      source={source}
+      style={{ width: VENT_ICON_SIZE, height: VENT_ICON_SIZE, opacity }}
+      contentFit="contain"
+      tintColor={color}
+    />
   );
 }
 
-function FaceVentIcon({ color, opacity = 1, size }: { color: string; opacity?: number; size?: number }) {
-  return <VentIcon mode="face" color={color} opacity={opacity} size={size} />;
+function FaceVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
+  return <VentIcon source={VENT_FACE_PNG} color={color} opacity={opacity} />;
 }
 
-function FeetVentIcon({ color, opacity = 1, size }: { color: string; opacity?: number; size?: number }) {
-  return <VentIcon mode="feet" color={color} opacity={opacity} size={size} />;
+function FeetVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
+  return <VentIcon source={VENT_FEET_PNG} color={color} opacity={opacity} />;
 }
 
-function MixVentIcon({ color, opacity = 1, size }: { color: string; opacity?: number; size?: number }) {
-  return <VentIcon mode="mix" color={color} opacity={opacity} size={size} />;
+function MixVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
+  return <VentIcon source={VENT_MIX_PNG} color={color} opacity={opacity} />;
 }
 
-function DefrostVentIcon({ color, opacity = 1, size }: { color: string; opacity?: number; size?: number }) {
-  return <VentIcon mode="defrost" color={color} opacity={opacity} size={size} />;
+function DefrostVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
+  return <VentIcon source={VENT_DEFROST_PNG} color={color} opacity={opacity} />;
 }
 
 function Knob({
@@ -490,7 +444,7 @@ function Knob({
               top: containerH / 2 - 16,
               left: containerW / 2 - labelWidth / 2,
               width: labelWidth,
-              height: 42,
+              height: 32,
               alignItems: 'center',
               justifyContent: 'center',
               overflow: 'visible',
@@ -505,7 +459,7 @@ function Knob({
               opt.render({
                 color: active ? (activeIconColor ?? C.amberBright) : POINTER_WHITE,
                 opacity: active ? 1 : 0.7,
-                size: active ? 34 : 30,
+                size: active ? 26 : 22,
               })
             ) : opt.icon ? (
               <MaterialCommunityIcons
@@ -689,10 +643,10 @@ const FAN_OPTIONS: KnobOption[] = [
   { key: 'auto', icon: 'fan-auto' },
 ];
 const VENT_OPTIONS: KnobOption[] = [
-  { key: 'face', render: (p) => <FaceVentIcon color={p.color} opacity={p.opacity} size={p.size} /> },
-  { key: 'mix', render: (p) => <MixVentIcon color={p.color} opacity={p.opacity} size={p.size} /> },
-  { key: 'feet', render: (p) => <FeetVentIcon color={p.color} opacity={p.opacity} size={p.size} /> },
-  { key: 'defrost', render: (p) => <DefrostVentIcon color={p.color} opacity={p.opacity} size={p.size} /> },
+  { key: 'face', render: (p) => <FaceVentIcon color={p.color} opacity={p.opacity} /> },
+  { key: 'mix', render: (p) => <MixVentIcon color={p.color} opacity={p.opacity} /> },
+  { key: 'feet', render: (p) => <FeetVentIcon color={p.color} opacity={p.opacity} /> },
+  { key: 'defrost', render: (p) => <DefrostVentIcon color={p.color} opacity={p.opacity} /> },
 ];
 
 function TempKnob({
@@ -751,8 +705,8 @@ function VentKnob({
         options={VENT_OPTIONS}
         activeKey={value}
         onChange={(k) => onChange(k)}
-        labelWidth={46}
-        labelOffset={29}
+        labelWidth={42}
+        labelOffset={26}
       />
     </View>
   );
@@ -856,7 +810,7 @@ function CircleButton({
           borderWidth: 1, borderColor: POINTER_WHITE,
         }}>
           <Text style={{
-          fontFamily: 'monospace', fontSize: 9,
+            fontFamily: 'monospace', fontSize: 9,
             color: POINTER_WHITE,
             fontWeight: 'bold',
             letterSpacing: 1,

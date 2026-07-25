@@ -19,7 +19,7 @@
       "package": "app.climatepermit.android",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "versionCode": 3
+      "versionCode": 4
     },
     "web": {
       "output": "static",

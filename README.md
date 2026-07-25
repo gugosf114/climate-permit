@@ -2,7 +2,7 @@
 
 > ## [⬇ DOWNLOAD THE LATEST ANDROID APK](https://github.com/gugosf114/climate-permit/releases/latest/download/Climate-Permit-1.0.0.apk)
 >
-> **Current review build: 1.0.0 · Android version code 3**
+> **Current review build: 1.0.0 · Android version code 4**
 
 A satirical Android personality quiz that classifies you into one of 16 archetypes based on how you operate your car's HVAC controls. The result is a shareable Operator Permit card, styled as a California Driver License parody.
 

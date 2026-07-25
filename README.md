@@ -1,5 +1,9 @@
 # Climate Permit
 
+> ## [⬇ DOWNLOAD THE LATEST ANDROID APK](https://github.com/gugosf114/climate-permit/releases/latest/download/Climate-Permit-1.0.0.apk)
+>
+> **Current review build: 1.0.0 · Android version code 3**
+
 A satirical Android personality quiz that classifies you into one of 16 archetypes based on how you operate your car's HVAC controls. The result is a shareable Operator Permit card, styled as a California Driver License parody.
 
 **Premise:** You configure 10 climate settings as you would in real life (driver temp, fan speed, vent direction, recirculation, A/C, climate mode, rear vents, heated seats, pre-cool). The app maps your behavior onto a self/other × controller/chill 2x2 grid and assigns you to one of 16 archetypes (Subarctic Tyrant, Tropical Tyrant, Fresh Air Fascist, Trust-Fall Diplomat, etc).

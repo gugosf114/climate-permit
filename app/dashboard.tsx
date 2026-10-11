@@ -427,7 +427,7 @@ function Knob({
               <MaterialCommunityIcons
                 name={opt.icon}
                 size={active ? iconSize + 4 : iconSize}
-                color={active ? (activeIconColor ?? C.amberBright) : POINTER_WHITE}
+                color={active ? (activeIconColor ?? C.amberBright) : C.silk}
                 style={{ opacity: active ? 1 : 0.9 }}
               />
             ) : (
@@ -436,7 +436,7 @@ function Knob({
                   fontFamily: 'monospace',
                   fontSize: active ? 12 : 9.5,
                   fontWeight: 'bold',
-                  color: active ? (activeIconColor ?? C.amberBright) : POINTER_WHITE,
+                  color: active ? (activeIconColor ?? C.amberBright) : C.silk,
                   opacity: active ? 1 : 0.85,
                   textAlign: 'center',
                   textShadowColor: C.amberBright,

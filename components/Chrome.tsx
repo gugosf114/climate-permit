@@ -5,7 +5,7 @@
  */
 import { View, Text } from 'react-native';
 import { Image } from 'expo-image';
-import { useDMV } from '../constants/tokens';
+import { useDMV, DMV_LIGHT } from '../constants/tokens';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const BEAR_PNG = require('../assets/images/bear.png');
@@ -22,10 +22,11 @@ export function BearSilhouette({ size, color }: { size: number; color: string })
   );
 }
 
-/** The masthead band: italic "California", USA, gold bear + wordmark. */
+/** The masthead band: italic "California", USA, gold bear + wordmark.
+ *  Always printed on cream paper, in both themes, so the mark never changes colour. */
 export function OfficialHeader() {
   const insets = useSafeAreaInsets();
-  const DMV = useDMV();
+  const DMV = DMV_LIGHT;
   return (
     <View style={{
       paddingTop: insets.top + 12, paddingBottom: 10, paddingHorizontal: 22,

@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import { Image } from 'expo-image';
-import Svg, { Path, G } from 'react-native-svg';
+import { BearSilhouette } from './Chrome';
 import { Archetype } from '../data/archetypes';
 import { Answers } from '../lib/store';
 import { getVehicleImage } from '../lib/vehicleImages';
@@ -97,49 +97,6 @@ function ventShort(v: Answers['ventDirection']): string {
 function modeShort(m: Answers['climateMode']): string {
   if (!m) return '—';
   return String(m).toUpperCase().slice(0, 3);
-}
-
-// California grizzly bear silhouette (walking pose, facing left, shoulder hump)
-function BearSilhouette({ size, color }: { size: number; color: string }) {
-  return (
-    <Svg width={size} height={size * 0.55} viewBox="0 0 100 55">
-      <G fill={color}>
-        {/* Body — emphasizes shoulder hump (right of center) and drooping head (left) */}
-        <Path d="
-          M 4 32
-          C 3 30, 4 27, 8 25
-          L 11 22
-          C 13 19, 16 17, 19 19
-          L 20 14
-          L 23 19
-          L 25 14
-          L 28 19
-          C 33 14, 41 11, 48 11
-          C 58 11, 68 13, 77 17
-          C 84 20, 89 24, 91 27
-          L 94 24
-          L 96 28
-          L 91 30
-          C 89 36, 86 41, 83 43
-          L 83 49
-          C 81 50, 78 50, 76 49
-          L 76 44
-          C 70 45, 64 45, 58 44
-          L 50 49
-          C 48 50, 45 50, 43 49
-          L 43 44
-          L 26 44
-          L 18 49
-          C 16 50, 13 50, 11 49
-          L 11 44
-          C 8 43, 5 38, 4 34
-          Z
-        " />
-        {/* 5-point star above shoulder */}
-        <Path d="M 55 20 L 56.8 24 L 61 24 L 57.6 26.6 L 58.8 31 L 55 28.4 L 51.2 31 L 52.4 26.6 L 49 24 L 53.2 24 Z" />
-      </G>
-    </Svg>
-  );
 }
 
 export function PermitCard({ archetype, make, model, answers, compact = false }: Props) {

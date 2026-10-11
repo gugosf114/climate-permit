@@ -190,10 +190,10 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
 
       {/* Watermark band — bottom edge */}
       <View pointerEvents="none" style={{
-        position: 'absolute', left: s(40), right: s(20), bottom: s(36),
+        position: 'absolute', left: s(40), right: s(80), bottom: s(36),
         flexDirection: 'row', justifyContent: 'space-between',
       }}>
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: 4 }).map((_, i) => (
           <Text key={i} style={{
             fontFamily: 'monospace',
             fontSize: s(7),
@@ -207,56 +207,6 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
         ))}
       </View>
 
-      {/* Watermark — diagonal "THE GOLDEN STATE" through middle */}
-      <Text pointerEvents="none" style={{
-        position: 'absolute',
-        top: s(110), left: s(-30), right: s(-30),
-        fontFamily: 'serif',
-        fontStyle: 'italic',
-        fontSize: s(20),
-        color: DL.gold,
-        opacity: 0.13,
-        letterSpacing: s(6),
-        textAlign: 'center',
-        fontWeight: 'bold',
-      }}>
-        ★  THE GOLDEN STATE OF CLIMATE  ★
-      </Text>
-
-      {/* === STATE OF CALIFORNIA navy watermark, large bold center === */}
-      <Text pointerEvents="none" style={{
-        position: 'absolute',
-        top: s(180), left: s(-40), right: s(-40),
-        fontFamily: undefined,
-        fontWeight: 'bold',
-        fontSize: s(34),
-        color: DL.caBlue,
-        opacity: 0.07,
-        letterSpacing: s(8),
-        textAlign: 'center',
-        transform: [{ rotate: '-8deg' }],
-      }}>
-        STATE  OF  CALIFORNIA
-      </Text>
-
-      {/* === Repeated STATE OF CALIFORNIA tiny in band, like real DL === */}
-      {Array.from({ length: 8 }).map((_, i) => (
-        <Text key={`socca${i}`} pointerEvents="none" style={{
-          position: 'absolute',
-          left: 0, right: 0,
-          top: s(60 + i * 60),
-          fontFamily: undefined,
-          fontSize: s(7),
-          color: DL.caBlue,
-          opacity: 0.06,
-          letterSpacing: s(2),
-          textAlign: 'center',
-          fontWeight: 'bold',
-        }}>
-          STATE OF CALIFORNIA · STATE OF CALIFORNIA · STATE OF CALIFORNIA · STATE OF CALIFORNIA
-        </Text>
-      ))}
-
       {/* === Large faint bear silhouette watermark (center-back) === */}
       <View pointerEvents="none" style={{
         position: 'absolute',
@@ -266,31 +216,6 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
       }}>
         <BearSilhouette size={s(240)} color={DL.caBlueDeep} />
       </View>
-
-      {/* === Smaller bear watermarks scattered === */}
-      <View pointerEvents="none" style={{
-        position: 'absolute',
-        top: s(260), left: s(20),
-        opacity: 0.09,
-      }}>
-        <BearSilhouette size={s(56)} color={DL.gold} />
-      </View>
-      <View pointerEvents="none" style={{
-        position: 'absolute',
-        bottom: s(80), right: s(30),
-        opacity: 0.09,
-      }}>
-        <BearSilhouette size={s(56)} color={DL.gold} />
-      </View>
-
-      {/* Subtle horizontal security grid */}
-      {Array.from({ length: 12 }).map((_, i) => (
-        <View key={`g${i}`} pointerEvents="none" style={{
-          position: 'absolute', left: s(28), right: s(20),
-          top: i * s(28), height: 1,
-          backgroundColor: DL.gold, opacity: 0.04,
-        }} />
-      ))}
 
       {/* === TOP HEADER ROW === */}
       <View
@@ -384,16 +309,16 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
             position: 'absolute',
             top: s(34), left: s(-6), right: 0,
             fontFamily: 'monospace',
-            fontSize: s(11),
+            fontSize: s(10),
             color: DL.ink,
-            opacity: 0.25,
+            opacity: 0.22,
             fontWeight: 'bold',
-            letterSpacing: s(6),
-            transform: [{ rotate: '-58deg' }],
+            letterSpacing: s(3),
+            transform: [{ rotate: '-50deg' }],
             textAlign: 'center',
-            width: s(120),
+            width: s(108),
           }}>
-            CLIMATE
+            SAMPLE
           </Text>
           {/* SSC marker repeating */}
           <Text style={{

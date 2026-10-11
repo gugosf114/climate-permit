@@ -33,7 +33,7 @@ export default function LandingScreen() {
           backgroundColor: DMV.paperLight,
         }}
       >
-        <Text style={{ fontFamily: 'monospace', fontSize: 9, color: DMV.caBlue, letterSpacing: 1.5 }}>
+        <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.caBlue, letterSpacing: 1.5 }}>
           {themeName === 'dark' ? '\u2600 DAY WINDOW' : '\u263e NIGHT SERVICE'}
         </Text>
       </TouchableOpacity>
@@ -44,8 +44,8 @@ export default function LandingScreen() {
       >
         <Animated.View entering={FadeInDown.duration(600).delay(100)}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 9, color: DMV.caBlue,
-            fontWeight: 'bold', letterSpacing: 2.4, marginBottom: 6,
+            fontFamily: 'monospace', fontSize: 10, color: DMV.caBlue,
+            fontWeight: 'bold', letterSpacing: 1.5, marginBottom: 6,
           }}>
             FORM  21-B  ·  REV  04
           </Text>
@@ -68,7 +68,7 @@ export default function LandingScreen() {
             <View style={{ height: 4, width: 70, backgroundColor: DMV.red }} />
             <View style={{ height: 1, flex: 1, backgroundColor: DMV.caBlue, opacity: 0.5 }} />
             <Text style={{
-              fontFamily: 'monospace', fontSize: 8,
+              fontFamily: 'monospace', fontSize: 10,
               color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1.5,
             }}>
               DEPT · OF · CLIMATE · CONTROL
@@ -90,7 +90,7 @@ export default function LandingScreen() {
             backgroundColor: DMV.noticeWash,
           }}>
             <Text style={{
-              fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue,
+              fontFamily: 'monospace', fontSize: 10, color: DMV.caBlue,
               fontWeight: 'bold', letterSpacing: 1.5, marginBottom: 4,
             }}>
               SECTION 1 · ASSESSMENT NOTICE
@@ -113,7 +113,7 @@ export default function LandingScreen() {
           }}>
             <View style={{ flex: 1 }}>
               <Text style={{
-                fontFamily: 'monospace', fontSize: 8,
+                fontFamily: 'monospace', fontSize: 10,
                 color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1.5,
               }}>
                 3 DOB
@@ -124,7 +124,7 @@ export default function LandingScreen() {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{
-                fontFamily: 'monospace', fontSize: 8,
+                fontFamily: 'monospace', fontSize: 10,
                 color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1.5,
               }}>
                 4b EXP
@@ -135,7 +135,7 @@ export default function LandingScreen() {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{
-                fontFamily: 'monospace', fontSize: 8,
+                fontFamily: 'monospace', fontSize: 10,
                 color: DMV.caBlue, fontWeight: 'bold', letterSpacing: 1.5,
               }}>
                 12 REST
@@ -169,7 +169,7 @@ export default function LandingScreen() {
             <Text style={{
               fontFamily: undefined, fontSize: 14,
               color: DMV.paperLight, fontWeight: 'bold',
-              letterSpacing: 3.5, textTransform: 'uppercase',
+              letterSpacing: 1.5, textTransform: 'uppercase',
             }}>
               Begin Application
             </Text>
@@ -182,7 +182,7 @@ export default function LandingScreen() {
           }}>
             <View style={{ height: 1, flex: 1, backgroundColor: DMV.divider }} />
             <Text style={{
-              fontFamily: 'monospace', fontSize: 8,
+              fontFamily: 'monospace', fontSize: 10,
               color: DMV.inkDim, letterSpacing: 1.5, fontWeight: 'bold',
             }}>
               AUTHORIZED
@@ -190,8 +190,8 @@ export default function LandingScreen() {
             <View style={{ height: 1, flex: 1, backgroundColor: DMV.divider }} />
           </View>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim,
-            lineHeight: 12.5, letterSpacing: 0.5, textAlign: 'center',
+            fontFamily: 'monospace', fontSize: 10, color: DMV.inkDim,
+            lineHeight: 15, letterSpacing: 0.5, textAlign: 'center',
           }}>
             This is a parody application. Not affiliated with{'\n'}
             the California Department of Motor Vehicles{'\n'}

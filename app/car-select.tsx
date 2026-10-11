@@ -60,7 +60,7 @@ function PaperRow({
           </Text>
           {sub ? (
             <Text style={{
-              fontFamily: 'monospace', fontSize: 9, color: DMV.caBlue,
+              fontFamily: 'monospace', fontSize: 10, color: DMV.caBlue,
               marginTop: 2, letterSpacing: 1, textTransform: 'uppercase', fontWeight: '600',
             }}>
               {sub}

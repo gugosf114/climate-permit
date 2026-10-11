@@ -69,7 +69,7 @@ export default function CompatScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: DMV.paper, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <Animated.View entering={FadeInDown.duration(600)} style={{ alignItems: 'center', width: '100%' }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 9, color: DMV.caBlueSoft, textTransform: 'uppercase', letterSpacing: 3, marginBottom: 8, textAlign: 'center' }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.caBlueSoft, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8, textAlign: 'center' }}>
             Your partner has challenged you
           </Text>
           <Text style={{
@@ -87,16 +87,16 @@ export default function CompatScreen() {
             borderWidth: 1, borderColor: DMV.border, paddingVertical: 14, paddingHorizontal: 20,
             marginBottom: 28, width: '100%', alignItems: 'center', backgroundColor: DMV.paperLight,
           }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim, textTransform: 'uppercase', letterSpacing: 1 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.inkDim, textTransform: 'uppercase', letterSpacing: 1 }}>
               Partner classified as
             </Text>
             <Text style={{
               fontFamily: 'monospace', fontSize: 16, fontWeight: 'bold', color: DMV.red,
-              textTransform: 'uppercase', letterSpacing: 3, marginTop: 4
+              textTransform: 'uppercase', letterSpacing: 1.5, marginTop: 4
             }}>
               ? ? ?
             </Text>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.inkSoft, marginTop: 4, letterSpacing: 1 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.inkSoft, marginTop: 4, letterSpacing: 1 }}>
               Reveal after your quiz
             </Text>
           </View>
@@ -111,7 +111,7 @@ export default function CompatScreen() {
             onPress={() => router.push('/car-select')}
             activeOpacity={0.88}
           >
-            <Text style={{ fontFamily: 'monospace', fontSize: 12, color: DMV.paperLight, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 12, color: DMV.paperLight, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1.5 }}>
               Start My Quiz
             </Text>
           </TouchableOpacity>
@@ -125,10 +125,10 @@ export default function CompatScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: DMV.paper, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="small" color={DMV.caBlue} style={{ marginBottom: 14 }} />
-        <Text style={{ fontFamily: 'monospace', fontSize: 11, color: DMV.caBlue, textTransform: 'uppercase', letterSpacing: 4, opacity: 0.7 }}>
+        <Text style={{ fontFamily: 'monospace', fontSize: 11, color: DMV.caBlue, textTransform: 'uppercase', letterSpacing: 1.5, opacity: 0.7 }}>
           Comparing Permits…
         </Text>
-        <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim, letterSpacing: 2, marginTop: 6 }}>
+        <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.inkDim, letterSpacing: 2, marginTop: 6 }}>
           FORM 21-B · SECTION 9
         </Text>
       </View>

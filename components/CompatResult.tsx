@@ -76,12 +76,12 @@ export function CompatResult(p: Props) {
             borderBottomWidth: 1, borderBottomColor: DMV.divider,
           }}
         >
-          <Text style={{ fontFamily: 'monospace', fontSize: 9, color: DMV.caBlueSoft, textTransform: 'uppercase', letterSpacing: 4 }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.caBlueSoft, textTransform: 'uppercase', letterSpacing: 1.5 }}>
             Climate Compatibility
           </Text>
           <Text style={{
             fontFamily: 'monospace', fontSize: 22, color: DMV.caBlue, fontWeight: 'bold',
-            textTransform: 'uppercase', letterSpacing: 3, marginTop: 6,
+            textTransform: 'uppercase', letterSpacing: 1.5, marginTop: 6,
           }}>
             Assessment
           </Text>
@@ -98,7 +98,7 @@ export function CompatResult(p: Props) {
                 borderBottomWidth: 1, borderBottomColor: DMV.divider,
               }}
             >
-              <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim, textTransform: 'uppercase', letterSpacing: 3, marginBottom: 4 }}>
+              <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.inkDim, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 4 }}>
                 Compatibility Index
               </Text>
               <Text
@@ -124,13 +124,13 @@ export function CompatResult(p: Props) {
             {/* Two permit cards */}
             <View style={{ flexDirection: 'row', paddingHorizontal: 12, paddingTop: 16, gap: 8 }}>
               <Animated.View entering={FadeInDown.duration(500).delay(350)} style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue, opacity: 0.85, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 2, marginBottom: 6 }}>
+                <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.caBlue, opacity: 0.85, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 2, marginBottom: 6 }}>
                   You
                 </Text>
                 <PermitCard compact archetype={p.myArchetype} make={p.myMake} model={p.myModel} answers={p.myAnswers} />
               </Animated.View>
               <Animated.View entering={FadeInDown.duration(500).delay(500)} style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue, opacity: 0.85, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 2, marginBottom: 6 }}>
+                <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.caBlue, opacity: 0.85, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 2, marginBottom: 6 }}>
                   Partner
                 </Text>
                 <PermitCard compact archetype={p.partnerArchetype} make={p.partnerMake} model={p.partnerModel} answers={p.partnerAnswers} />
@@ -138,7 +138,7 @@ export function CompatResult(p: Props) {
             </View>
 
             <View style={{ alignItems: 'center', paddingVertical: 18 }}>
-              <Text style={{ fontFamily: 'monospace', fontSize: 8, color: DMV.inkDim, letterSpacing: 3, textTransform: 'uppercase' }}>
+              <Text style={{ fontFamily: 'monospace', fontSize: 10, color: DMV.inkDim, letterSpacing: 1.5, textTransform: 'uppercase' }}>
                 CLIMATE PERMIT · GET YOURS ON GOOGLE PLAY
               </Text>
             </View>
@@ -159,7 +159,7 @@ export function CompatResult(p: Props) {
               elevation: 3,
             }}
           >
-            <Text style={{ fontFamily: 'monospace', fontSize: 12, color: DMV.paperLight, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 12, color: DMV.paperLight, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1.5 }}>
               Share Results
             </Text>
           </TouchableOpacity>

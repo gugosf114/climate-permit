@@ -44,7 +44,7 @@ export function OfficialHeader() {
           California
         </Text>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 8, color: DMV.ink,
+          fontFamily: 'monospace', fontSize: 10, color: DMV.ink,
           fontWeight: 'bold', letterSpacing: 1, marginLeft: 3, marginBottom: 5,
         }}>
           USA
@@ -63,60 +63,17 @@ export function OfficialHeader() {
   );
 }
 
-/** Faint security printing behind form screens: repeated state name,
- *  guilloche rules, watermark bears. */
+/** The paper behind form screens: one faint grizzly, nothing else. */
 export function DocumentBackground() {
   const DMV = useDMV();
   return (
     <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-      <Text style={{
-        position: 'absolute',
-        top: '40%', left: -40, right: -40,
-        fontWeight: 'bold',
-        fontSize: 42,
-        color: DMV.caBlue,
-        opacity: 0.06,
-        letterSpacing: 10,
-        textAlign: 'center',
-        transform: [{ rotate: '-8deg' }],
-      }}>
-        STATE OF CALIFORNIA
-      </Text>
-
-      {Array.from({ length: 14 }).map((_, i) => (
-        <Text key={`r${i}`} style={{
-          position: 'absolute', left: 0, right: 0,
-          top: 70 + i * 60,
-          fontSize: 8, fontWeight: 'bold',
-          color: DMV.caBlue, opacity: 0.055,
-          letterSpacing: 2.5,
-          textAlign: 'center',
-        }}>
-          STATE OF CALIFORNIA · STATE OF CALIFORNIA · STATE OF CALIFORNIA · STATE OF CALIFORNIA
-        </Text>
-      ))}
-
       <View style={{
-        position: 'absolute', top: '40%', left: 0, right: 0,
-        alignItems: 'center', opacity: 0.05,
+        position: 'absolute', bottom: 48, right: -30,
+        opacity: 0.06,
       }}>
-        <BearSilhouette size={260} color={DMV.caBlueDeep} />
+        <BearSilhouette size={300} color={DMV.caBlueDeep} />
       </View>
-
-      <View style={{ position: 'absolute', top: 220, right: 30, opacity: 0.08 }}>
-        <BearSilhouette size={50} color={DMV.gold} />
-      </View>
-      <View style={{ position: 'absolute', bottom: 200, left: 24, opacity: 0.08 }}>
-        <BearSilhouette size={50} color={DMV.gold} />
-      </View>
-
-      {Array.from({ length: 32 }).map((_, i) => (
-        <View key={`g${i}`} style={{
-          position: 'absolute', left: 0, right: 0,
-          top: i * 24, height: 1,
-          backgroundColor: DMV.gold, opacity: 0.04,
-        }} />
-      ))}
     </View>
   );
 }
@@ -138,8 +95,8 @@ export function SectionHeader({
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <View style={{ flex: 1 }}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 9, color: kickerColor ?? DMV.caBlue,
-            fontWeight: 'bold', letterSpacing: 2.2, marginBottom: 4,
+            fontFamily: 'monospace', fontSize: 10, color: kickerColor ?? DMV.caBlue,
+            fontWeight: 'bold', letterSpacing: 1.5, marginBottom: 4,
           }}>
             {kicker}
           </Text>

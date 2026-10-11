@@ -33,7 +33,7 @@ function PermitStamp() {
   return (
     <Animated.View
       pointerEvents="none"
-      style={[{ position: 'absolute', bottom: 96, right: 26 }, stampStyle]}
+      style={[{ position: 'absolute', bottom: 40, right: 18 }, stampStyle]}
     >
       <View style={{
         borderWidth: 2.5, borderColor: DMV.red, borderRadius: 4,

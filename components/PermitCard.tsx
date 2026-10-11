@@ -264,16 +264,16 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
           {/* SAMPLE diagonal text on photo (CA DL specimen marker) */}
           <Text pointerEvents="none" style={{
             position: 'absolute',
-            top: s(34), left: s(-6), right: 0,
+            top: s(50), left: 0, right: 0,
             fontFamily: 'monospace',
-            fontSize: s(10),
+            fontSize: s(9),
             color: DL.ink,
             opacity: 0.22,
             fontWeight: 'bold',
             letterSpacing: s(3),
-            transform: [{ rotate: '-50deg' }],
+            transform: [{ rotate: '-45deg' }],
             textAlign: 'center',
-            width: s(108),
+            width: s(96),
           }}>
             SAMPLE
           </Text>
@@ -297,7 +297,7 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
         {/* Field block */}
         <View style={{ flex: 1, gap: s(2) }}>
           {/* Top row: DLN | EXP */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginRight: s(48) }}>
             <NumField num="4d" label="DLN" value={dln} red large scale={s} />
             <NumField num="4b" label="EXP" value={exp} red scale={s} />
           </View>

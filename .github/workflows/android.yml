@@ -1,0 +1,117 @@
+name: Android
+
+on:
+  push:
+    branches: [design-overhaul, master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  EXPO_PUBLIC_ADMOB_BANNER_ID: ca-app-pub-8333116290939960/2991530387
+  EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID: ca-app-pub-8333116290939960/4025410452
+  NODE_ENV: production
+
+jobs:
+  build:
+    name: Signed AAB + APK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx eslint .
+
+      - name: Generate the android project
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Restore the upload key
+        env:
+          CLIMATE_KEYSTORE_BASE64: ${{ secrets.CLIMATE_KEYSTORE_BASE64 }}
+        run: |
+          test -n "$CLIMATE_KEYSTORE_BASE64"
+          printf '%s' "$CLIMATE_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/climate-permit-upload.jks"
+          chmod 600 "$RUNNER_TEMP/climate-permit-upload.jks"
+
+      - name: Sign release builds with the upload key
+        env:
+          KS: ${{ runner.temp }}/climate-permit-upload.jks
+          PW: ${{ secrets.CLIMATE_KEY_PASSWORD }}
+        run: |
+          test -n "$PW"
+          f=android/app/build.gradle
+          python3 - "$f" "$KS" "$PW" <<'PY'
+          import sys,re
+          f,ks,pw=sys.argv[1:4]
+          s=open(f).read()
+          block="""signingConfigs {
+                  uploadKey {
+                      storeFile file('%s')
+                      storePassword '%s'
+                      keyAlias 'upload'
+                      keyPassword '%s'
+                  }""" % (ks,pw,pw)
+          assert 'signingConfigs {' in s
+          s=s.replace('signingConfigs {',block,1)
+          s,n=re.subn(r'(release \{[^}]*?)signingConfig signingConfigs\.debug',r'\1signingConfig signingConfigs.uploadKey',s,count=1,flags=re.S)
+          assert n==1, 'release signingConfig not patched'
+          open(f,'w').write(s)
+          PY
+          grep -n "signingConfigs.uploadKey" "$f"
+
+      - name: Build the Play bundle and the APK
+        working-directory: android
+        run: |
+          ./gradlew bundleRelease assembleRelease --no-daemon
+          jarsigner -verify app/build/outputs/bundle/release/app-release.aab
+          ls -la app/build/outputs/bundle/release/ app/build/outputs/apk/release/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: climate-permit-play-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+      - uses: actions/upload-artifact@v4
+        with:
+          name: climate-permit-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      # The README's first line is the dated download link; this step keeps it true.
+      - name: Publish the APK and date the README link
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VER=$(node -p "require('./app.json').expo.version")
+          VC=$(node -p "require('./app.json').expo.android.versionCode")
+          DATE=$(TZ=America/Los_Angeles date +%F)
+          cp android/app/build/outputs/apk/release/app-release.apk "Climate-Permit-$VER.apk"
+          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
+          gh release create latest "Climate-Permit-$VER.apk" --title "Climate Permit $VER ($VC) — $DATE" --notes "Signed with the upload key. Installs over the Play copy and over the last giveaway." --latest
+          git config user.name "github-actions[bot]"; git config user.email "github-actions[bot]@users.noreply.github.com"
+          python3 - "$VER" "$VC" "$DATE" <<'PY'
+          import sys,re
+          ver,vc,date=sys.argv[1:4]
+          s=open('README.md').read()
+          line=f"> ## [⬇ DOWNLOAD THE LATEST ANDROID APK — {date}](https://github.com/gugosf114/climate-permit/releases/latest/download/Climate-Permit-{ver}.apk)"
+          s=re.sub(r'^> ## \[⬇ DOWNLOAD THE LATEST ANDROID APK[^\n]*', line, s, count=1, flags=re.M)
+          s=re.sub(r'^> \*\*Current review build:[^\n]*', f"> **Current build: {ver} · Android version code {vc} · {date}**", s, count=1, flags=re.M)
+          open('README.md','w').write(s)
+          PY
+          git add README.md
+          git commit -m "chore: giveaway APK v$VER ($DATE), README link dated [skip ci]" || exit 0
+          git push

@@ -122,58 +122,6 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
         position: 'relative',
       }}
     >
-      {/* === BACKGROUND SECURITY PATTERN === */}
-      {/* Watermark band — repeating DLN along the left edge */}
-      <View pointerEvents="none" style={{
-        position: 'absolute', top: 0, bottom: 0, left: s(8), width: s(14),
-        justifyContent: 'space-between', paddingVertical: s(40),
-      }}>
-        {Array.from({ length: 10 }).map((_, i) => (
-          <Text key={i} style={{
-            fontFamily: 'monospace',
-            fontSize: s(6.5),
-            color: DL.goldDeep,
-            opacity: 0.18,
-            letterSpacing: s(0.5),
-            transform: [{ rotate: '-90deg' }],
-            width: s(80),
-            marginLeft: s(-30),
-            fontWeight: 'bold',
-          }}>
-            {dln}/{dln}/{dln}
-          </Text>
-        ))}
-      </View>
-
-      {/* Watermark band — bottom edge */}
-      <View pointerEvents="none" style={{
-        position: 'absolute', left: s(40), right: s(80), bottom: s(36),
-        flexDirection: 'row', justifyContent: 'space-between',
-      }}>
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Text key={i} style={{
-            fontFamily: 'monospace',
-            fontSize: s(7),
-            color: DL.goldDeep,
-            opacity: 0.18,
-            letterSpacing: s(0.5),
-            fontWeight: 'bold',
-          }}>
-            {dln}
-          </Text>
-        ))}
-      </View>
-
-      {/* === Large faint bear silhouette watermark (center-back) === */}
-      <View pointerEvents="none" style={{
-        position: 'absolute',
-        top: s(120), left: s(40), right: s(40),
-        alignItems: 'center',
-        opacity: 0.06,
-      }}>
-        <BearSilhouette size={s(240)} color={DL.caBlueDeep} />
-      </View>
-
       {/* === TOP HEADER ROW === */}
       <View
         style={{
@@ -276,21 +224,6 @@ export function PermitCard({ archetype, make, model, answers, compact = false }:
             width: s(96),
           }}>
             SAMPLE
-          </Text>
-          {/* SSC marker repeating */}
-          <Text style={{
-            position: 'absolute',
-            bottom: s(2), left: -s(4), right: 0,
-            fontFamily: 'monospace',
-            fontSize: s(5.5),
-            color: DL.goldDeep,
-            opacity: 0.4,
-            letterSpacing: 0,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            transform: [{ rotate: '0deg' }],
-          }}>
-            {dln.slice(-3)}/{dln.slice(-3)}/{dln.slice(-3)}
           </Text>
         </View>
 

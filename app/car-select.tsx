@@ -8,7 +8,7 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { CARS, CarEntry, MAKES, DashboardStyle } from '../data/cars';
 import { useClimateStore } from '../lib/store';
 import { getBrandLogo } from '../lib/brandLogos';
-import { useDMV } from '../constants/tokens';
+import { useDMV, DMV_LIGHT } from '../constants/tokens';
 import { OfficialHeader, DocumentBackground, SectionHeader } from '../components/Chrome';
 
 
@@ -128,7 +128,8 @@ export default function CarSelectScreen() {
                       width: 42, height: 42,
                       borderWidth: 1, borderColor: DMV.border,
                       alignItems: 'center', justifyContent: 'center',
-                      backgroundColor: DMV.paper,
+                      // brand logos are dark art: keep the badge on cream paper in both themes
+                      backgroundColor: DMV_LIGHT.paperLight,
                       padding: 4,
                     }}>
                       {logo ? (

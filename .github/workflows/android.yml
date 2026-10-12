@@ -13,7 +13,6 @@ concurrency:
 env:
   EXPO_PUBLIC_ADMOB_BANNER_ID: ca-app-pub-8333116290939960/2991530387
   EXPO_PUBLIC_ADMOB_INTERSTITIAL_ID: ca-app-pub-8333116290939960/4025410452
-  NODE_ENV: production
 
 jobs:
   build:
@@ -34,7 +33,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - run: npm ci
       - run: npx tsc --noEmit
-      - run: npx eslint .
+      - run: npx expo lint
 
       - name: Generate the android project
         run: npx expo prebuild --platform android --no-install

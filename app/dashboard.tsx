@@ -10,10 +10,6 @@ import { pickArchetype } from '../lib/scoring';
 import { getDashboardImage } from '../lib/dashboardImages';
 import { useDMV } from '../constants/tokens';
 import { OfficialHeader, SectionHeader } from '../components/Chrome';
-const VENT_FACE_PNG = require('../assets/images/hvac-icons/face.png');
-const VENT_MIX_PNG = require('../assets/images/hvac-icons/mix.png');
-const VENT_FEET_PNG = require('../assets/images/hvac-icons/feet.png');
-const VENT_DEFROST_PNG = require('../assets/images/hvac-icons/defrost.png');
 const RECIRC_PNG = require('../assets/images/hvac-icons/recirc.png');
 
 const TEMP_STEPS = [60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80];
@@ -98,7 +94,7 @@ function BrandBanner({
           borderWidth: 1, borderColor: CHIP_NAVY,
           paddingHorizontal: 8, paddingVertical: 3,
         }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_NAVY, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 10, color: CHIP_NAVY, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
             {make} · {model}
           </Text>
         </View>
@@ -111,10 +107,10 @@ function BrandBanner({
           paddingVertical: 8, paddingHorizontal: 10, minWidth: 90,
         }}>
           <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_NAVY, fontWeight: 'bold', letterSpacing: 1 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: CHIP_NAVY, fontWeight: 'bold', letterSpacing: 1 }}>
               16
             </Text>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_DIM, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: CHIP_DIM, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
               HGT
             </Text>
           </View>
@@ -132,7 +128,7 @@ function BrandBanner({
               backgroundColor: acOn ? CHIP_RED : 'transparent',
               borderWidth: 1, borderColor: acOn ? CHIP_RED : CHIP_NAVY,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: acOn ? CHIP_RED : CHIP_DIM, letterSpacing: 1.5, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: acOn ? CHIP_RED : CHIP_DIM, letterSpacing: 1.5, fontWeight: 'bold' }}>
               A/C
             </Text>
             <View style={{
@@ -141,7 +137,7 @@ function BrandBanner({
               borderWidth: 1, borderColor: autoOn ? CHIP_RED : CHIP_NAVY,
               marginLeft: 4,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: autoOn ? CHIP_RED : CHIP_DIM, letterSpacing: 1.5, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: autoOn ? CHIP_RED : CHIP_DIM, letterSpacing: 1.5, fontWeight: 'bold' }}>
               AUTO
             </Text>
             <View style={{
@@ -150,13 +146,13 @@ function BrandBanner({
               borderWidth: 1, borderColor: recircOn ? CHIP_RED : CHIP_NAVY,
               marginLeft: 4,
             }} />
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: recircOn ? CHIP_RED : CHIP_DIM, letterSpacing: 1.5, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: recircOn ? CHIP_RED : CHIP_DIM, letterSpacing: 1.5, fontWeight: 'bold' }}>
               RCRC
             </Text>
           </View>
 
           <View style={{ marginTop: 6, flexDirection: 'row', gap: 2, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_DIM, letterSpacing: 1.5, marginRight: 4, fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: CHIP_DIM, letterSpacing: 1.5, marginRight: 4, fontWeight: 'bold' }}>
               FAN
             </Text>
             {[1, 2, 3, 4, 5, 6, 7].map((n) => {
@@ -182,7 +178,7 @@ function BrandBanner({
           borderWidth: 1, borderColor: CHIP_NAVY,
           paddingHorizontal: 10, paddingVertical: 3,
         }}>
-          <Text style={{ fontFamily: 'monospace', fontSize: 8, color: CHIP_NAVY, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 10, color: CHIP_NAVY, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
             Tap · +1   Hold · −1
           </Text>
         </View>
@@ -235,14 +231,14 @@ function LCDReadout({ value, label, big }: { value?: number | 'same'; label: str
       {/* Field-number prefix matching CA DL convention */}
       <View style={{ flexDirection: 'row', alignItems: 'baseline', marginBottom: 4, gap: 4 }}>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 8, color: C.amber,
+          fontFamily: 'monospace', fontSize: 10, color: C.amber,
           fontWeight: 'bold', letterSpacing: 1,
         }}>
           16
         </Text>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 8, color: C.silkDim,
-          letterSpacing: 2.5, textTransform: 'uppercase', fontWeight: 'bold',
+          fontFamily: 'monospace', fontSize: 10, color: C.silkDim,
+          letterSpacing: 1.5, textTransform: 'uppercase', fontWeight: 'bold',
         }}>
           {label}
         </Text>
@@ -323,37 +319,7 @@ type KnobOption = {
   key: string;
   label?: string;
   icon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
-  render?: (props: { color: string; opacity: number; size: number }) => React.ReactNode;
 };
-
-const VENT_ICON_SIZE = 32;
-
-function VentIcon({ source, color, opacity = 1 }: { source: any; color: string; opacity?: number }) {
-  return (
-    <Image
-      source={source}
-      style={{ width: VENT_ICON_SIZE, height: VENT_ICON_SIZE, opacity }}
-      contentFit="contain"
-      tintColor={color}
-    />
-  );
-}
-
-function FaceVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
-  return <VentIcon source={VENT_FACE_PNG} color={color} opacity={opacity} />;
-}
-
-function FeetVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
-  return <VentIcon source={VENT_FEET_PNG} color={color} opacity={opacity} />;
-}
-
-function MixVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
-  return <VentIcon source={VENT_MIX_PNG} color={color} opacity={opacity} />;
-}
-
-function DefrostVentIcon({ color, opacity = 1 }: { color: string; opacity?: number }) {
-  return <VentIcon source={VENT_DEFROST_PNG} color={color} opacity={opacity} />;
-}
 
 function Knob({
   options, activeKey, onChange,
@@ -362,6 +328,7 @@ function Knob({
   labelOffset = 11,
   dashColorFn,
   activeIconColor,
+  iconSize = 14,
 }: {
   options: KnobOption[];
   activeKey?: string;
@@ -371,6 +338,7 @@ function Knob({
   labelOffset?: number;
   dashColorFn?: (i: number, active: boolean) => string;
   activeIconColor?: string;
+  iconSize?: number;
 }) {
   const C = useDashC();
   const radius = size / 2;
@@ -455,18 +423,12 @@ function Knob({
               ],
             }}
           >
-            {opt.render ? (
-              opt.render({
-                color: active ? (activeIconColor ?? C.amberBright) : POINTER_WHITE,
-                opacity: active ? 1 : 0.7,
-                size: active ? 26 : 22,
-              })
-            ) : opt.icon ? (
+            {opt.icon ? (
               <MaterialCommunityIcons
                 name={opt.icon}
-                size={active ? 17 : 14}
-                color={active ? (activeIconColor ?? C.amberBright) : POINTER_WHITE}
-                style={{ opacity: active ? 1 : 0.85 }}
+                size={active ? iconSize + 4 : iconSize}
+                color={active ? (activeIconColor ?? C.amberBright) : C.amber}
+                style={{ opacity: active ? 1 : 0.9 }}
               />
             ) : (
               <Text
@@ -474,7 +436,7 @@ function Knob({
                   fontFamily: 'monospace',
                   fontSize: active ? 12 : 9.5,
                   fontWeight: 'bold',
-                  color: active ? (activeIconColor ?? C.amberBright) : POINTER_WHITE,
+                  color: active ? (activeIconColor ?? C.amberBright) : C.amber,
                   opacity: active ? 1 : 0.85,
                   textAlign: 'center',
                   textShadowColor: C.amberBright,
@@ -643,10 +605,10 @@ const FAN_OPTIONS: KnobOption[] = [
   { key: 'auto', icon: 'fan-auto' },
 ];
 const VENT_OPTIONS: KnobOption[] = [
-  { key: 'face', render: (p) => <FaceVentIcon color={p.color} opacity={p.opacity} /> },
-  { key: 'mix', render: (p) => <MixVentIcon color={p.color} opacity={p.opacity} /> },
-  { key: 'feet', render: (p) => <FeetVentIcon color={p.color} opacity={p.opacity} /> },
-  { key: 'defrost', render: (p) => <DefrostVentIcon color={p.color} opacity={p.opacity} /> },
+  { key: 'face', icon: 'face-man' },
+  { key: 'mix', icon: 'human' },
+  { key: 'feet', icon: 'shoe-print' },
+  { key: 'defrost', icon: 'car-defrost-front' },
 ];
 
 function TempKnob({
@@ -705,8 +667,9 @@ function VentKnob({
         options={VENT_OPTIONS}
         activeKey={value}
         onChange={(k) => onChange(k)}
-        labelWidth={42}
-        labelOffset={26}
+        labelWidth={40}
+        labelOffset={18}
+        iconSize={24}
       />
     </View>
   );
@@ -810,7 +773,7 @@ function CircleButton({
           borderWidth: 1, borderColor: POINTER_WHITE,
         }}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 9,
+            fontFamily: 'monospace', fontSize: 10,
             color: POINTER_WHITE,
             fontWeight: 'bold',
             letterSpacing: 1,
@@ -846,31 +809,31 @@ function DashButton({
   return (
     <Pressable
       onPress={async () => { await Haptics.selectionAsync(); onPress(); }}
-      style={({ pressed }) => ({
+      android_ripple={{ color: C.washBlue }}
+      style={{
         flex,
         minWidth,
-        paddingVertical: 12, paddingHorizontal: 10,
+        paddingTop: 14, paddingBottom: 12, paddingHorizontal: 8,
         borderRadius: 3,
-        borderWidth: active ? 2.5 : 2,
+        borderWidth: 2,
         borderColor: active ? C.red : C.amber,
         backgroundColor: active ? C.washRed : C.washBlue,
         alignItems: 'center',
         justifyContent: 'center',
-        opacity: pressed ? 0.78 : 1,
-      })}
+      }}
     >
       {/* Form-stamp checkbox at top-right */}
       <View style={{
         position: 'absolute', top: 5, right: 5,
-        width: 9, height: 9,
+        width: 12, height: 12,
         borderWidth: 1, borderColor: active ? C.red : C.amber,
         backgroundColor: active ? C.red : 'transparent',
         alignItems: 'center', justifyContent: 'center',
       }}>
         {active && (
           <Text style={{
-            color: C.panel, fontSize: 8,
-            fontWeight: 'bold', lineHeight: 7,
+            color: C.panel, fontSize: 9,
+            fontWeight: 'bold', lineHeight: 10,
           }}>
             ✓
           </Text>
@@ -1027,7 +990,7 @@ export default function DashboardScreen() {
             paddingBottom: 8, marginBottom: 12,
             borderBottomWidth: 1, borderBottomColor: C.panelEdge,
           }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: C.silk, letterSpacing: 2.5, textTransform: 'uppercase', fontWeight: 'bold' }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: C.silk, letterSpacing: 1.5, textTransform: 'uppercase', fontWeight: 'bold' }}>
               Climate · Control
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -1196,10 +1159,10 @@ export default function DashboardScreen() {
 
           {/* Panel serial footer */}
           <View style={{ marginTop: 18, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.panelEdge, flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.silkDim, letterSpacing: 2 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: C.silkDim, letterSpacing: 2 }}>
               CCU-PNL · REV 04
             </Text>
-            <Text style={{ fontFamily: 'monospace', fontSize: 8, color: C.silkDim, letterSpacing: 2 }}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 10, color: C.silkDim, letterSpacing: 2 }}>
               OEM · NON-USER-SERVICEABLE
             </Text>
           </View>
@@ -1224,7 +1187,7 @@ export default function DashboardScreen() {
         >
           <Text style={{
             fontFamily: 'monospace', fontSize: 12, fontWeight: 'bold',
-            textTransform: 'uppercase', letterSpacing: 3,
+            textTransform: 'uppercase', letterSpacing: 1.5,
             color: allAnswered ? DMV.paperLight : C.silk,
           }}>
             {allAnswered ? 'Submit Configuration' : `${remainingCount} setting${remainingCount === 1 ? '' : 's'} remaining`}

@@ -33,7 +33,7 @@ function PermitStamp() {
   return (
     <Animated.View
       pointerEvents="none"
-      style={[{ position: 'absolute', top: 30, right: 14 }, stampStyle]}
+      style={[{ position: 'absolute', bottom: 40, right: 18 }, stampStyle]}
     >
       <View style={{
         borderWidth: 2.5, borderColor: DMV.red, borderRadius: 4,
@@ -43,13 +43,13 @@ function PermitStamp() {
       }}>
         <Text style={{
           fontFamily: 'monospace', fontSize: 16, fontWeight: 'bold',
-          color: DMV.red, letterSpacing: 4,
+          color: DMV.red, letterSpacing: 1.5,
         }}>
           ISSUED
         </Text>
         <Text style={{
-          fontFamily: 'monospace', fontSize: 8, color: DMV.red,
-          letterSpacing: 2, opacity: 0.85, marginTop: 1,
+          fontFamily: 'monospace', fontSize: 9, color: DMV.red,
+          letterSpacing: 1.2, opacity: 0.85, marginTop: 1,
         }}>
           DEPT · OF · CLIMATE · CONTROL
         </Text>
@@ -69,7 +69,7 @@ export default function ResultScreen() {
       <View style={{ flex: 1, backgroundColor: DMV.paper, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <Text style={{
           fontFamily: 'monospace', fontSize: 11, color: DMV.caBlue,
-          textTransform: 'uppercase', letterSpacing: 3, marginBottom: 4, fontWeight: 'bold',
+          textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 4, fontWeight: 'bold',
         }}>
           NO PERMIT ON FILE
         </Text>
@@ -91,7 +91,7 @@ export default function ResultScreen() {
         >
           <Text style={{
             fontFamily: undefined, fontSize: 13, color: DMV.paperLight,
-            fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 3,
+            fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1.5,
           }}>
             Start Over
           </Text>
@@ -172,7 +172,7 @@ export default function ResultScreen() {
             backgroundColor: DMV.noticeWash,
           }}>
             <Text style={{
-              fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue,
+              fontFamily: 'monospace', fontSize: 10, color: DMV.caBlue,
               fontWeight: 'bold', letterSpacing: 1.5, marginBottom: 4,
             }}>
               9 · QUADRANT · BIAS PROFILE
@@ -189,7 +189,7 @@ export default function ResultScreen() {
         {/* Compatible traits */}
         <Animated.View entering={FadeInDown.duration(500).delay(540)} style={{ paddingHorizontal: 22, paddingBottom: 24 }}>
           <Text style={{
-            fontFamily: 'monospace', fontSize: 8, color: DMV.caBlue,
+            fontFamily: 'monospace', fontSize: 10, color: DMV.caBlue,
             fontWeight: 'bold', letterSpacing: 1.5, marginBottom: 4,
           }}>
             18 · COMPATIBLE OPERATORS
@@ -215,7 +215,7 @@ export default function ResultScreen() {
           >
             <Text style={{
               fontFamily: undefined, fontSize: 13, color: DMV.paperLight,
-              fontWeight: 'bold', letterSpacing: 3, textTransform: 'uppercase',
+              fontWeight: 'bold', letterSpacing: 1.5, textTransform: 'uppercase',
             }}>
               Share Your Permit
             </Text>
@@ -236,7 +236,7 @@ export default function ResultScreen() {
             >
               <Text style={{
                 fontFamily: undefined, fontSize: 13, color: DMV.paperLight,
-                fontWeight: 'bold', letterSpacing: 3, textTransform: 'uppercase',
+                fontWeight: 'bold', letterSpacing: 1.5, textTransform: 'uppercase',
               }}>
                 View Compatibility  →
               </Text>
@@ -254,7 +254,7 @@ export default function ResultScreen() {
             >
               <Text style={{
                 fontFamily: undefined, fontSize: 13, color: DMV.caBlue,
-                fontWeight: 'bold', letterSpacing: 3, textTransform: 'uppercase',
+                fontWeight: 'bold', letterSpacing: 1.5, textTransform: 'uppercase',
               }}>
                 Test Your Partner  →
               </Text>
@@ -269,7 +269,7 @@ export default function ResultScreen() {
           >
             <Text style={{
               fontFamily: 'monospace', fontSize: 10, color: DMV.inkDim,
-              textTransform: 'uppercase', letterSpacing: 2.5, fontWeight: 'bold',
+              textTransform: 'uppercase', letterSpacing: 1.5, fontWeight: 'bold',
             }}>
               Start Over
             </Text>

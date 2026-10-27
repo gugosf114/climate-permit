@@ -1,6 +1,6 @@
 # Climate Permit
 
-> ## [⬇ DOWNLOAD THE LATEST ANDROID APK — 2026-10-12](https://github.com/gugosf114/climate-permit/releases/latest/download/Climate-Permit-1.1.1.apk)
+> ## [⬇ DOWNLOAD THE LATEST ANDROID APK — 2026-10-26](https://github.com/gugosf114/climate-permit/releases/latest/download/Climate-Permit-1.1.2.apk)
 >
 > **Current build: 1.1.0 · Android version code 5 · 2026-10-11**
 

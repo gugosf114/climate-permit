@@ -142,7 +142,7 @@ export default function CarSelectScreen() {
                     </View>
                   }
                   label={make}
-                  sub="REGISTERED MAKE"
+                  sub={`${CARS.filter((c) => c.make === make).length} MODELS ON FILE`}
                   onPress={() => handleMake(make)}
                 />
               );

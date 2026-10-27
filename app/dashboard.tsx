@@ -329,6 +329,7 @@ function Knob({
   dashColorFn,
   activeIconColor,
   iconSize = 14,
+  minorTicks = 0,
 }: {
   options: KnobOption[];
   activeKey?: string;
@@ -339,6 +340,8 @@ function Knob({
   dashColorFn?: (i: number, active: boolean) => string;
   activeIconColor?: string;
   iconSize?: number;
+  /** unlabeled ticks drawn between each pair of positions (hardware rhythm on sparse dials) */
+  minorTicks?: number;
 }) {
   const C = useDashC();
   const radius = size / 2;
@@ -483,6 +486,26 @@ function Knob({
             backgroundColor: 'transparent',
           }}
         />
+
+        {minorTicks > 0 && options.slice(0, -1).map((opt, i) =>
+          Array.from({ length: minorTicks }, (_, k) => {
+            const angle = angleForIdx(i) + (angleStep * (k + 1)) / (minorTicks + 1);
+            return (
+              <View
+                key={`m${opt.key}-${k}`}
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  top: radius, left: radius,
+                  width: 0, height: 0,
+                  transform: [{ rotate: `${angle}deg` }, { translateY: -dashR }],
+                }}
+              >
+                <View style={{ width: 2, height: 7, backgroundColor: DASH_NEUTRAL, opacity: 0.55, borderRadius: 1, marginLeft: -1, marginTop: -3.5 }} />
+              </View>
+            );
+          })
+        )}
 
         {options.map((opt, i) => {
           const angle = angleForIdx(i);
@@ -670,6 +693,7 @@ function VentKnob({
         labelWidth={40}
         labelOffset={18}
         iconSize={24}
+        minorTicks={3}
       />
     </View>
   );
@@ -940,37 +964,38 @@ export default function DashboardScreen() {
     <View style={{ flex: 1, backgroundColor: C.chrome }}>
       <OfficialHeader />
 
-      {/* Section 2 header */}
-      <View style={{ paddingTop: 16, paddingBottom: 10, paddingHorizontal: 22 }}>
-        <SectionHeader
-          kicker="SECTION 2 · OPERATING SAMPLE"
-          title={`${make.toUpperCase()} ${model.toUpperCase()}`}
-          subtitle="Operate the climate panel exactly as you would in real life."
-          boxChar="2"
-        />
+      {/* The section header scrolls away with the form, so the panel gets the whole screen while answering. */}
+      <ScrollView style={{ flex: 1, backgroundColor: C.chrome }} contentContainerStyle={{ paddingBottom: 40 }}>
+        <View style={{ paddingTop: 16, paddingBottom: 12, paddingHorizontal: 22 }}>
+          <SectionHeader
+            kicker="SECTION 2 · OPERATING SAMPLE"
+            title={`${make.toUpperCase()} ${model.toUpperCase()}`}
+            subtitle="Operate the climate panel exactly as you would in real life."
+            boxChar="2"
+          />
 
-        <TouchableOpacity
-          onPress={() => router.back()}
-          activeOpacity={0.7}
-          style={{
-            alignSelf: 'flex-start',
-            flexDirection: 'row', alignItems: 'center', gap: 4,
-            paddingVertical: 6,
-            marginTop: 10,
-          }}
-        >
-          <MaterialCommunityIcons name="chevron-left" size={14} color={C.amber} />
-          <Text style={{
-            fontFamily: 'monospace', fontSize: 10, color: C.amber,
-            textTransform: 'uppercase', letterSpacing: 2, fontWeight: 'bold',
-          }}>
-            RETURN TO SECTION 1
-          </Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            activeOpacity={0.7}
+            style={{
+              alignSelf: 'flex-start',
+              flexDirection: 'row', alignItems: 'center', gap: 4,
+              paddingVertical: 6,
+              marginTop: 8,
+            }}
+          >
+            <MaterialCommunityIcons name="chevron-left" size={14} color={C.amber} />
+            <Text style={{
+              fontFamily: 'monospace', fontSize: 10, color: C.amber,
+              textTransform: 'uppercase', letterSpacing: 2, fontWeight: 'bold',
+            }}>
+              RETURN TO SECTION 1
+            </Text>
+          </TouchableOpacity>
+        </View>
 
-      {/* The HVAC Panel */}
-      <ScrollView style={{ flex: 1, backgroundColor: C.chromeDeep }} contentContainerStyle={{ padding: 12, paddingBottom: 40 }}>
+        {/* The HVAC Panel */}
+        <View style={{ backgroundColor: C.chromeDeep, padding: 12 }}>
         <BrandBanner make={make} model={model} answers={answers} onCycleTemp={cycleTemp} />
         <Animated.View
           entering={FadeIn.duration(450)}
@@ -1038,7 +1063,7 @@ export default function DashboardScreen() {
           <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginTop: 18, marginBottom: 14, paddingHorizontal: 30 }}>
             <View style={{ alignItems: 'center' }}>
               <CircleButton
-                label="A/S"
+                label="A/C"
                 state={(answers.acCompressor as any) ?? 'off'}
                 onPress={() => set('acCompressor', cycleTriState(answers.acCompressor))}
               />
@@ -1167,6 +1192,7 @@ export default function DashboardScreen() {
             </Text>
           </View>
         </Animated.View>
+        </View>
       </ScrollView>
 
       {/* Submit footer */}

@@ -40,7 +40,7 @@ export default function LandingScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 26, paddingBottom: 40 }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 26, paddingBottom: 40, flexGrow: 1 }}
       >
         <Animated.View entering={FadeInDown.duration(600).delay(100)}>
           <Text style={{
@@ -176,7 +176,7 @@ export default function LandingScreen() {
           </TouchableOpacity>
         </Animated.View>
 
-        <Animated.View entering={FadeIn.duration(600).delay(650)} style={{ marginTop: 28 }}>
+        <Animated.View entering={FadeIn.duration(600).delay(650)} style={{ marginTop: 'auto', paddingTop: 36 }}>
           <View style={{
             flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8,
           }}>

@@ -28,12 +28,12 @@ function PermitStamp() {
   }, []);
   const stampStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
-    transform: [{ rotate: '-14deg' }, { scale: scale.value }],
+    transform: [{ rotate: '-9deg' }, { scale: scale.value }],
   }));
   return (
     <Animated.View
       pointerEvents="none"
-      style={[{ position: 'absolute', bottom: 40, right: 18 }, stampStyle]}
+      style={[{ position: 'absolute', bottom: 22, right: 64 }, stampStyle]}
     >
       <View style={{
         borderWidth: 2.5, borderColor: DMV.red, borderRadius: 4,

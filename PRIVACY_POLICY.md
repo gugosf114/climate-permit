@@ -1,8 +1,8 @@
 # Privacy Policy — Climate Permit
 
-**Effective date:** May 14, 2026
-**App:** Climate Permit (Android)
-**Developer:** George Abrahamyants
+**Effective date:** October 27, 2026
+**App:** Climate Permit — A/C Quiz (Android, package app.climatepermit.android)
+**Developer:** WiM Labs
 **Contact:** gugosf@gmail.com
 
 ---
